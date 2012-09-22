@@ -1,0 +1,26 @@
+{
+  "name": "jenkins",
+  "description": "Client for Jenkins",
+  "version": "0.0.1",
+  "author": "Silas Sewell <silas@sewell.org>",
+  "keywords": [
+    "jenkins"
+  ],
+  "dependencies": {
+    "request": "*"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/silas/node-jenkins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/silas/node-jenkins/issues"
+  },
+  "scripts": {
+    "test": "mocha test/unit.js"
+  },
+  "main": "./jenkins"
+}
