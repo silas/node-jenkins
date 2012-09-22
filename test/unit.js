@@ -89,7 +89,7 @@ describe('jenkins', function() {
       })
     })
 
-    it('should return error on 404', function(done) {
+    it('should return error when it does not exist', function(done) {
       var api = test(done)
                     .get('/job/nodejs-jenkins-test/2/api/json?depth=0')
                     .reply(404)
@@ -101,7 +101,7 @@ describe('jenkins', function() {
       })
     })
 
-    it('should stop', function(done) {
+    it('should stop build', function(done) {
       var api = test(done)
                     .get('/job/nodejs-jenkins-test/1/stop')
                     .reply(302, assets.url + '/job/nodejs-jenkins-test/1')
@@ -113,121 +113,205 @@ describe('jenkins', function() {
   })
 
   describe('job', function() {
-    it('should build', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/build')
-                    .reply(302, assets.url + '/job/nodejs-jenkins-test')
-      jenkins.job.build('nodejs-jenkins-test', function(err) {
-        assert.ifError(err)
-        api.done()
+
+    describe('build', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/build')
+                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+        jenkins.job.build('nodejs-jenkins-test', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should work with a token', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/build?token=secret')
+                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+        jenkins.job.build('nodejs-jenkins-test', { token: 'secret' }, function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should work with parameters', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world')
+                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+        jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' } }, function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should work with a token and parameters', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world&token=secret')
+                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+        jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' }, token: 'secret' }, function(err) {
+          assert.ifError(err)
+          api.done()
+        })
       })
     })
 
-    it('should build with token', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/build?token=secret')
-                    .reply(302, assets.url + '/job/nodejs-jenkins-test')
-      jenkins.job.build('nodejs-jenkins-test', { token: 'secret' }, function(err) {
-        assert.ifError(err)
-        api.done()
+    describe('config', function() {
+      it('should return xml', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/config.xml')
+                      .reply(200, assets.job.create)
+        jenkins.job.config('nodejs-jenkins-test', function(err, xml) {
+          assert.ifError(err)
+          assert.equal(xml, assets.job.create)
+          api.done()
+        })
+      })
+
+      it('should update xml', function(done) {
+        var api = test(done)
+                      .matchHeader('content-type', 'text/xml')
+                      .post('/job/nodejs-jenkins-test/config.xml', assets.job.update)
+                      .reply(200)
+        jenkins.job.config('nodejs-jenkins-test', assets.job.update, function(err, xml) {
+          assert.ifError(err)
+          api.done()
+        })
       })
     })
 
-    it('should build with parameters', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world')
-                    .reply(302, assets.url + '/job/nodejs-jenkins-test')
-      jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' } }, function(err) {
-        assert.ifError(err)
-        api.done()
+    describe('copy', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200)
+                      .get('/createItem?name=nodejs-jenkins-test-copy&from=nodejs-jenkins-test&mode=copy')
+                      .reply(200)
+                      .get('/job/nodejs-jenkins-test-copy/api/json?depth=0')
+                      .reply(200)
+        jenkins.job.copy('nodejs-jenkins-test', 'nodejs-jenkins-test-copy', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
       })
     })
 
-    it('should build with token and parameters', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world&token=secret')
-                    .reply(302, assets.url + '/job/nodejs-jenkins-test')
-      jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' }, token: 'secret' }, function(err) {
-        assert.ifError(err)
-        api.done()
+    describe('copy', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+                      .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
+                      .matchHeader('content-type', 'text/xml')
+                      .reply(200)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200)
+        jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should return an error if it already exists', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200)
+        jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
+          assert.ok(err instanceof jenkins.Error)
+          assert.equal(err.message, 'job "nodejs-jenkins-test" already exists')
+          api.done()
+        })
+      })
+
+      it('should return error on failure', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+                      .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
+                      .matchHeader('content-type', 'text/xml')
+                      .reply(200)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+        jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
+          assert.ok(err instanceof jenkins.Error)
+          assert.equal(err.message, 'create "nodejs-jenkins-test" failed')
+          api.done()
+        })
       })
     })
 
-    it('should return config', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/config.xml')
-                    .reply(200, assets.job.create)
-      jenkins.job.config('nodejs-jenkins-test', function(err, xml) {
-        assert.ifError(err)
-        assert.equal(xml, assets.job.create)
-        api.done()
+    describe('delete', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .post('/job/nodejs-jenkins-test/doDelete')
+                      .reply(200)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+        jenkins.job.delete('nodejs-jenkins-test', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should return error on failure', function(done) {
+        var api = test(done)
+                      .post('/job/nodejs-jenkins-test/doDelete')
+                      .reply(200)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200)
+        jenkins.job.delete('nodejs-jenkins-test', function(err) {
+          assert.ok(err instanceof jenkins.Error)
+          assert.equal(err.message, 'delete "nodejs-jenkins-test" failed')
+          api.done()
+        })
       })
     })
 
-    it('should update config', function(done) {
-      var api = test(done)
-                    .matchHeader('content-type', 'text/xml')
-                    .post('/job/nodejs-jenkins-test/config.xml', assets.job.update)
-                    .reply(200)
-      jenkins.job.config('nodejs-jenkins-test', assets.job.update, function(err, xml) {
-        assert.ifError(err)
-        api.done()
+    describe('disable', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .post('/job/nodejs-jenkins-test/disable', '')
+                      .reply(200)
+        jenkins.job.disable('nodejs-jenkins-test', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
       })
     })
 
-    it('should copy', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(200)
-                    .get('/createItem?name=nodejs-jenkins-test-copy&from=nodejs-jenkins-test&mode=copy')
-                    .reply(200)
-                    .get('/job/nodejs-jenkins-test-copy/api/json?depth=0')
-                    .reply(200)
-      jenkins.job.copy('nodejs-jenkins-test', 'nodejs-jenkins-test-copy', function(err) {
-        assert.ifError(err)
-        api.done()
+    describe('enable', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .post('/job/nodejs-jenkins-test/enable', '')
+                      .reply(200)
+        jenkins.job.enable('nodejs-jenkins-test', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
       })
     })
 
-    it('should create', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(404)
-                    .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
-                    .matchHeader('content-type', 'text/xml')
-                    .reply(200)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(200)
-      jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
-        assert.ifError(err)
-        api.done()
+    describe('enable', function() {
+      it('should return true when job exists', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200)
+        jenkins.job.exists('nodejs-jenkins-test', function(err, data) {
+          assert.ifError(err)
+          assert.strictEqual(data, true)
+          api.done()
+        })
       })
-    })
 
-    it('should not create if already exists', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(200)
-      jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
-        assert.ok(err instanceof jenkins.Error)
-        assert.equal(err.message, 'job "nodejs-jenkins-test" already exists')
-        api.done()
-      })
-    })
-
-    it('should return error when create fails', function(done) {
-      var api = test(done)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(404)
-                    .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
-                    .matchHeader('content-type', 'text/xml')
-                    .reply(200)
-                    .get('/job/nodejs-jenkins-test/api/json?depth=0')
-                    .reply(404)
-      jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
-        assert.ok(err instanceof jenkins.Error)
-        assert.equal(err.message, 'create "nodejs-jenkins-test" failed')
-        api.done()
+      it('should return false when it does not exist', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+        jenkins.job.exists('nodejs-jenkins-test', function(err, data) {
+          assert.ifError(err)
+          assert.strictEqual(data, false)
+          api.done()
+        })
       })
     })
   })
