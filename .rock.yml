@@ -3,3 +3,5 @@ runtime: node08
 build_publish: npm publish
 
 test: mocha
+test_unit: mocha test/unit.js
+test_integration: mocha test/integration.js

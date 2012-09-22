@@ -10,7 +10,8 @@
     "request": "*"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "nock": "*"
   },
   "repository": {
     "type": "git",

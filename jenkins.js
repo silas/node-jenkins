@@ -22,20 +22,24 @@ var error = function(message, res) {
   return new JenkinsError(message, res)
 }
 
+var jobNotFound = function(name, res) {
+  return error('job "' + name + '" does not exist', res)
+}
+
 var path = function() {
   var args = Array.prototype.slice.call(arguments)
   return '/' + args.map(encodeURIComponent).join('/')
 }
 
 module.exports = function(url) {
-  var api = { Error: JenkinsError }
+  var api = { Error: JenkinsError, url: url }
 
-  if (typeof url !== 'string' || url.length < 1) {
+  if (typeof api.url !== 'string' || api.url.length < 1) {
     throw error('url required')
   }
 
-  if (url[url.length-1] === '/') {
-    url = url.substring(0, url.length-1)
+  if (api.url[api.url.length-1] === '/') {
+    api.url = api.url.substring(0, api.url.length-1)
   }
 
   api.request = function(path, opts, cb) {
@@ -48,7 +52,7 @@ module.exports = function(url) {
         opts[name] = value
       }
     }
-    defaults('url', url + path)
+    defaults('url', api.url + path)
 
     if (opts.hasOwnProperty('body')) {
       opts.method = 'POST'
@@ -57,8 +61,15 @@ module.exports = function(url) {
       defaults('json', true)
     }
 
+    opts.headers = opts.headers || {}
+    opts.headers.referer = api.url + '/'
+
     request(opts, function(err, res) {
       if (err) return cb(error(err, res))
+      if ([401, 403, 500].indexOf(res.statusCode) >= 0) {
+        return cb(error('Request failed, possibly authentication issue (' +
+                  res.statusCode + ')', res))
+      }
       cb(err, res)
     })
   }
@@ -80,21 +91,22 @@ module.exports = function(url) {
 
   api.build = {}
 
-  api.build.get = function(name, number) {
+  api.build.get = function(name, number, cb) {
     var p = path('job', name, number, 'api', 'json')
       , o = { qs: { depth: 0 } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) {
         return cb(error('job "' + name + '" build "' + number +
-                  '" does not exist'), res)
+                  '" does not exist', res))
       }
       cb(null, res.body)
     })
   }
 
   api.build.stop = function(name, number, cb) {
-    api.request(path('job', name, number, 'stop'), function(err) {
+    var o = { headers: { 'referer': api.url + '/' } }
+    api.request(path('job', name, number, 'stop'), o, function(err) {
       if (err) return cb(err)
       cb()
     })
@@ -113,19 +125,22 @@ module.exports = function(url) {
     }
     opts = opts || {}
     var p = path('job', name) + '/build'
-      , o = { qs: opts.parameters || {} }
-    if (Object.keys(o.qs).length > 0) {
+      , o = {}
+    if (opts.parameters) {
+      o.qs = opts.parameters
       p += 'WithParameters'
     }
     if (opts.token) {
-      o.qs.token = opts.token
+      if (o.qs) {
+        o.qs.token = opts.token
+      } else {
+        o.qs = { token: opts.token }
+      }
     }
-    api.job.get(name, function(err) {
+    api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      api.request(p, o, function(err) {
-        if (err) return cb(err)
-        cb()
-      })
+      if (res.statusCode == 404) return cb(jobNotFound(name, res))
+      cb()
     })
   }
 
@@ -135,6 +150,7 @@ module.exports = function(url) {
       cb = xml
       api.request(p, function(err, res) {
         if (err) return cb(err)
+        if (res.statusCode == 404) return cb(jobNotFound(name, res))
         cb(null, res.body)
       })
     } else {
@@ -142,8 +158,9 @@ module.exports = function(url) {
         headers: { 'content-type': 'text/xml' },
         body: xml,
       }
-      api.request(p, o, function(err) {
+      api.request(p, o, function(err, res) {
         if (err) return cb(err)
+        if (res.statusCode == 404) return cb(jobNotFound(name, res))
         cb()
       })
     }
@@ -231,9 +248,7 @@ module.exports = function(url) {
       , o = { qs: { depth: 0 } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode == 404) {
-        return cb(error('job "' + name + '" does not exist', res))
-      }
+      if (res.statusCode == 404) return cb(jobNotFound(name, res))
       cb(null, res.body)
     })
   }
@@ -297,8 +312,7 @@ module.exports = function(url) {
 
   api.queue.cancel = function(number, cb) {
     var p = path('queue', 'item', number, 'cancelQueue')
-      , o = { headers: { 'referer': api.url + '/' } }
-    api.request(p, o, function(err) {
+    api.request(p, function(err) {
       if (err) return cb(err)
       if (res.statusCode == 404) {
         return cb(error('queue "' + number + '" does not exist'), res)
