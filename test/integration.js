@@ -17,14 +17,14 @@ describe('jenkins', function() {
       })
     })
 
-    it('should create', function(done) {
+    it('should be created', function(done) {
       jenkins.job.create(job, assets.job.create, function(err) {
         assert.ifError(err)
         done()
       })
     })
 
-    it('should exist after create', function(done) {
+    it('should exist after being created', function(done) {
       jenkins.job.exists(job, function(err, exists) {
         assert.ifError(err)
         assert.strictEqual(exists, true)

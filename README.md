@@ -2,6 +2,21 @@
 
 This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
+Get
+
+    npm install jenkins
+
+Use
+
+    var jenkins = require('jenkins')('http://user:pass@localhost:8080')
+
+    jenkins.job.list(function(err, list) {
+        if (err) throw err
+        console.log(list)
+    })
+
+See code/tests for all available functions.
+
 ## License
 
 This work is licensed under the MIT License (see the LICENSE file).
