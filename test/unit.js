@@ -16,7 +16,6 @@ var test = function(done) {
 }
 
 describe('jenkins', function() {
-
   describe('initialize', function() {
     it('should normalize url', function() {
       assert.equal(jenkins.url, assets.url)
@@ -113,7 +112,6 @@ describe('jenkins', function() {
   })
 
   describe('job', function() {
-
     describe('build', function() {
       it('should work', function(done) {
         var api = test(done)
@@ -291,8 +289,8 @@ describe('jenkins', function() {
       })
     })
 
-    describe('enable', function() {
-      it('should return true when job exists', function(done) {
+    describe('exists', function() {
+      it('should return true', function(done) {
         var api = test(done)
                       .get('/job/nodejs-jenkins-test/api/json?depth=0')
                       .reply(200)
@@ -303,13 +301,88 @@ describe('jenkins', function() {
         })
       })
 
-      it('should return false when it does not exist', function(done) {
+      it('should return false', function(done) {
         var api = test(done)
                       .get('/job/nodejs-jenkins-test/api/json?depth=0')
                       .reply(404)
         jenkins.job.exists('nodejs-jenkins-test', function(err, data) {
           assert.ifError(err)
           assert.strictEqual(data, false)
+          api.done()
+        })
+      })
+    })
+
+    describe('get', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(200, assets.job.get)
+        jenkins.job.get('nodejs-jenkins-test', function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.displayName, 'nodejs-jenkins-test')
+          api.done()
+        })
+      })
+
+      it('should return error when not found', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=0')
+                      .reply(404)
+        jenkins.job.get('nodejs-jenkins-test', function(err, data) {
+          assert.ok(err instanceof jenkins.Error)
+          assert.equal(err.message, 'job "nodejs-jenkins-test" does not exist')
+          assert.ok(!data)
+          api.done()
+        })
+      })
+    })
+
+    describe('list', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/api/json')
+                      .reply(200, assets.get)
+        jenkins.job.list(function(err, data) {
+          assert.ifError(err)
+          assert.equal(data[0].name, 'nodejs-jenkins-test')
+          api.done()
+        })
+      })
+    })
+  })
+
+  describe('queue', function() {
+    describe('get', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/queue/api/json?depth=0')
+                      .reply(200, assets.queue.get)
+        jenkins.queue.get(function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.items[0].why, 'Build #3 is already in progress (ETA:N/A)')
+          api.done()
+        })
+      })
+    })
+
+    describe('cancel', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .post('/queue/items/1/cancelQueue', '')
+                      .reply(200)
+        jenkins.queue.cancel(1, function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+
+      it('should return error on failure', function(done) {
+        var api = test(done)
+                      .post('/queue/items/1/cancelQueue', '')
+                      .reply(500)
+        jenkins.queue.cancel(1, function(err) {
+          assert.ok(err instanceof jenkins.Error)
           api.done()
         })
       })

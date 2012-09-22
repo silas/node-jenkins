@@ -311,12 +311,10 @@ module.exports = function(url) {
   }
 
   api.queue.cancel = function(number, cb) {
-    var p = path('queue', 'item', number, 'cancelQueue')
-    api.request(p, function(err) {
+    var p = path('queue', 'items', number, 'cancelQueue')
+      , o = { body: '' }
+    api.request(p, o, function(err) {
       if (err) return cb(err)
-      if (res.statusCode == 404) {
-        return cb(error('queue "' + number + '" does not exist'), res)
-      }
       cb()
     })
   }

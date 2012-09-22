@@ -107,3 +107,75 @@ exports.job.config = "" +
   "  <publishers/>" +
   "  <buildWrappers/>" +
   "</project>"
+
+exports.job.get = {
+  "actions": [],
+  "description": "before",
+  "displayName": "nodejs-jenkins-test",
+  "displayNameOrNull": null,
+  "name": "nodejs-jenkins-test",
+  "url": "http://localhost:8080/job/nodejs-jenkins-test/",
+  "buildable": true,
+  "builds": [],
+  "color": "grey",
+  "firstBuild": null,
+  "healthReport": [],
+  "inQueue": false,
+  "keepDependencies": false,
+  "lastBuild": null,
+  "lastCompletedBuild": null,
+  "lastFailedBuild": null,
+  "lastStableBuild": null,
+  "lastSuccessfulBuild": null,
+  "lastUnstableBuild": null,
+  "lastUnsuccessfulBuild": null,
+  "nextBuildNumber": 1,
+  "property": [],
+  "queueItem": null,
+  "concurrentBuild": false,
+  "downstreamProjects": [],
+  "scm": {},
+  "upstreamProjects": []
+}
+
+exports.queue = {}
+
+exports.queue.get = {
+  "items": [
+    {
+      "actions": [
+        {
+          "causes": [
+            {
+              "shortDescription": "Started by user anonymous",
+              "userId": null,
+              "userName": "anonymous"
+            },
+            {
+              "shortDescription": "Started by user anonymous",
+              "userId": null,
+              "userName": "anonymous"
+            },
+            {
+              "shortDescription": "Started by user anonymous",
+              "userId": null,
+              "userName": "anonymous"
+            }
+          ]
+        }
+      ],
+      "blocked": true,
+      "buildable": false,
+      "id": 28,
+      "inQueueSince": 1348350479842,
+      "params":"", "stuck": false,
+      "task": {
+        "name": "nodejs-jenkins-test",
+        "url": "http://localhost:8080/job/nodejs-jenkins-test/",
+        "color": "blue_anime"
+      },
+      "why": "Build #3 is already in progress (ETA:N/A)",
+      "buildableStartMilliseconds": 1348350479943
+    }
+  ]
+}
