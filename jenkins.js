@@ -18,8 +18,8 @@ function JenkinsError(err, res) {
 }
 util.inherits(JenkinsError, Error)
 
-var error = function(message, opts) {
-  return new JenkinsError(message, opts)
+var error = function(message, res) {
+  return new JenkinsError(message, res)
 }
 
 var path = function() {
@@ -82,7 +82,7 @@ module.exports = function(url) {
 
   api.build.get = function(name, number) {
     var p = path('job', name, number, 'api', 'json')
-      , opts = { qs: { depth: 0 } }
+      , o = { qs: { depth: 0 } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) {
@@ -113,13 +113,16 @@ module.exports = function(url) {
     }
     opts = opts || {}
     var p = path('job', name) + '/build'
-      , l = Object.keys(opts).length
-    if (l > 1 || (l > 0 && !opts.hasOwnProperty('token'))) {
-      path += 'WithParameters'
+      , o = { qs: opts.parameters || {} }
+    if (Object.keys(o.qs).length > 0) {
+      p += 'WithParameters'
+    }
+    if (opts.token) {
+      o.qs.token = opts.token
     }
     api.job.get(name, function(err) {
       if (err) return cb(err)
-      api.request(p, opts, function(err) {
+      api.request(p, o, function(err) {
         if (err) return cb(err)
         cb()
       })
@@ -136,9 +139,7 @@ module.exports = function(url) {
       })
     } else {
       var o = {
-        headers: {
-          'content-type': 'text/xml'
-        },
+        headers: { 'content-type': 'text/xml' },
         body: xml,
       }
       api.request(p, o, function(err) {
@@ -151,13 +152,7 @@ module.exports = function(url) {
   api.job.copy = function(srcName, dstName, cb) {
     api.job.get(srcName, function(err) {
       if (err) return cb(err)
-      var o = {
-        qs: {
-          name: dstName,
-          from: srcName,
-          mode: 'copy',
-        },
-      }
+      var o = { qs: { name: dstName, from: srcName, mode: 'copy' } }
       api.request('/createItem', o, function(err, res) {
         if (err) return cb(err)
         api.job.exists(dstName, function(err, exists) {
