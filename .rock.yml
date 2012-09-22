@@ -1,3 +1,5 @@
 runtime: node08
 
+build_publish: npm publish
+
 test: mocha
