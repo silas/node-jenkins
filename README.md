@@ -6,8 +6,8 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 This work is licensed under the MIT License (see the LICENSE file).
 
-## Note
+## Notes
 
-I used [python-jenkins](https://launchpad.net/python-jenkins) (BSD License) as
-a reference when implementing this client and its create/reconfigure job XML in
-the node-jenkins integration tests.
+[python-jenkins](https://launchpad.net/python-jenkins) (BSD License, see NOTES)
+was used as a reference when implementing this client and its
+create/reconfigure job XML was used in the tests.
