@@ -2,11 +2,11 @@
 
 This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
-Get
+## Installation
 
     npm install jenkins
 
-Use
+## Usage
 
     var jenkins = require('jenkins')('http://user:pass@localhost:8080')
 
@@ -15,7 +15,71 @@ Use
         console.log(list)
     })
 
-See code/tests for all available functions.
+## API
+
+    jenkins.get(cb)
+
+Retrieves general information about your Jenkins server. Your callback should accept the parameters: error, response.
+
+    jenkins.build.get(name, number, cb)
+
+Retrieves information about a build. Your callback should accept the parameters: error, response.
+
+    jenkins.build.stop(name, number, cb)
+
+Stops a build. Your callback should accept the parameters: error.
+
+    jenkins.job.build(name, opts, cb)
+
+Starts a build. Your callback should accept the parameters: error.
+
+    jenkins.job.config(name, cb)
+
+Retrieves Jenkins XML configuration for a job. Your callback should accept the parameters: error, response.
+
+    jenkins.job.config(name, xml, cb)
+
+Updates a job's configuration. Your callback should accept the parameters: error.
+
+    jenkins.job.copy(srcName, dstName, cb)
+
+Creates a new job by copying an existing job. Your callback should accept the parameters: error.
+
+    jenkins.job.create(name, xml, cb)
+
+Creates a new job from scratch. Your callback should accept the parameters: error.
+
+    jenkins.job.delete(name, cb)
+
+Deletes a job. Your callback should accept the parameters: error.
+
+    jenkins.job.disable(name, cb)
+
+Disables a job. Your callback should accept the parameters: error.
+
+    jenkins.job.enable(name, cb)
+
+Enables a job. Your callback should accept the parameters: error.
+
+    jenkins.job.exists(name, cb)
+
+Checks for the existence of a job. Your callback should accept the parameters: error, exists.
+
+    jenkins.job.get(name, cb)
+
+Retrieves information about a job. Your callback should accept the parameters: error, response.
+
+    jenkins.job.list(cb)
+
+Retrieves a list of all jobs. Your callback should accept the parameters: error, response.
+
+    jenkins.queue.get(cb)
+
+Retrieves information about the queue. Your callback should accept the parameters: error, response.
+
+    jenkins.queue.cancel(number, cb)
+
+Cancels a build in the queue. Your callback should accept the parameters: error.
 
 ## License
 
