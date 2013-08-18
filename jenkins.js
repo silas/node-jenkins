@@ -91,9 +91,17 @@ module.exports = function(url) {
 
   api.build = {}
 
-  api.build.get = function(name, number, cb) {
+  api.build.get = function(name, number, opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = null
+    }
+    opts = opts || { parameters: { qs: { depth: 0 } } };
     var p = path('job', name, number, 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = {}
+    if (opts.parameters) {
+      o.qs = opts.parameters
+    }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) {
@@ -243,9 +251,17 @@ module.exports = function(url) {
     })
   }
 
-  api.job.get = function(name, cb) {
+  api.job.get = function(name, opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = null
+    }
+    opts = opts || { parameters: { qs: { depth: 0 } } };
     var p = path('job', name, 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = {}
+    if (opts.parameters) {
+      o.qs = opts.parameters
+    }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) return cb(jobNotFound(name, res))
@@ -302,8 +318,16 @@ module.exports = function(url) {
   api.queue = {}
 
   api.queue.get = function(cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = null
+    }
+    opts = opts || { parameters: { qs: { depth: 0 } } };
     var p = path('queue', 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = {}
+    if (opts.parameters) {
+      o.qs = opts.parameters
+    }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       cb(null, res.body)
