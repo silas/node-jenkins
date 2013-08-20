@@ -21,7 +21,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 Retrieves general information about your Jenkins server. Your callback should accept the parameters: error, response.
 
-    jenkins.build.get(name, number, cb)
+    jenkins.build.get(name, number, [opts], cb)
 
 Retrieves information about a build. Your callback should accept the parameters: error, response.
 
@@ -65,7 +65,7 @@ Enables a job. Your callback should accept the parameters: error.
 
 Checks for the existence of a job. Your callback should accept the parameters: error, exists.
 
-    jenkins.job.get(name, cb)
+    jenkins.job.get(name, [opts], cb)
 
 Retrieves information about a job. Your callback should accept the parameters: error, response.
 
@@ -73,7 +73,7 @@ Retrieves information about a job. Your callback should accept the parameters: e
 
 Retrieves a list of all jobs. Your callback should accept the parameters: error, response.
 
-    jenkins.queue.get(cb)
+    jenkins.queue.get([opts], cb)
 
 Retrieves information about the queue. Your callback should accept the parameters: error, response.
 
