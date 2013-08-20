@@ -88,6 +88,17 @@ describe('jenkins', function() {
       })
     })
 
+    it('should get with options', function(done) {
+      var api = test(done)
+                    .get('/job/nodejs-jenkins-test/1/api/json?depth=2')
+                    .reply(200, assets.build.get)
+      jenkins.build.get('nodejs-jenkins-test', 1, {depth: 1}, function(err, data) {
+        assert.ifError(err)
+        assert.equal(data.duration, 138)
+        api.done()
+      })
+    })
+
     it('should return error when it does not exist', function(done) {
       var api = test(done)
                     .get('/job/nodejs-jenkins-test/2/api/json?depth=0')
@@ -325,6 +336,17 @@ describe('jenkins', function() {
         })
       })
 
+      it('should work with options', function(done) {
+        var api = test(done)
+                      .get('/job/nodejs-jenkins-test/api/json?depth=1')
+                      .reply(200, assets.job.get)
+        jenkins.job.get('nodejs-jenkins-test', {depth: 1}, function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.displayName, 'nodejs-jenkins-test')
+          api.done()
+        })
+      })
+
       it('should return error when not found', function(done) {
         var api = test(done)
                       .get('/job/nodejs-jenkins-test/api/json?depth=0')
@@ -359,6 +381,17 @@ describe('jenkins', function() {
                       .get('/queue/api/json?depth=0')
                       .reply(200, assets.queue.get)
         jenkins.queue.get(function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.items[0].why, 'Build #3 is already in progress (ETA:N/A)')
+          api.done()
+        })
+      })
+
+      it('should work with options', function(done) {
+        var api = test(done)
+                      .get('/queue/api/json?depth=1')
+                      .reply(200, assets.queue.get)
+        jenkins.queue.get({depth: 1}, function(err, data) {
           assert.ifError(err)
           assert.equal(data.items[0].why, 'Build #3 is already in progress (ETA:N/A)')
           api.done()

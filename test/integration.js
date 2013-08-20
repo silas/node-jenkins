@@ -2,7 +2,7 @@ var assert = require('assert')
   , assets = require('./assets')
 
 var url = process.env.JENKINS_TEST_URL || assets.url
-  , job = process.env.JENKINS_TEST_JOB || assets.job
+  , job = assets.job.get.name
 
 var jenkins = require('../jenkins')(url)
 

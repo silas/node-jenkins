@@ -91,9 +91,14 @@ module.exports = function(url) {
 
   api.build = {}
 
-  api.build.get = function(name, number, cb) {
+  api.build.get = function(name, number, opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
+    }
+    opts.depth = opts.depth || 0
     var p = path('job', name, number, 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) {
@@ -169,7 +174,10 @@ module.exports = function(url) {
   api.job.copy = function(srcName, dstName, cb) {
     api.job.get(srcName, function(err) {
       if (err) return cb(err)
-      var o = { qs: { name: dstName, from: srcName, mode: 'copy' } }
+      var o = {
+        headers: { 'content-type': 'text/xml' },
+        qs: { name: dstName, from: srcName, mode: 'copy' },
+      }
       api.request('/createItem', o, function(err, res) {
         if (err) return cb(err)
         api.job.exists(dstName, function(err, exists) {
@@ -243,9 +251,14 @@ module.exports = function(url) {
     })
   }
 
-  api.job.get = function(name, cb) {
+  api.job.get = function(name, opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
+    }
+    opts.depth = opts.depth || 0
     var p = path('job', name, 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) return cb(jobNotFound(name, res))
@@ -301,9 +314,14 @@ module.exports = function(url) {
 
   api.queue = {}
 
-  api.queue.get = function(cb) {
+  api.queue.get = function(opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts
+      opts = {}
+    }
+    opts.depth = opts.depth || 0
     var p = path('queue', 'api', 'json')
-      , o = { qs: { depth: 0 } }
+      , o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       cb(null, res.body)
