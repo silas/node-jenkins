@@ -90,7 +90,7 @@ describe('jenkins', function() {
 
     it('should get with options', function(done) {
       var api = test(done)
-                    .get('/job/nodejs-jenkins-test/1/api/json?depth=2')
+                    .get('/job/nodejs-jenkins-test/1/api/json?depth=1')
                     .reply(200, assets.build.get)
       jenkins.build.get('nodejs-jenkins-test', 1, {depth: 1}, function(err, data) {
         assert.ifError(err)
