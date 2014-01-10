@@ -4,82 +4,178 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 ## Installation
 
-    npm install jenkins
+``` console
+$ npm install jenkins --save
+```
 
 ## Usage
 
-    var jenkins = require('jenkins')('http://user:pass@localhost:8080')
+``` javascript
+var jenkins = require('jenkins')('http://user:pass@localhost:8080')
 
-    jenkins.job.list(function(err, list) {
-        if (err) throw err
-        console.log(list)
-    })
+jenkins.job.list(function(err, list) {
+    if (err) throw err
+    console.log(list)
+})
+```
 
 ## API
 
-    jenkins.get(cb)
+### jenkins.get(callback)
 
-Retrieves general information about your Jenkins server. Your callback should accept the parameters: error, response.
+Get information about server. The callback gets two arguments `err, info`.
 
-    jenkins.build.get(name, number, [opts], cb)
+#### info
 
-Retrieves information about a build. Your callback should accept the parameters: error, response.
+``` json
+{
+    "assignedLabels": [
+        {}
+    ],
+    "description": null,
+    "jobs": [],
+    "mode": "NORMAL",
+    "nodeDescription": "the master Jenkins node",
+    "nodeName": "",
+    "numExecutors": 2,
+    "overallLoad": {},
+    "primaryView": {
+        "name": "All",
+        "url": "http://localhost:8080/"
+    },
+    "quietingDown": false,
+    "slaveAgentPort": 0,
+    "unlabeledLoad": {},
+    "useCrumbs": false,
+    "useSecurity": false,
+    "views": [
+        {
+            "name": "All",
+            "url": "http://localhost:8080/"
+        }
+    ]
+}
+```
 
-    jenkins.build.stop(name, number, cb)
+### jenkins.build.get(name, number, [opts], callback)
 
-Stops a build. Your callback should accept the parameters: error.
+Get information about build. The callback gets two arguments `err, info`.
 
-    jenkins.job.build(name, opts, cb)
+#### info
 
-Starts a build. Your callback should accept the parameters: error.
+``` json
+{
+    "actions": [],
+    "buildable": true,
+    "builds": [
+        {
+            "number": 1,
+            "url": "http://localhost:8080/job/example/1/"
+        }
+    ],
+    "color": "blue",
+    "concurrentBuild": false,
+    "description": "",
+    "displayName": "example",
+    "displayNameOrNull": null,
+    "downstreamProjects": [],
+    "firstBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/example/1/"
+    },
+    "healthReport": [
+        {
+            "description": "Build stability: No recent builds failed.",
+            "iconUrl": "health-80plus.png",
+            "score": 100
+        }
+    ],
+    "inQueue": false,
+    "keepDependencies": false,
+    "lastBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/example/1/"
+    },
+    "lastCompletedBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/example/1/"
+    },
+    "lastFailedBuild": null,
+    "lastStableBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/example/1/"
+    },
+    "lastSuccessfulBuild": {
+        "number": 1,
+        "url": "http://localhost:8080/job/example/1/"
+    },
+    "lastUnstableBuild": null,
+    "lastUnsuccessfulBuild": null,
+    "name": "example",
+    "nextBuildNumber": 2,
+    "property": [],
+    "queueItem": null,
+    "scm": {},
+    "upstreamProjects": [],
+    "url": "http://localhost:8080/job/example/"
+}
+```
 
-    jenkins.job.config(name, cb)
+### jenkins.build.stop(name, number, callback)
 
-Retrieves Jenkins XML configuration for a job. Your callback should accept the parameters: error, response.
+Stop build. The callback gets one argument `err`.
 
-    jenkins.job.config(name, xml, cb)
+### jenkins.job.build(name, opts, callback)
 
-Updates a job's configuration. Your callback should accept the parameters: error.
+Start build. The callback gets one argument `err`.
 
-    jenkins.job.copy(srcName, dstName, cb)
+### jenkins.job.config(name, callback)
 
-Creates a new job by copying an existing job. Your callback should accept the parameters: error.
+Get XML configuration for job. The callback gets two arguments `err, xml`.
 
-    jenkins.job.create(name, xml, cb)
+### jenkins.job.config(name, xml, callback)
 
-Creates a new job from scratch. Your callback should accept the parameters: error.
+Update job configuration. The callback gets one argument `err`.
 
-    jenkins.job.delete(name, cb)
+### jenkins.job.copy(srcName, dstName, callback)
 
-Deletes a job. Your callback should accept the parameters: error.
+Create new job by copying existing job. The callback gets one argument `err`.
 
-    jenkins.job.disable(name, cb)
+#### jenkins.job.create(name, xml, callback)
 
-Disables a job. Your callback should accept the parameters: error.
+Create new job from scratch. The callback gets one argument `err`.
 
-    jenkins.job.enable(name, cb)
+### jenkins.job.delete(name, callback)
 
-Enables a job. Your callback should accept the parameters: error.
+Delete job. The callback gets one argument `err`.
 
-    jenkins.job.exists(name, cb)
+### jenkins.job.disable(name, callback)
 
-Checks for the existence of a job. Your callback should accept the parameters: error, exists.
+Disable job. The callback gets one argument `err`.
 
-    jenkins.job.get(name, [opts], cb)
+### jenkins.job.enable(name, callback)
 
-Retrieves information about a job. Your callback should accept the parameters: error, response.
+Enable job. The callback gets one argument `err`.
 
-    jenkins.job.list(cb)
+### jenkins.job.exists(name, callback)
 
-Retrieves a list of all jobs. Your callback should accept the parameters: error, response.
+Check for existence of job. The callback gets two arguments `err, exists`.
 
-    jenkins.queue.get([opts], cb)
+### jenkins.job.get(name, [opts], callback)
 
-Retrieves information about the queue. Your callback should accept the parameters: error, response.
+Get information about job. The callback gets two arguments `err, info`.
 
-    jenkins.queue.cancel(number, cb)
+### jenkins.job.list(callback)
 
-Cancels a build in the queue. Your callback should accept the parameters: error.
+Get list of all jobs. The callback gets two arguments `err, jobs`.
+
+### jenkins.queue.get([opts], callback)
+
+Get information about the queue. The callback gets two arguments `err, info`.
+
+### jenkins.queue.cancel(number, callback)
+
+Cancel build in the queue. The callback gets one argument `err`.
 
 ## License
 
