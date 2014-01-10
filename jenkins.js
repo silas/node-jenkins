@@ -31,17 +31,31 @@ var path = function() {
   return '/' + args.map(encodeURIComponent).join('/')
 }
 
-module.exports = function(url) {
-  var api = { Error: JenkinsError, url: url }
+module.exports = function(opts) {
+  if (typeof opts === 'string') {
+    opts = { url: opts }
+  }
+
+  if (typeof opts !== 'object') {
+    throw error('opts must be an object')
+  }
+
+  // create api object, this is what the users gets when calling the module
+  var api = { Error: JenkinsError, url: opts.url }
 
   if (typeof api.url !== 'string' || api.url.length < 1) {
     throw error('url required')
   }
 
+  // strip trailing forward slash
   if (api.url[api.url.length-1] === '/') {
     api.url = api.url.substring(0, api.url.length-1)
   }
 
+  // allow user to pass in default request
+  var defaultRequest = opts.request || request
+
+  // api.request is used for mapping http requests to jenkins
   api.request = function(path, opts, cb) {
     if (typeof opts === 'function') {
       cb = opts
@@ -64,7 +78,7 @@ module.exports = function(url) {
     opts.headers = opts.headers || {}
     opts.headers.referer = api.url + '/'
 
-    request(opts, function(err, res) {
+    defaultRequest(opts, function(err, res) {
       if (err) return cb(error(err, res))
       if ([401, 403, 500].indexOf(res.statusCode) >= 0) {
         return cb(error('Request failed, possibly authentication issue (' +
