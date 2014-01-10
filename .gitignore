@@ -1,3 +1,4 @@
 *swp
+.vagrant
 node_modules
 npm-shrinkwrap.json
