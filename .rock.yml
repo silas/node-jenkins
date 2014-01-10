@@ -1,4 +1,8 @@
-runtime: node08
+runtime: node010
+
+build: |
+  {{ parent }}
+  rm -f npm-shrinkwrap.json
 
 build_publish: npm publish
 
