@@ -10,6 +10,7 @@
     "request": "*"
   },
   "devDependencies": {
+    "jshint": "*",
     "mocha": "*",
     "nock": "*"
   },

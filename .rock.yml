@@ -6,6 +6,9 @@ build: |
 
 build_publish: npm publish
 
-test: mocha
+test: |
+  mocha
+  jshint jenkins.js
+
 test_unit: mocha test/unit.js
 test_integration: mocha test/integration.js
