@@ -25,7 +25,7 @@ jenkins.job.list(function(err, list) {
 
 Get information about server. The callback gets two arguments `err, info`.
 
-#### info
+**info**
 
 ``` json
 {
@@ -61,7 +61,7 @@ Get information about server. The callback gets two arguments `err, info`.
 
 Get information about build. The callback gets two arguments `err, info`.
 
-#### info
+**info**
 
 ``` json
 {
