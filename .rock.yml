@@ -4,11 +4,14 @@ build: |
   {{ parent }}
   rm -f npm-shrinkwrap.json
 
-build_publish: npm publish
+publish: npm publish
 
 test: |
   mocha
   jshint jenkins.js
 
-test_unit: mocha test/unit.js
-test_integration: mocha test/integration.js
+unit: |
+  mocha test/unit.js
+  jshint jenkins.js
+
+integration: mocha test/integration.js

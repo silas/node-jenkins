@@ -138,6 +138,136 @@ exports.job.get = {
   "upstreamProjects": []
 }
 
+exports.node = {}
+
+exports.node.get = {
+  "actions": [],
+  "displayName": "master",
+  "executors": [
+    {},
+    {}
+  ],
+  "icon": "computer.png",
+  "idle": true,
+  "jnlpAgent": false,
+  "launchSupported": true,
+  "loadStatistics": {},
+  "manualLaunchAllowed": true,
+  "monitorData": {
+    "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
+    "hudson.node_monitors.ClockMonitor": {
+      "diff": 0
+    },
+    "hudson.node_monitors.DiskSpaceMonitor": {
+      "path": "/var/lib/jenkins",
+      "size": 77646782464
+    },
+    "hudson.node_monitors.ResponseTimeMonitor": {
+      "average": 0
+    },
+    "hudson.node_monitors.SwapSpaceMonitor": {
+      "availablePhysicalMemory": 6045696,
+      "availableSwapSpace": 804081664,
+      "totalPhysicalMemory": 515358720,
+      "totalSwapSpace": 805302272
+    },
+    "hudson.node_monitors.TemporarySpaceMonitor": {
+      "path": "/tmp",
+      "size": 77646782464
+    }
+  },
+  "numExecutors": 2,
+  "offline": false,
+  "offlineCause": null,
+  "offlineCauseReason": "",
+  "oneOffExecutors": [],
+  "temporarilyOffline": false
+}
+
+exports.node.slave = {
+  "actions": [],
+  "displayName": "slave",
+  "executors": [
+    {},
+    {}
+  ],
+  "icon": "computer-x.png",
+  "idle": true,
+  "jnlpAgent": true,
+  "launchSupported": false,
+  "loadStatistics": {},
+  "manualLaunchAllowed": true,
+  "monitorData": {
+    "hudson.node_monitors.ArchitectureMonitor": null,
+    "hudson.node_monitors.ClockMonitor": null,
+    "hudson.node_monitors.DiskSpaceMonitor": null,
+    "hudson.node_monitors.ResponseTimeMonitor": {
+      "average": 5000
+    },
+    "hudson.node_monitors.SwapSpaceMonitor": null,
+    "hudson.node_monitors.TemporarySpaceMonitor": null
+  },
+  "numExecutors": 2,
+  "offline": true,
+  "offlineCause": null,
+  "offlineCauseReason": "",
+  "oneOffExecutors": [],
+  "temporarilyOffline": false
+}
+
+exports.node.list = {
+  "busyExecutors": 0,
+  "computer": [
+    {
+      "actions": [],
+      "displayName": "master",
+      "executors": [
+        {},
+        {}
+      ],
+      "icon": "computer.png",
+      "idle": true,
+      "jnlpAgent": false,
+      "launchSupported": true,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
+        "hudson.node_monitors.ClockMonitor": {
+          "diff": 0
+        },
+        "hudson.node_monitors.DiskSpaceMonitor": {
+          "path": "/var/lib/jenkins",
+          "size": 77646782464
+        },
+        "hudson.node_monitors.ResponseTimeMonitor": {
+          "average": 0
+        },
+        "hudson.node_monitors.SwapSpaceMonitor": {
+          "availablePhysicalMemory": 6045696,
+          "availableSwapSpace": 804081664,
+          "totalPhysicalMemory": 515358720,
+          "totalSwapSpace": 805302272
+        },
+        "hudson.node_monitors.TemporarySpaceMonitor": {
+          "path": "/tmp",
+          "size": 77646782464
+        }
+      },
+      "numExecutors": 2,
+      "offline": false,
+      "offlineCause": null,
+      "offlineCauseReason": "",
+      "oneOffExecutors": [],
+      "temporarilyOffline": false
+    }
+  ],
+  "displayName": "nodes",
+  "totalExecutors": 2
+}
+
+
+
 exports.queue = {}
 
 exports.queue.get = {

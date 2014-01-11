@@ -1,5 +1,7 @@
 var assert = require('assert')
+  , deepcopy = require('deepcopy')
   , nock = require('nock')
+  , querystring = require('querystring')
   , assets = require('./assets')
   , jenkins = require('../jenkins')(assets.url + '/')
 
@@ -368,6 +370,131 @@ describe('jenkins', function() {
         jenkins.job.list(function(err, data) {
           assert.ifError(err)
           assert.equal(data[0].name, 'nodejs-jenkins-test')
+          api.done()
+        })
+      })
+    })
+  })
+
+  describe('node', function() {
+    describe('create', function() {
+      it('should work', function(done) {
+        var qs = {}
+        qs.name = 'slave'
+        qs.type = 'hudson.slaves.DumbSlave$DescriptorImpl'
+        qs.json = JSON.stringify({
+          name: qs.name,
+          nodeDescription: undefined,
+          numExecutors: 2,
+          remoteFS: '/var/lib/jenkins',
+          labelString: undefined,
+          mode: 'NORMAL',
+          type: qs.type,
+          retentionStrategy: {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
+          nodeProperties: {'stapler-class-bag': 'true'},
+          launcher: {'stapler-class': 'hudson.slaves.JNLPLauncher'},
+        })
+        var api = test(done)
+                      .get('/computer/slave/api/json?depth=0')
+                      .reply(404)
+                      .post('/computer/doCreateItem?' + querystring.stringify(qs))
+                      .reply(302)
+        jenkins.node.create('slave', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+    })
+
+    describe('delete', function() {
+      it('should run', function(done) {
+        var api = test(done)
+                      .get('/computer/slave/api/json?depth=0')
+                      .reply(200, assets.node.slave)
+                      .post('/computer/slave/doDelete')
+                      .reply(302)
+        jenkins.node.delete('slave', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+    })
+
+    describe('disable', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/computer/slave/api/json?depth=0')
+                      .reply(200, assets.node.slave)
+                      .post('/computer/slave/toggleOffline?offlineMessage=test')
+                      .reply(302)
+        jenkins.node.disable('slave', 'test', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+    })
+
+    describe('enable', function() {
+      it('should work', function(done) {
+        var slave = deepcopy(assets.node.slave)
+        slave.temporarilyOffline = true
+        var api = test(done)
+                      .get('/computer/slave/api/json?depth=0')
+                      .reply(200, slave)
+                      .post('/computer/slave/toggleOffline?offlineMessage=')
+                      .reply(302)
+        jenkins.node.enable('slave', function(err) {
+          assert.ifError(err)
+          api.done()
+        })
+      })
+    })
+
+    describe('exists', function() {
+      it('should return true', function(done) {
+        var api = test(done)
+                      .get('/computer/(master)/api/json?depth=0')
+                      .reply(200)
+        jenkins.node.exists('master', function(err, data) {
+          assert.ifError(err)
+          assert.strictEqual(data, true)
+          api.done()
+        })
+      })
+
+      it('should return false', function(done) {
+        var api = test(done)
+                      .get('/computer/slave/api/json?depth=0')
+                      .reply(404)
+        jenkins.node.exists('slave', function(err, data) {
+          assert.ifError(err)
+          assert.strictEqual(data, false)
+          api.done()
+        })
+      })
+    })
+
+    describe('get', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/computer/(master)/api/json?depth=0')
+                      .reply(200, assets.node.get)
+        jenkins.node.get('master', function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.displayName, 'master')
+          api.done()
+        })
+      })
+    })
+
+    describe('list', function() {
+      it('should work', function(done) {
+        var api = test(done)
+                      .get('/computer/api/json?depth=0')
+                      .reply(200, assets.node.list)
+        jenkins.node.list(function(err, data) {
+          assert.ifError(err)
+          assert.equal(data.computer[0].displayName, 'master')
           api.done()
         })
       })

@@ -10,6 +10,7 @@
     "request": "*"
   },
   "devDependencies": {
+    "deepcopy": "*",
     "jshint": "*",
     "mocha": "*",
     "nock": "*"

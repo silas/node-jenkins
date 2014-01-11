@@ -3,6 +3,7 @@ var assert = require('assert')
 
 var url = process.env.JENKINS_TEST_URL || assets.url
   , job = assets.job.get.name
+  , node = assets.node.slave.displayName
 
 var jenkins = require('../jenkins')(url)
 
@@ -134,6 +135,84 @@ describe('jenkins', function() {
 
     it('should not exist after delete', function(done) {
       jenkins.job.exists(job, function(err, exists) {
+        assert.ifError(err)
+        assert.strictEqual(exists, false)
+        done()
+      })
+    })
+  })
+
+  describe('node', function() {
+    it('should not exist', function(done) {
+      jenkins.node.exists(node, function(err, exists) {
+        assert.ifError(err)
+        assert.strictEqual(exists, false)
+        done()
+      })
+    })
+
+    it('should be created', function(done) {
+      jenkins.node.create(node, function(err) {
+        assert.ifError(err)
+        done()
+      })
+    })
+
+    it('should exist after being created', function(done) {
+      jenkins.node.exists(node, function(err, exists) {
+        assert.ifError(err)
+        assert.strictEqual(exists, true)
+        done()
+      })
+    })
+
+    it('should get', function(done) {
+      jenkins.node.get(node, function(err, data) {
+        assert.ifError(err)
+        assert.equal(data.displayName, node)
+        done()
+      })
+    })
+
+    it('should list', function(done) {
+      jenkins.node.list(function(err, data) {
+        assert.ifError(err)
+        assert.ok(data.computer.some(function(d) { return d.displayName === node }))
+        done()
+      })
+    })
+
+    it('should disable', function(done) {
+      jenkins.node.disable(node, 'test', function(err) {
+        assert.ifError(err)
+        jenkins.node.get(node, function(err, data) {
+          assert.ifError(err)
+          assert.ok(data.temporarilyOffline)
+          done()
+        })
+      })
+    })
+
+    it('should enable', function(done) {
+      jenkins.node.enable(node, function(err) {
+        assert.ifError(err)
+        jenkins.node.get(node, function(err, data) {
+          assert.ifError(err)
+          assert.ok(!data.temporarilyOffline)
+          done()
+        })
+      })
+    })
+
+    it('should delete', function(done) {
+      jenkins.node.delete(node, function(err) {
+        assert.ifError(err)
+        done()
+      })
+    })
+
+    it('should not exist after delete', function(done) {
+      jenkins.node.exists(node, function(err, exists) {
         assert.ifError(err)
         assert.strictEqual(exists, false)
         done()
