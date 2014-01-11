@@ -1,7 +1,7 @@
 {
   "name": "jenkins",
   "description": "Client for Jenkins",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "author": "Silas Sewell <silas@sewell.org>",
   "keywords": [
     "jenkins"
