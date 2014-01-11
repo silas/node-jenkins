@@ -125,7 +125,7 @@ Get build information. The callback gets two arguments `err, data`.
 
 Stop build. The callback gets one argument `err`.
 
-### jenkins.job.build(name, opts, callback)
+### jenkins.job.build(name, [opts], callback)
 
 Start build. The callback gets one argument `err`.
 
