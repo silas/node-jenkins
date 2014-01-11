@@ -18,6 +18,10 @@ function JenkinsError(err, res) {
 }
 util.inherits(JenkinsError, Error)
 
+//
+// error helpers
+//
+
 var error = function(message, res) {
   return new JenkinsError(message, res)
 }
@@ -26,41 +30,31 @@ var jobNotFound = function(name, res) {
   return error('job "' + name + '" does not exist', res)
 }
 
+// encode and join path components
 var path = function() {
   var args = Array.prototype.slice.call(arguments)
   return '/' + args.map(encodeURIComponent).join('/')
 }
 
 module.exports = function(opts) {
-  if (typeof opts === 'string') {
-    opts = { url: opts }
-  }
-
-  if (typeof opts !== 'object') {
-    throw error('opts must be an object')
-  }
+  // normalize and validate options
+  if (typeof opts === 'string') opts = { url: opts }
+  if (typeof opts !== 'object') throw error('opts must be an object')
+  if (typeof opts.url !== 'string' || opts.url.length < 1) throw error('url required')
+  if (opts.url[opts.url.length-1] === '/') opts.url = opts.url.substring(0, opts.url.length-1)
 
   // create api object, this is what the users gets when calling the module
   var api = { Error: JenkinsError, url: opts.url }
 
-  if (typeof api.url !== 'string' || api.url.length < 1) {
-    throw error('url required')
-  }
-
-  // strip trailing forward slash
-  if (api.url[api.url.length-1] === '/') {
-    api.url = api.url.substring(0, api.url.length-1)
-  }
-
   // allow user to pass in default request
   var defaultRequest = opts.request || request
 
-  // api.request is used for mapping http requests to jenkins
+  // api.request is used for making http requests to jenkins
   api.request = function(path, opts, cb) {
-    if (typeof opts === 'function') {
-      cb = opts
-      opts = {}
-    }
+    if (typeof opts === 'function') { cb = opts; opts = {} }
+
+    // setup opts
+
     var defaults = function(name, value) {
       if (!opts.hasOwnProperty(name)) {
         opts[name] = value
@@ -78,6 +72,7 @@ module.exports = function(opts) {
     opts.headers = opts.headers || {}
     opts.headers.referer = api.url + '/'
 
+    // make request and handle common errors
     defaultRequest(opts, function(err, res) {
       if (err) return cb(error(err, res))
       if ([401, 403, 500].indexOf(res.statusCode) >= 0) {
@@ -124,8 +119,7 @@ module.exports = function(opts) {
   }
 
   api.build.stop = function(name, number, cb) {
-    var o = { headers: { 'referer': api.url + '/' } }
-    api.request(path('job', name, number, 'stop'), o, function(err) {
+    api.request(path('job', name, number, 'stop'), function(err) {
       if (err) return cb(err)
       cb()
     })
@@ -138,10 +132,7 @@ module.exports = function(opts) {
   api.job = {}
 
   api.job.build = function(name, opts, cb) {
-    if (typeof opts === 'function') {
-      cb = opts
-      opts = null
-    }
+    if (typeof opts === 'function') { cb = opts; opts = null }
     opts = opts || {}
     var p = path('job', name) + '/build'
       , o = {}
