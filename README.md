@@ -23,7 +23,7 @@ jenkins.job.list(function(err, list) {
 
 ### jenkins.get(callback)
 
-Get information about server. The callback gets two arguments `err, data`.
+Get server information. The callback gets two arguments `err, data`.
 
 #### Data
 
@@ -59,7 +59,7 @@ Get information about server. The callback gets two arguments `err, data`.
 
 ### jenkins.build.get(name, number, [opts], callback)
 
-Get information about build. The callback gets two arguments `err, data`.
+Get build information. The callback gets two arguments `err, data`.
 
 #### Data
 
@@ -141,7 +141,7 @@ Update job XML configuration. The callback gets one argument `err`.
 
 Create job by copying existing job. The callback gets one argument `err`.
 
-#### jenkins.job.create(name, xml, callback)
+### jenkins.job.create(name, xml, callback)
 
 Create job from scratch. The callback gets one argument `err`.
 
@@ -159,17 +159,17 @@ Enable job. The callback gets one argument `err`.
 
 ### jenkins.job.exists(name, callback)
 
-Check for existence of job. The callback gets two arguments `err, exists`.
+Check job exists. The callback gets two arguments `err, exists`.
 
 ### jenkins.job.get(name, [opts], callback)
 
-Get information about job. The callback gets two arguments `err, data`.
+Get job information. The callback gets two arguments `err, data`.
 
 ### jenkins.job.list(callback)
 
-Get list of all jobs. The callback gets two arguments `err, data`.
+List all jobs. The callback gets two arguments `err, data`.
 
-#### jenkins.node.create(name, [opts], callback)
+### jenkins.node.create(name, [opts], callback)
 
 Create node. The callback gets one argument `err`.
 
@@ -187,23 +187,23 @@ Enable node. The callback gets one argument `err`.
 
 ### jenkins.node.exists(name, callback)
 
-Check for existence of node. The callback gets two arguments `err, exists`.
+Check node exists. The callback gets two arguments `err, exists`.
 
 ### jenkins.node.get(name, callback)
 
-Get information about node. The callback gets two arguments `err, data`.
+Get node information. The callback gets two arguments `err, data`.
 
 ### jenkins.node.list(callback)
 
-Get list of all nodes. The callback gets two arguments `err, data`.
+List all nodes. The callback gets two arguments `err, data`.
 
 ### jenkins.queue.get([opts], callback)
 
-Get information about the queue. The callback gets two arguments `err, data`.
+Get queue information. The callback gets two arguments `err, data`.
 
 ### jenkins.queue.cancel(number, callback)
 
-Cancel build in the queue. The callback gets one argument `err`.
+Cancel build in queue. The callback gets one argument `err`.
 
 ## License
 
