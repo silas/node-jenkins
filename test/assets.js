@@ -1,3 +1,5 @@
+/* jshint ignore:start */
+
 exports.job = "nodejs-jenkins-test"
 exports.url = "http://localhost:8080"
 
@@ -265,8 +267,6 @@ exports.node.list = {
   "displayName": "nodes",
   "totalExecutors": 2
 }
-
-
 
 exports.queue = {}
 

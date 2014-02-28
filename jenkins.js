@@ -1,5 +1,15 @@
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+
 var request = require('request')
-  , util = require('util')
+var util = require('util')
+
+/**
+ * JenkinsError contains error message and response status code.
+ */
 
 function JenkinsError(err, res) {
   this.name = 'JenkinsError'
@@ -18,9 +28,9 @@ function JenkinsError(err, res) {
 }
 util.inherits(JenkinsError, Error)
 
-//
-// error helpers
-//
+/**
+ * Error helpers.
+ */
 
 var error = function(message, res) {
   return new JenkinsError(message, res)
@@ -30,18 +40,25 @@ var notFound = function(type, name, res) {
   return error(type + ' "' + name + '" does not exist', res)
 }
 
-// encode and join path components
-var path = function() {
+/**
+ * Encode and join path components.
+ */
+
+function path() {
   var args = Array.prototype.slice.call(arguments)
   return '/' + args.map(encodeURIComponent).join('/')
 }
+
+/**
+ * Expose Jenkins client.
+ */
 
 module.exports = function(opts) {
   // normalize and validate options
   if (typeof opts === 'string') opts = { url: opts }
   if (typeof opts !== 'object') throw error('opts must be an object')
   if (typeof opts.url !== 'string' || opts.url.length < 1) throw error('url required')
-  if (opts.url[opts.url.length-1] === '/') opts.url = opts.url.substring(0, opts.url.length-1)
+  if (opts.url[opts.url.length - 1] === '/') opts.url = opts.url.substring(0, opts.url.length - 1)
 
   // create api object, this is what the users gets when calling the module
   var api = { Error: JenkinsError, url: opts.url }
@@ -62,7 +79,7 @@ module.exports = function(opts) {
     }
     defaults('url', api.url + path)
 
-    if( !opts.method ) {
+    if (!opts.method) {
       if (opts.hasOwnProperty('body') || opts.hasOwnProperty('body')) {
         opts.method = 'POST'
       } else {
@@ -106,10 +123,10 @@ module.exports = function(opts) {
     if (typeof opts === 'function') { cb = opts; opts = {} }
     opts.depth = opts.depth || 0
     var p = path('job', name, number, 'api', 'json')
-      , o = { qs: { depth: opts.depth } }
+    var o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode == 404) {
+      if (res.statusCode === 404) {
         return cb(error('job "' + name + '" build "' + number +
                   '" does not exist', res))
       }
@@ -134,7 +151,7 @@ module.exports = function(opts) {
     if (typeof opts === 'function') { cb = opts; opts = null }
     opts = opts || {}
     var p = path('job', name) + '/build'
-      , o = {}
+    var o = { method: 'POST' }
     if (opts.parameters) {
       o.qs = opts.parameters
       p += 'WithParameters'
@@ -146,10 +163,9 @@ module.exports = function(opts) {
         o.qs = { token: opts.token }
       }
     }
-    o.method = 'POST'
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode == 404) return cb(notFound('job', name, res))
+      if (res.statusCode === 404) return cb(notFound('job', name, res))
       cb()
     })
   }
@@ -160,7 +176,7 @@ module.exports = function(opts) {
       cb = xml
       api.request(p, function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode == 404) return cb(notFound('job', name, res))
+        if (res.statusCode === 404) return cb(notFound('job', name, res))
         cb(null, res.body)
       })
     } else {
@@ -170,7 +186,7 @@ module.exports = function(opts) {
       }
       api.request(p, o, function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode == 404) return cb(notFound('job', name, res))
+        if (res.statusCode === 404) return cb(notFound('job', name, res))
         cb()
       })
     }
@@ -183,7 +199,7 @@ module.exports = function(opts) {
         headers: { 'content-type': 'text/xml' },
         qs: { name: dstName, from: srcName, mode: 'copy' },
       }
-      api.request('/createItem', o, function(err, res) {
+      api.request('/createItem', o, function(err) {
         if (err) return cb(err)
         api.job.exists(dstName, function(err, exists) {
           if (err) return cb(err)
@@ -203,7 +219,7 @@ module.exports = function(opts) {
         body: xml,
         qs: { name: name },
       }
-      api.request('/createItem', o, function(err, res) {
+      api.request('/createItem', o, function(err) {
         if (err) return cb(err)
         api.job.exists(name, function(err, exists) {
           if (err) return cb(err)
@@ -216,8 +232,8 @@ module.exports = function(opts) {
 
   api.job.delete = function(name, cb) {
     var p = path('job', name, 'doDelete')
-      , o = { body: '' }
-    api.request(p, o, function(err, res) {
+    var o = { body: '' }
+    api.request(p, o, function(err) {
       if (err) return cb(err)
       api.job.exists(name, function(err, exists) {
         if (err) return cb(err)
@@ -229,8 +245,8 @@ module.exports = function(opts) {
 
   api.job.disable = function(name, cb) {
     var p = path('job', name, 'disable')
-      , o = { body: '' }
-    api.request(p, o, function(err, res) {
+    var o = { body: '' }
+    api.request(p, o, function(err) {
       if (err) return cb(err)
       cb()
     })
@@ -238,8 +254,8 @@ module.exports = function(opts) {
 
   api.job.enable = function(name, cb) {
     var p = path('job', name, 'enable')
-      , o = { body: '' }
-    api.request(p, o, function(err, res) {
+    var o = { body: '' }
+    api.request(p, o, function(err) {
       if (err) return cb(err)
       cb()
     })
@@ -248,7 +264,7 @@ module.exports = function(opts) {
   api.job.exists = function(name, cb) {
     api.job.get(name, function(err) {
       if (err) {
-        if (err.code == 404) return cb(null, false)
+        if (err.code === 404) return cb(null, false)
         cb(err)
       } else {
         cb(null, true)
@@ -260,10 +276,10 @@ module.exports = function(opts) {
     if (typeof opts === 'function') { cb = opts; opts = {} }
     opts.depth = opts.depth || 0
     var p = path('job', name, 'api', 'json')
-      , o = { qs: { depth: opts.depth } }
+    var o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode == 404) return cb(notFound('job', name, res))
+      if (res.statusCode === 404) return cb(notFound('job', name, res))
       cb(null, res.body)
     })
   }
@@ -288,7 +304,7 @@ module.exports = function(opts) {
       if (err) return cb(err)
       if (exists) return cb(error('node already exists'))
       var p = path('computer', 'doCreateItem')
-        , o = { body: '', qs: {} }
+      var o = { body: '', qs: {} }
       o.qs.name = name
       o.qs.type = 'hudson.slaves.DumbSlave$DescriptorImpl'
       o.qs.json = JSON.stringify({
@@ -299,13 +315,13 @@ module.exports = function(opts) {
         labelString: opts.labelString,
         mode: opts.exclusive ? 'EXCLUSIVE' : 'NORMAL',
         type: o.qs.type,
-        retentionStrategy: opts.retentionStrategy || {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
-        nodeProperties: opts.nodeProperties || {'stapler-class-bag': 'true'},
-        launcher: opts.launcher || {'stapler-class': 'hudson.slaves.JNLPLauncher'},
+        retentionStrategy: opts.retentionStrategy || { 'stapler-class': 'hudson.slaves.RetentionStrategy$Always' },
+        nodeProperties: opts.nodeProperties || { 'stapler-class-bag': 'true' },
+        launcher: opts.launcher || { 'stapler-class': 'hudson.slaves.JNLPLauncher' },
       })
       api.request(p, o, function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode != 302) return cb(error('failed to create node', res))
+        if (res.statusCode !== 302) return cb(error('failed to create node', res))
         cb()
       })
     })
@@ -316,10 +332,10 @@ module.exports = function(opts) {
       if (err) return cb(err)
       if (node.name === 'master') return cb(error('cannot delete master node'))
       var p = path('computer', name, 'doDelete')
-        , o = { body: '' }
+      var o = { body: '' }
       api.request(p, o, function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode != 302) return cb(error('failed to delete node', res))
+        if (res.statusCode !== 302) return cb(error('failed to delete node', res))
         cb()
       })
     })
@@ -327,7 +343,7 @@ module.exports = function(opts) {
 
   api.node._toggleOffline = function(name, message, cb) {
     var p = path('computer', name, 'toggleOffline')
-      , o = { body: '', qs: { offlineMessage: message } }
+    var o = { body: '', qs: { offlineMessage: message } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       cb(null, res)
@@ -336,10 +352,10 @@ module.exports = function(opts) {
 
   api.node._offlineCauseReason = function(name, message, cb) {
     var p = path('computer', name, 'changeOfflineCause')
-      , o = { body: '', qs: { offlineMessage: message } }
+    var o = { body: '', qs: { offlineMessage: message } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode != 302) return cb(error('failed to set node offline message', res))
+      if (res.statusCode !== 302) return cb(error('failed to set node offline message', res))
       cb()
     })
   }
@@ -350,14 +366,14 @@ module.exports = function(opts) {
     api.node.get(name, function(err, node) {
       if (err) return cb(err)
       if (node.temporarilyOffline) {
-        if (setMessage && node.offlineCauseReason != message) {
+        if (setMessage && node.offlineCauseReason !== message) {
           return api.node._offlineCauseReason(name, message, cb)
         }
         return cb()
       }
       api.node._toggleOffline(name, message, function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode != 302) return cb(error('failed to disable node', res))
+        if (res.statusCode !== 302) return cb(error('failed to disable node', res))
         cb()
       })
     })
@@ -369,7 +385,7 @@ module.exports = function(opts) {
       if (!node.temporarilyOffline) return cb()
       api.node._toggleOffline(name, '', function(err, res) {
         if (err) return cb(err)
-        if (res.statusCode != 302) return cb(error('failed to enable node', res))
+        if (res.statusCode !== 302) return cb(error('failed to enable node', res))
         cb()
       })
     })
@@ -378,7 +394,7 @@ module.exports = function(opts) {
   api.node.exists = function(name, cb) {
     api.node.get(name, function(err) {
       if (err) {
-        if (err.code == 404) return cb(null, false)
+        if (err.code === 404) return cb(null, false)
         cb(err)
       } else {
         cb(null, true)
@@ -387,19 +403,19 @@ module.exports = function(opts) {
   }
 
   api.node.get = function(name, cb) {
-    name = name == 'master' ? '(master)' : name
+    name = name === 'master' ? '(master)' : name
     var p = path('computer', name, 'api', 'json')
-      , o = { qs: { depth: 0 } }
+    var o = { qs: { depth: 0 } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
-      if (res.statusCode == 404) return cb(notFound('node', name, res))
+      if (res.statusCode === 404) return cb(notFound('node', name, res))
       cb(null, res.body)
     })
   }
 
   api.node.list = function(cb) {
     var p = path('computer', 'api', 'json')
-      , o = { qs: { depth: 0 } }
+    var o = { qs: { depth: 0 } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       cb(null, res.body)
@@ -416,7 +432,7 @@ module.exports = function(opts) {
     if (typeof opts === 'function') { cb = opts; opts = {} }
     opts.depth = opts.depth || 0
     var p = path('queue', 'api', 'json')
-      , o = { qs: { depth: opts.depth } }
+    var o = { qs: { depth: opts.depth } }
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       cb(null, res.body)
@@ -425,7 +441,7 @@ module.exports = function(opts) {
 
   api.queue.cancel = function(number, cb) {
     var p = path('queue', 'items', number, 'cancelQueue')
-      , o = { body: '' }
+    var o = { body: '' }
     api.request(p, o, function(err) {
       if (err) return cb(err)
       cb()

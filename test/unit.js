@@ -1,9 +1,21 @@
-var assert = require('assert')
-  , deepcopy = require('deepcopy')
-  , nock = require('nock')
-  , querystring = require('querystring')
-  , assets = require('./assets')
-  , jenkins = require('../jenkins')(assets.url + '/')
+'use strict';
+
+/**
+ * Module dependencies.
+ */
+
+var assert = require('assert');
+var deepcopy = require('deepcopy');
+var nock = require('nock');
+var querystring = require('querystring');
+
+var assets = require('./assets');
+
+var jenkins = require('../jenkins')(assets.url + '/');
+
+/**
+ * Helpers.
+ */
 
 var test = function(done) {
   var n = nock(assets.url)
@@ -16,6 +28,10 @@ var test = function(done) {
   }
   return n
 }
+
+/**
+ * Helpers.
+ */
 
 describe('jenkins', function() {
   describe('initialize', function() {
@@ -53,7 +69,7 @@ describe('jenkins', function() {
         var api = test(done)
                       .get('/test')
                       .reply(code)
-        jenkins.request('/test', function(err, res) {
+        jenkins.request('/test', function(err) {
           assert.ok(err instanceof jenkins.Error)
           assert.equal(err.code, code)
           assert.equal(err.message, 'Request failed, possibly authentication ' +
@@ -94,7 +110,7 @@ describe('jenkins', function() {
       var api = test(done)
                     .get('/job/nodejs-jenkins-test/1/api/json?depth=1')
                     .reply(200, assets.build.get)
-      jenkins.build.get('nodejs-jenkins-test', 1, {depth: 1}, function(err, data) {
+      jenkins.build.get('nodejs-jenkins-test', 1, { depth: 1 }, function(err, data) {
         assert.ifError(err)
         assert.equal(data.duration, 138)
         api.done()
@@ -184,7 +200,7 @@ describe('jenkins', function() {
                       .matchHeader('content-type', 'text/xml')
                       .post('/job/nodejs-jenkins-test/config.xml', assets.job.update)
                       .reply(200)
-        jenkins.job.config('nodejs-jenkins-test', assets.job.update, function(err, xml) {
+        jenkins.job.config('nodejs-jenkins-test', assets.job.update, function(err) {
           assert.ifError(err)
           api.done()
         })
@@ -342,7 +358,7 @@ describe('jenkins', function() {
         var api = test(done)
                       .get('/job/nodejs-jenkins-test/api/json?depth=1')
                       .reply(200, assets.job.get)
-        jenkins.job.get('nodejs-jenkins-test', {depth: 1}, function(err, data) {
+        jenkins.job.get('nodejs-jenkins-test', { depth: 1 }, function(err, data) {
           assert.ifError(err)
           assert.equal(data.displayName, 'nodejs-jenkins-test')
           api.done()
@@ -390,9 +406,9 @@ describe('jenkins', function() {
           labelString: undefined,
           mode: 'NORMAL',
           type: qs.type,
-          retentionStrategy: {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
-          nodeProperties: {'stapler-class-bag': 'true'},
-          launcher: {'stapler-class': 'hudson.slaves.JNLPLauncher'},
+          retentionStrategy: { 'stapler-class': 'hudson.slaves.RetentionStrategy$Always' },
+          nodeProperties: { 'stapler-class-bag': 'true' },
+          launcher: { 'stapler-class': 'hudson.slaves.JNLPLauncher' },
         })
         var api = test(done)
                       .get('/computer/slave/api/json?depth=0')
@@ -518,7 +534,7 @@ describe('jenkins', function() {
         var api = test(done)
                       .get('/queue/api/json?depth=1')
                       .reply(200, assets.queue.get)
-        jenkins.queue.get({depth: 1}, function(err, data) {
+        jenkins.queue.get({ depth: 1 }, function(err, data) {
           assert.ifError(err)
           assert.equal(data.items[0].why, 'Build #3 is already in progress (ETA:N/A)')
           api.done()

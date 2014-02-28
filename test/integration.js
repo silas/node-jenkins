@@ -1,14 +1,15 @@
+'use strict';
+
 var assert = require('assert')
-  , assets = require('./assets')
+var assets = require('./assets')
 
 var url = process.env.JENKINS_TEST_URL || assets.url
-  , job = assets.job.get.name
-  , node = assets.node.slave.displayName
+var job = assets.job.get.name
+var node = assets.node.slave.displayName
 
 var jenkins = require('../jenkins')(url)
 
 describe('jenkins', function() {
-
   describe('job', function() {
     it('should not exist', function(done) {
       jenkins.job.exists(job, function(err, exists) {
@@ -99,7 +100,7 @@ describe('jenkins', function() {
     it('should get config', function(done) {
       jenkins.job.config(job, function(err, data) {
         assert.ifError(err)
-        assert.ok(data.match(/\<canRoam\>/))
+        assert.ok(data.match(/<canRoam>/))
         done()
       })
     })

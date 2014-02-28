@@ -4,14 +4,11 @@ build: |
   {{ parent }}
   rm -f npm-shrinkwrap.json
 
-publish: npm publish
+publish: exec npm publish
 
 test: |
-  mocha
-  jshint jenkins.js
+  {{ parent }}
 
-unit: |
-  mocha test/unit.js
-  jshint jenkins.js
-
-integration: mocha test/integration.js
+  if [[ "$ROCK_ARGS_ALL" == "true" ]]; then
+    mocha test/integration.js
+  fi
