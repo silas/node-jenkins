@@ -62,11 +62,13 @@ module.exports = function(opts) {
     }
     defaults('url', api.url + path)
 
-    if (opts.hasOwnProperty('body') || opts.hasOwnProperty('body')) {
-      opts.method = 'POST'
-    } else {
-      opts.method = 'GET'
-      defaults('json', true)
+    if( !opts.method ) {
+      if (opts.hasOwnProperty('body') || opts.hasOwnProperty('body')) {
+        opts.method = 'POST'
+      } else {
+        opts.method = 'GET'
+        defaults('json', true)
+      }
     }
 
     opts.headers = opts.headers || {}
@@ -144,6 +146,7 @@ module.exports = function(opts) {
         o.qs = { token: opts.token }
       }
     }
+    o.method = 'POST'
     api.request(p, o, function(err, res) {
       if (err) return cb(err)
       if (res.statusCode == 404) return cb(notFound('job', name, res))
