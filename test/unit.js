@@ -128,8 +128,8 @@ describe('jenkins', function() {
     describe('build', function() {
       it('should work', function(done) {
         var api = test(done)
-                      .get('/job/nodejs-jenkins-test/build')
-                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+                      .post('/job/nodejs-jenkins-test/build')
+                      .reply(201, assets.url + '/job/nodejs-jenkins-test')
         jenkins.job.build('nodejs-jenkins-test', function(err) {
           assert.ifError(err)
           api.done()
@@ -138,8 +138,8 @@ describe('jenkins', function() {
 
       it('should work with a token', function(done) {
         var api = test(done)
-                      .get('/job/nodejs-jenkins-test/build?token=secret')
-                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+                      .post('/job/nodejs-jenkins-test/build?token=secret')
+                      .reply(201, assets.url + '/job/nodejs-jenkins-test')
         jenkins.job.build('nodejs-jenkins-test', { token: 'secret' }, function(err) {
           assert.ifError(err)
           api.done()
@@ -148,8 +148,8 @@ describe('jenkins', function() {
 
       it('should work with parameters', function(done) {
         var api = test(done)
-                      .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world')
-                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+                      .post('/job/nodejs-jenkins-test/buildWithParameters?hello=world')
+                      .reply(201, assets.url + '/job/nodejs-jenkins-test')
         jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' } }, function(err) {
           assert.ifError(err)
           api.done()
@@ -158,8 +158,8 @@ describe('jenkins', function() {
 
       it('should work with a token and parameters', function(done) {
         var api = test(done)
-                      .get('/job/nodejs-jenkins-test/buildWithParameters?hello=world&token=secret')
-                      .reply(302, assets.url + '/job/nodejs-jenkins-test')
+                      .post('/job/nodejs-jenkins-test/buildWithParameters?hello=world&token=secret')
+                      .reply(201, assets.url + '/job/nodejs-jenkins-test')
         jenkins.job.build('nodejs-jenkins-test', { parameters: { hello: 'world' }, token: 'secret' }, function(err) {
           assert.ifError(err)
           api.done()
