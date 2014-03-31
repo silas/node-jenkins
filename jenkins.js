@@ -391,7 +391,11 @@
           cb(err);
           return;
         }
-        cb(null, data.jobs);
+        if (data && data.jobs) {
+          cb(null, data.jobs);
+        } else {
+          cb(null, []);
+        }
       });
     };
 
