@@ -64,8 +64,5 @@
   "maxlen": 120,
 
   // Enforce placing 'use strict' at the top function scope
-  "strict": true,
-
-  // Mostly because the diff would be horrible
-  "asi": true
+  "strict": true
 }
