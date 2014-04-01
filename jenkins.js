@@ -587,6 +587,7 @@
         }
         if (res.statusCode === 404) {
           cb(notFound('node', name, res));
+          return;
         }
         cb(null, res.body);
       });
