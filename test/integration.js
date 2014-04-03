@@ -10,6 +10,8 @@ var node = assets.node.slave.displayName
 var jenkins = require('../jenkins')(url)
 
 describe('jenkins', function() {
+  this.timeout(10 * 1000);
+
   describe('job', function() {
     it('should not exist', function(done) {
       jenkins.job.exists(job, function(err, exists) {
