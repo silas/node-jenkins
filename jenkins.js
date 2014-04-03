@@ -289,7 +289,7 @@ module.exports = function(opts) {
       if (err) return cb(err)
       if (typeof data !== 'object' || !Array.isArray(data.jobs)) {
         err = error('job list returned bad data')
-        err.data = data;
+        err.data = data
         return cb(err)
       }
       cb(null, data.jobs)
