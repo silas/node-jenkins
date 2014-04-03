@@ -389,6 +389,19 @@ describe('jenkins', function() {
           api.done()
         })
       })
+
+      it('should handle corrupt responses', function(done) {
+        var data = '"trash'
+        var api = test(done)
+                      .get('/api/json')
+                      .reply(200, data)
+        jenkins.job.list(function(err) {
+          assert.ok(err instanceof jenkins.Error)
+          assert.equal(err.message, 'job list returned bad data')
+          assert.equal(err.data, data)
+          api.done()
+        })
+      })
     })
   })
 

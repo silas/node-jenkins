@@ -287,6 +287,11 @@ module.exports = function(opts) {
   api.job.list = function(cb) {
     api.get(function(err, data) {
       if (err) return cb(err)
+      if (typeof data !== 'object' || !Array.isArray(data.jobs)) {
+        err = error('job list returned bad data')
+        err.data = data;
+        return cb(err)
+      }
       cb(null, data.jobs)
     })
   }
