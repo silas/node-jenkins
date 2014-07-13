@@ -196,6 +196,7 @@ module.exports = function(opts) {
     api.job.get(srcName, function(err) {
       if (err) return cb(err)
       var o = {
+        method: 'POST',
         headers: { 'content-type': 'text/xml' },
         qs: { name: dstName, from: srcName, mode: 'copy' },
       }
