@@ -1,0 +1,11 @@
+.env
+.jscs.json
+.jshintrc
+.npmignore
+.rock.yml
+.vagrant
+Vagrantfile
+config
+coverage
+test
+tmp

@@ -1,4 +1,10 @@
+*.log
+*.pid
 *swp
+.env
+.rock.yml
 .vagrant
+config
+coverage
 node_modules
-npm-shrinkwrap.json
+tmp
