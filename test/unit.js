@@ -212,7 +212,7 @@ describe('jenkins', function() {
         var api = test(done)
                       .get('/job/nodejs-jenkins-test/api/json?depth=0')
                       .reply(200)
-                      .get('/createItem?name=nodejs-jenkins-test-copy&from=nodejs-jenkins-test&mode=copy')
+                      .post('/createItem?name=nodejs-jenkins-test-copy&from=nodejs-jenkins-test&mode=copy')
                       .reply(200)
                       .get('/job/nodejs-jenkins-test-copy/api/json?depth=0')
                       .reply(200)
