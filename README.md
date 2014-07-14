@@ -14,8 +14,9 @@ $ npm install jenkins --save
 var jenkins = require('jenkins')('http://user:pass@localhost:8080')
 
 jenkins.job.list(function(err, list) {
-    if (err) throw err
-    console.log(list)
+  if (err) throw err;
+
+  console.log(list);
 })
 ```
 
@@ -29,37 +30,37 @@ Get server information. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "assignedLabels": [
-        {}
-    ],
-    "description": null,
-    "jobs": [
-        {
-            "color": "blue",
-            "name": "example",
-            "url": "http://localhost:8080/job/example/"
-        }
-    ],
-    "mode": "NORMAL",
-    "nodeDescription": "the master Jenkins node",
-    "nodeName": "",
-    "numExecutors": 2,
-    "overallLoad": {},
-    "primaryView": {
-        "name": "All",
-        "url": "http://localhost:8080/"
-    },
-    "quietingDown": false,
-    "slaveAgentPort": 12345,
-    "unlabeledLoad": {},
-    "useCrumbs": false,
-    "useSecurity": false,
-    "views": [
-        {
-            "name": "All",
-            "url": "http://localhost:8080/"
-        }
-    ]
+  "assignedLabels": [
+    {}
+  ],
+  "description": null,
+  "jobs": [
+    {
+      "color": "blue",
+      "name": "example",
+      "url": "http://localhost:8080/job/example/"
+    }
+  ],
+  "mode": "NORMAL",
+  "nodeDescription": "the master Jenkins node",
+  "nodeName": "",
+  "numExecutors": 2,
+  "overallLoad": {},
+  "primaryView": {
+    "name": "All",
+    "url": "http://localhost:8080/"
+  },
+  "quietingDown": false,
+  "slaveAgentPort": 12345,
+  "unlabeledLoad": {},
+  "useCrumbs": false,
+  "useSecurity": false,
+  "views": [
+    {
+      "name": "All",
+      "url": "http://localhost:8080/"
+    }
+  ]
 }
 ```
 
@@ -71,59 +72,59 @@ Get build information. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "actions": [],
-    "buildable": true,
-    "builds": [
-        {
-            "number": 1,
-            "url": "http://localhost:8080/job/example/1/"
-        }
-    ],
-    "color": "blue",
-    "concurrentBuild": false,
-    "description": "",
-    "displayName": "example",
-    "displayNameOrNull": null,
-    "downstreamProjects": [],
-    "firstBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "healthReport": [
-        {
-            "description": "Build stability: No recent builds failed.",
-            "iconUrl": "health-80plus.png",
-            "score": 100
-        }
-    ],
-    "inQueue": false,
-    "keepDependencies": false,
-    "lastBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastCompletedBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastFailedBuild": null,
-    "lastStableBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastSuccessfulBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastUnstableBuild": null,
-    "lastUnsuccessfulBuild": null,
-    "name": "example",
-    "nextBuildNumber": 2,
-    "property": [],
-    "queueItem": null,
-    "scm": {},
-    "upstreamProjects": [],
-    "url": "http://localhost:8080/job/example/"
+  "actions": [],
+  "buildable": true,
+  "builds": [
+    {
+      "number": 1,
+      "url": "http://localhost:8080/job/example/1/"
+    }
+  ],
+  "color": "blue",
+  "concurrentBuild": false,
+  "description": "",
+  "displayName": "example",
+  "displayNameOrNull": null,
+  "downstreamProjects": [],
+  "firstBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "healthReport": [
+    {
+      "description": "Build stability: No recent builds failed.",
+      "iconUrl": "health-80plus.png",
+      "score": 100
+    }
+  ],
+  "inQueue": false,
+  "keepDependencies": false,
+  "lastBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastCompletedBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastFailedBuild": null,
+  "lastStableBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastSuccessfulBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastUnstableBuild": null,
+  "lastUnsuccessfulBuild": null,
+  "name": "example",
+  "nextBuildNumber": 2,
+  "property": [],
+  "queueItem": null,
+  "scm": {},
+  "upstreamProjects": [],
+  "url": "http://localhost:8080/job/example/"
 }
 ```
 
@@ -175,59 +176,59 @@ Get job information. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "actions": [],
-    "buildable": true,
-    "builds": [
-        {
-            "number": 1,
-            "url": "http://localhost:8080/job/example/1/"
-        }
-    ],
-    "color": "blue",
-    "concurrentBuild": false,
-    "description": "",
-    "displayName": "example",
-    "displayNameOrNull": null,
-    "downstreamProjects": [],
-    "firstBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "healthReport": [
-        {
-            "description": "Build stability: No recent builds failed.",
-            "iconUrl": "health-80plus.png",
-            "score": 100
-        }
-    ],
-    "inQueue": false,
-    "keepDependencies": false,
-    "lastBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastCompletedBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastFailedBuild": null,
-    "lastStableBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastSuccessfulBuild": {
-        "number": 1,
-        "url": "http://localhost:8080/job/example/1/"
-    },
-    "lastUnstableBuild": null,
-    "lastUnsuccessfulBuild": null,
-    "name": "example",
-    "nextBuildNumber": 2,
-    "property": [],
-    "queueItem": null,
-    "scm": {},
-    "upstreamProjects": [],
-    "url": "http://localhost:8080/job/example/"
+  "actions": [],
+  "buildable": true,
+  "builds": [
+    {
+      "number": 1,
+      "url": "http://localhost:8080/job/example/1/"
+    }
+  ],
+  "color": "blue",
+  "concurrentBuild": false,
+  "description": "",
+  "displayName": "example",
+  "displayNameOrNull": null,
+  "downstreamProjects": [],
+  "firstBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "healthReport": [
+    {
+      "description": "Build stability: No recent builds failed.",
+      "iconUrl": "health-80plus.png",
+      "score": 100
+    }
+  ],
+  "inQueue": false,
+  "keepDependencies": false,
+  "lastBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastCompletedBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastFailedBuild": null,
+  "lastStableBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastSuccessfulBuild": {
+    "number": 1,
+    "url": "http://localhost:8080/job/example/1/"
+  },
+  "lastUnstableBuild": null,
+  "lastUnsuccessfulBuild": null,
+  "name": "example",
+  "nextBuildNumber": 2,
+  "property": [],
+  "queueItem": null,
+  "scm": {},
+  "upstreamProjects": [],
+  "url": "http://localhost:8080/job/example/"
 }
 ```
 
@@ -239,11 +240,11 @@ List all jobs. The callback gets two arguments `err, data`.
 
 ``` json
 [
-    {
-        "color": "blue",
-        "name": "example",
-        "url": "http://localhost:8080/job/example/"
-    }
+  {
+    "color": "blue",
+    "name": "example",
+    "url": "http://localhost:8080/job/example/"
+  }
 ]
 ```
 
@@ -275,34 +276,34 @@ Get node information. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "actions": [],
-    "displayName": "slave",
-    "executors": [
-        {},
-        {}
-    ],
-    "icon": "computer-x.png",
-    "idle": true,
-    "jnlpAgent": true,
-    "launchSupported": false,
-    "loadStatistics": {},
-    "manualLaunchAllowed": true,
-    "monitorData": {
-        "hudson.node_monitors.ArchitectureMonitor": null,
-        "hudson.node_monitors.ClockMonitor": null,
-        "hudson.node_monitors.DiskSpaceMonitor": null,
-        "hudson.node_monitors.ResponseTimeMonitor": {
-            "average": 5000
-        },
-        "hudson.node_monitors.SwapSpaceMonitor": null,
-        "hudson.node_monitors.TemporarySpaceMonitor": null
+  "actions": [],
+  "displayName": "slave",
+  "executors": [
+    {},
+    {}
+  ],
+  "icon": "computer-x.png",
+  "idle": true,
+  "jnlpAgent": true,
+  "launchSupported": false,
+  "loadStatistics": {},
+  "manualLaunchAllowed": true,
+  "monitorData": {
+    "hudson.node_monitors.ArchitectureMonitor": null,
+    "hudson.node_monitors.ClockMonitor": null,
+    "hudson.node_monitors.DiskSpaceMonitor": null,
+    "hudson.node_monitors.ResponseTimeMonitor": {
+      "average": 5000
     },
-    "numExecutors": 2,
-    "offline": true,
-    "offlineCause": null,
-    "offlineCauseReason": "",
-    "oneOffExecutors": [],
-    "temporarilyOffline": false
+    "hudson.node_monitors.SwapSpaceMonitor": null,
+    "hudson.node_monitors.TemporarySpaceMonitor": null
+  },
+  "numExecutors": 2,
+  "offline": true,
+  "offlineCause": null,
+  "offlineCauseReason": "",
+  "oneOffExecutors": [],
+  "temporarilyOffline": false
 }
 ```
 
@@ -314,84 +315,84 @@ List all nodes. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "busyExecutors": 0,
-    "computer": [
-        {
-            "actions": [],
-            "displayName": "master",
-            "executors": [
-                {},
-                {}
-            ],
-            "icon": "computer.png",
-            "idle": true,
-            "jnlpAgent": false,
-            "launchSupported": true,
-            "loadStatistics": {},
-            "manualLaunchAllowed": true,
-            "monitorData": {
-                "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
-                "hudson.node_monitors.ClockMonitor": {
-                    "diff": 0
-                },
-                "hudson.node_monitors.DiskSpaceMonitor": {
-                    "path": "/var/lib/jenkins",
-                    "size": 77620142080
-                },
-                "hudson.node_monitors.ResponseTimeMonitor": {
-                    "average": 0
-                },
-                "hudson.node_monitors.SwapSpaceMonitor": {
-                    "availablePhysicalMemory": 22761472,
-                    "availableSwapSpace": 794497024,
-                    "totalPhysicalMemory": 515358720,
-                    "totalSwapSpace": 805302272
-                },
-                "hudson.node_monitors.TemporarySpaceMonitor": {
-                    "path": "/tmp",
-                    "size": 77620142080
-                }
-            },
-            "numExecutors": 2,
-            "offline": false,
-            "offlineCause": null,
-            "offlineCauseReason": "",
-            "oneOffExecutors": [],
-            "temporarilyOffline": false
+  "busyExecutors": 0,
+  "computer": [
+    {
+      "actions": [],
+      "displayName": "master",
+      "executors": [
+        {},
+        {}
+      ],
+      "icon": "computer.png",
+      "idle": true,
+      "jnlpAgent": false,
+      "launchSupported": true,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
+        "hudson.node_monitors.ClockMonitor": {
+          "diff": 0
         },
-        {
-            "actions": [],
-            "displayName": "slave",
-            "executors": [
-                {},
-                {}
-            ],
-            "icon": "computer-x.png",
-            "idle": true,
-            "jnlpAgent": true,
-            "launchSupported": false,
-            "loadStatistics": {},
-            "manualLaunchAllowed": true,
-            "monitorData": {
-                "hudson.node_monitors.ArchitectureMonitor": null,
-                "hudson.node_monitors.ClockMonitor": null,
-                "hudson.node_monitors.DiskSpaceMonitor": null,
-                "hudson.node_monitors.ResponseTimeMonitor": {
-                    "average": 5000
-                },
-                "hudson.node_monitors.SwapSpaceMonitor": null,
-                "hudson.node_monitors.TemporarySpaceMonitor": null
-            },
-            "numExecutors": 2,
-            "offline": true,
-            "offlineCause": null,
-            "offlineCauseReason": "",
-            "oneOffExecutors": [],
-            "temporarilyOffline": false
+        "hudson.node_monitors.DiskSpaceMonitor": {
+          "path": "/var/lib/jenkins",
+          "size": 77620142080
+        },
+        "hudson.node_monitors.ResponseTimeMonitor": {
+          "average": 0
+        },
+        "hudson.node_monitors.SwapSpaceMonitor": {
+          "availablePhysicalMemory": 22761472,
+          "availableSwapSpace": 794497024,
+          "totalPhysicalMemory": 515358720,
+          "totalSwapSpace": 805302272
+        },
+        "hudson.node_monitors.TemporarySpaceMonitor": {
+          "path": "/tmp",
+          "size": 77620142080
         }
-    ],
-    "displayName": "nodes",
-    "totalExecutors": 2
+      },
+      "numExecutors": 2,
+      "offline": false,
+      "offlineCause": null,
+      "offlineCauseReason": "",
+      "oneOffExecutors": [],
+      "temporarilyOffline": false
+    },
+    {
+      "actions": [],
+      "displayName": "slave",
+      "executors": [
+        {},
+        {}
+      ],
+      "icon": "computer-x.png",
+      "idle": true,
+      "jnlpAgent": true,
+      "launchSupported": false,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.ArchitectureMonitor": null,
+        "hudson.node_monitors.ClockMonitor": null,
+        "hudson.node_monitors.DiskSpaceMonitor": null,
+        "hudson.node_monitors.ResponseTimeMonitor": {
+          "average": 5000
+        },
+        "hudson.node_monitors.SwapSpaceMonitor": null,
+        "hudson.node_monitors.TemporarySpaceMonitor": null
+      },
+      "numExecutors": 2,
+      "offline": true,
+      "offlineCause": null,
+      "offlineCauseReason": "",
+      "oneOffExecutors": [],
+      "temporarilyOffline": false
+    }
+  ],
+  "displayName": "nodes",
+  "totalExecutors": 2
 }
 ```
 
@@ -403,35 +404,35 @@ List queues. The callback gets two arguments `err, data`.
 
 ``` json
 {
-    "items": [
+  "items": [
+    {
+      "actions": [
         {
-            "actions": [
-                {
-                    "causes": [
-                        {
-                            "shortDescription": "Started by user anonymous",
-                            "userId": null,
-                            "userName": "anonymous"
-                        }
-                    ]
-                }
-            ],
-            "blocked": true,
-            "buildable": false,
-            "buildableStartMilliseconds": 1389418977387,
-            "id": 20,
-            "inQueueSince": 1389418977358,
-            "params": "",
-            "stuck": false,
-            "task": {
-                "color": "blue_anime",
-                "name": "example",
-                "url": "http://localhost:8080/job/example/"
-            },
-            "url": "queue/item/20/",
-            "why": "Build #2 is already in progress (ETA:N/A)"
+          "causes": [
+            {
+              "shortDescription": "Started by user anonymous",
+              "userId": null,
+              "userName": "anonymous"
+            }
+          ]
         }
-    ]
+      ],
+      "blocked": true,
+      "buildable": false,
+      "buildableStartMilliseconds": 1389418977387,
+      "id": 20,
+      "inQueueSince": 1389418977358,
+      "params": "",
+      "stuck": false,
+      "task": {
+        "color": "blue_anime",
+        "name": "example",
+        "url": "http://localhost:8080/job/example/"
+      },
+      "url": "queue/item/20/",
+      "why": "Build #2 is already in progress (ETA:N/A)"
+    }
+  ]
 }
 ```
 
