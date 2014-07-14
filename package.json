@@ -6,6 +6,7 @@
     "rapi": "^0.6.0"
   },
   "devDependencies": {
+    "async": "^0.9.0",
     "jscs": "^1.5.8",
     "jshint": "^2.5.2",
     "lodash": "^2.4.1",

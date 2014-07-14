@@ -1,6 +1,4 @@
-/* jshint ignore:start */
-
-exports.url = 'http://localhost:8080'
+exports.url = 'http://localhost:8080';
 
 exports.get = {
   assignedLabels: [{}],
@@ -32,9 +30,9 @@ exports.get = {
       url: 'http://localhost:8080/'
     }
   ]
-}
+};
 
-exports.build = {}
+exports.build = {};
 
 exports.build.get = {
   actions: [
@@ -67,11 +65,11 @@ exports.build.get = {
     kind: null
   },
   culprits: []
-}
+};
 
-exports.job = {}
+exports.job = {};
 
-exports.job.name = 'nodejs-jenkins-test'
+exports.job.name = 'nodejs-jenkins-test';
 
 exports.job.create = '' +
   '<?xml version=\'1.0\' encoding=\'UTF-8\'?>' +
@@ -88,7 +86,7 @@ exports.job.create = '' +
   '  <builders/>' +
   '  <publishers/>' +
   '  <buildWrappers/>' +
-  '</project>'
+  '</project>';
 
 exports.job.update = '' +
   '<?xml version=\'1.0\' encoding=\'UTF-8\'?>' +
@@ -109,7 +107,7 @@ exports.job.update = '' +
   '  </builders>' +
   '  <publishers/>' +
   '  <buildWrappers/>' +
-  '</project>'
+  '</project>';
 
 exports.job.get = {
   actions: [],
@@ -139,9 +137,9 @@ exports.job.get = {
   downstreamProjects: [],
   scm: {},
   upstreamProjects: []
-}
+};
 
-exports.node = {}
+exports.node = {};
 
 exports.node.get = {
   actions: [],
@@ -185,7 +183,7 @@ exports.node.get = {
   offlineCauseReason: '',
   oneOffExecutors: [],
   temporarilyOffline: false
-}
+};
 
 exports.node.slave = {
   actions: [],
@@ -216,7 +214,7 @@ exports.node.slave = {
   offlineCauseReason: '',
   oneOffExecutors: [],
   temporarilyOffline: false
-}
+};
 
 exports.node.list = {
   busyExecutors: 0,
@@ -267,9 +265,9 @@ exports.node.list = {
   ],
   displayName: 'nodes',
   totalExecutors: 2
-}
+};
 
-exports.queue = {}
+exports.queue = {};
 
 exports.queue.get = {
   items: [
@@ -310,4 +308,4 @@ exports.queue.get = {
       buildableStartMilliseconds: 1348350479943
     }
   ]
-}
+};
