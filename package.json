@@ -1,13 +1,9 @@
 {
   "name": "jenkins",
   "description": "Client for Jenkins",
-  "version": "0.3.0",
-  "author": "Silas Sewell <silas@sewell.org>",
-  "keywords": [
-    "jenkins"
-  ],
+  "version": "0.4.0",
   "dependencies": {
-    "request": "^2.37.0"
+    "rapi": "^0.6.0"
   },
   "devDependencies": {
     "deepcopy": "0.3.3",
@@ -16,6 +12,10 @@
     "mocha": "^1.20.1",
     "nock": "^0.42.1"
   },
+  "keywords": [
+    "jenkins"
+  ],
+  "author": "Silas Sewell <silas@sewell.org>",
   "repository": {
     "type": "git",
     "url": "https://github.com/silas/node-jenkins.git"
@@ -24,7 +24,7 @@
     "url": "https://github.com/silas/node-jenkins/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jshint ./jenkins.js test && ./node_modules/.bin/jscs ./jenkins.js test && ./node_modules/.bin/mocha test/unit.js"
+    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/mocha test/unit.js --timeout 15000"
   },
   "main": "./jenkins"
 }

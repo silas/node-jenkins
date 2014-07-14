@@ -31,7 +31,7 @@
 
   // Force all variable names to use either camelCase style or UPPER_CASE
   // with underscores.
-  "camelcase": true,
+  "camelcase": false,
 
   // Prohibit use of == and != in favor of === and !==.
   "eqeqeq": true,
@@ -60,12 +60,9 @@
   // Warn when variables are defined but never used.
   "unused": true,
 
-  // Enforce line length to 80 characters
-  "maxlen": 120,
+  // Enforce line length to 100 characters
+  "maxlen": 100,
 
   // Enforce placing 'use strict' at the top function scope
-  "strict": true,
-
-  // Mostly because the diff would be horrible
-  "asi": true
+  "strict": true
 }

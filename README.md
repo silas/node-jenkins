@@ -21,7 +21,7 @@ jenkins.job.list(function(err, list) {
 
 ## API
 
-### jenkins.get(callback)
+### jenkins.info(callback)
 
 Get server information. The callback gets two arguments `err, data`.
 
@@ -151,7 +151,7 @@ Create job by copying existing job. The callback gets one argument `err`.
 
 Create job from scratch. The callback gets one argument `err`.
 
-### jenkins.job.delete(name, callback)
+### jenkins.job.destroy(name, callback)
 
 Delete job. The callback gets one argument `err`.
 
@@ -251,7 +251,7 @@ List all jobs. The callback gets two arguments `err, data`.
 
 Create node. The callback gets one argument `err`.
 
-### jenkins.node.delete(name, callback)
+### jenkins.node.destroy(name, callback)
 
 Delete node. The callback gets one argument `err`.
 
@@ -395,9 +395,9 @@ List all nodes. The callback gets two arguments `err, data`.
 }
 ```
 
-### jenkins.queue.get([opts], callback)
+### jenkins.queue.list([opts], callback)
 
-Get queue information. The callback gets two arguments `err, data`.
+List queues. The callback gets two arguments `err, data`.
 
 #### Data
 
