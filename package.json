@@ -6,11 +6,12 @@
     "rapi": "^0.6.0"
   },
   "devDependencies": {
-    "deepcopy": "0.3.3",
     "jscs": "^1.5.8",
     "jshint": "^2.5.2",
+    "lodash": "^2.4.1",
     "mocha": "^1.20.1",
-    "nock": "^0.42.1"
+    "nock": "^0.42.1",
+    "should": "^4.0.4"
   },
   "keywords": [
     "jenkins"
