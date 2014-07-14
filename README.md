@@ -299,7 +299,7 @@ jenkins.job.enable('example', function(err) {
 });
 ```
 
-### jenkins.job.exists(name, callback)
+### jenkins.job.exists(options, callback)
 
 Check job exists.
 
@@ -437,7 +437,7 @@ jenkins.node.create('slave', function(err) {
 });
 ```
 
-### jenkins.node.destroy(name, callback)
+### jenkins.node.destroy(options, callback)
 
 Delete node.
 
@@ -504,7 +504,7 @@ jenkins.node.exists('slave', function(err, exists) {
 });
 ```
 
-### jenkins.node.get(name, callback)
+### jenkins.node.get(options, callback)
 
 Get node information.
 
@@ -706,7 +706,7 @@ Result
 }
 ```
 
-### jenkins.queue.cancel(number, callback)
+### jenkins.queue.cancel(options, callback)
 
 Cancel build in queue.
 
