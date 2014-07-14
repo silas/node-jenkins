@@ -2,31 +2,37 @@
 
 This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
-## Installation
+<a name="init"/>
+### jenkins([options])
 
-``` console
-$ npm install jenkins --save
-```
+Initialize a new Jenkins client.
 
-## Usage
+Options
+
+ * baseUrl (String): Jenkins URL
+ * headers (Object, optional): headers included in every request
+
+Usage
 
 ``` javascript
-var jenkins = require('jenkins')('http://user:pass@localhost:8080')
-
-jenkins.job.list(function(err, list) {
-  if (err) throw err;
-
-  console.log(list);
-})
+var jenkins = require('jenkins')('http://user:pass@localhost:8080');
 ```
-
-## API
 
 ### jenkins.info(callback)
 
-Get server information. The callback gets two arguments `err, data`.
+Get server information.
 
-#### Data
+Usage
+
+``` javascript
+jenkins.info(function(err, data) {
+  if (err) throw err;
+
+  console.log('info', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -64,11 +70,26 @@ Get server information. The callback gets two arguments `err, data`.
 }
 ```
 
-### jenkins.build.get(name, number, [opts], callback)
+### jenkins.build.get(options, callback)
 
-Get build information. The callback gets two arguments `err, data`.
+Get build information.
 
-#### Data
+Options
+
+ * name (String): job name
+ * number (Integer): build number
+
+Usage
+
+``` javascript
+jenkins.build.get('example', 1, function(err, data) {
+  if (err) throw err;
+
+  console.log('build', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -128,51 +149,193 @@ Get build information. The callback gets two arguments `err, data`.
 }
 ```
 
-### jenkins.build.stop(name, number, callback)
+### jenkins.build.stop(options, callback)
 
-Stop build. The callback gets one argument `err`.
+Stop build.
 
-### jenkins.job.build(name, [opts], callback)
+Options
 
-Start build. The callback gets one argument `err`.
+ * name (String): job name
+ * number (Integer): build number
 
-### jenkins.job.config(name, callback)
+Usage
 
-Get job XML configuration. The callback gets two arguments `err, xml`.
+``` javascript
+jenkins.build.stop('example', 1, function(err) {
+  if (err) throw err;
+});
+```
 
-### jenkins.job.config(name, xml, callback)
+### jenkins.job.build(options, callback)
 
-Update job XML configuration. The callback gets one argument `err`.
+Trigger build.
 
-### jenkins.job.copy(srcName, dstName, callback)
+Options
 
-Create job by copying existing job. The callback gets one argument `err`.
+ * name (String): job name
 
-### jenkins.job.create(name, xml, callback)
+Usage
 
-Create job from scratch. The callback gets one argument `err`.
+``` javascript
+jenkins.job.build('example', function(err) {
+  if (err) throw err;
+});
+```
 
-### jenkins.job.destroy(name, callback)
+### jenkins.job.config(options, callback)
 
-Delete job. The callback gets one argument `err`.
+Get job XML configuration.
 
-### jenkins.job.disable(name, callback)
+Options
 
-Disable job. The callback gets one argument `err`.
+ * name (String): job name
 
-### jenkins.job.enable(name, callback)
+Usage
 
-Enable job. The callback gets one argument `err`.
+``` javascript
+jenkins.job.config('example', function(err, data) {
+  if (err) throw err;
+
+  console.log('xml', data);
+});
+```
+
+### jenkins.job.config(options, callback)
+
+Update job XML configuration.
+
+Options
+
+ * name (String): job name
+ * xml (String): configuration XML
+
+Usage
+
+``` javascript
+jenkins.job.config('example', xml, function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.job.copy(options, callback)
+
+Create job by copying existing job.
+
+Options
+
+ * name (String): new job name
+ * from (String): source job name
+
+Usage
+
+``` javascript
+jenkins.job.copy('fromJob', 'example', function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.job.create(options, callback)
+
+Create job from scratch.
+
+Options
+
+ * name (String): job name
+ * xml (String): configuration XML
+
+Usage
+
+``` javascript
+jenkins.job.create('example', xml, function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.job.destroy(options, callback)
+
+Delete job.
+
+Options
+
+ * name (String): job name
+
+Usage
+
+``` javascript
+jenkins.job.destroy('example', function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.job.disable(options, callback)
+
+Disable job.
+
+Options
+
+ * name (String): job name
+
+Usage
+
+``` javascript
+jenkins.job.disable('example', function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.job.enable(options, callback)
+
+Enable job.
+
+Options
+
+ * name (String): job name
+
+Usage
+
+``` javascript
+jenkins.job.enable('example', function(err) {
+  if (err) throw err;
+});
+```
 
 ### jenkins.job.exists(name, callback)
 
-Check job exists. The callback gets two arguments `err, exists`.
+Check job exists.
 
-### jenkins.job.get(name, [opts], callback)
+Options
 
-Get job information. The callback gets two arguments `err, data`.
+ * name (String): job name
 
-#### Data
+Usage
+
+``` javascript
+jenkins.job.exists('example', function(err, exists) {
+  if (err) throw err;
+
+  console.log('exists', exists);
+});
+```
+
+### jenkins.job.get(options, callback)
+
+Get job information.
+
+Options
+
+ * name (String): job name
+
+Usage
+
+``` javascript
+jenkins.job.get('example', function(err, data) {
+  if (err) throw err;
+
+  console.log('job', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -234,9 +397,19 @@ Get job information. The callback gets two arguments `err, data`.
 
 ### jenkins.job.list(callback)
 
-List all jobs. The callback gets two arguments `err, data`.
+List all jobs.
 
-#### Data
+Usage
+
+``` javascript
+jenkins.job.list(function(err, data) {
+  if (err) throw err;
+
+  console.log('jobs', data);
+});
+```
+
+Result
 
 ``` json
 [
@@ -248,31 +421,108 @@ List all jobs. The callback gets two arguments `err, data`.
 ]
 ```
 
-### jenkins.node.create(name, [opts], callback)
+### jenkins.node.create(options, callback)
 
-Create node. The callback gets one argument `err`.
+Create node.
+
+Options
+
+ * name (String): node name
+
+Usage
+
+``` javascript
+jenkins.node.create('slave', function(err) {
+  if (err) throw err;
+});
+```
 
 ### jenkins.node.destroy(name, callback)
 
-Delete node. The callback gets one argument `err`.
+Delete node.
 
-### jenkins.node.disable(name, [message], callback)
+Options
 
-Disable node. The callback gets one argument `err`.
+ * name (String): node name
 
-### jenkins.node.enable(name, callback)
+Usage
 
-Enable node. The callback gets one argument `err`.
+``` javascript
+jenkins.node.destroy('slave', function(err) {
+  if (err) throw err;
+});
+```
 
-### jenkins.node.exists(name, callback)
+### jenkins.node.disable(options, callback)
 
-Check node exists. The callback gets two arguments `err, exists`.
+Disable node.
+
+Options
+
+ * name (String): node name
+ * message (String, optional): reason for being disabled
+
+Usage
+
+``` javascript
+jenkins.node.disable('slave', 'network failure', function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.node.enable(options, callback)
+
+Enable node.
+
+Options
+
+ * name (String): node name
+
+Usage
+
+``` javascript
+jenkins.node.enable('slave', function(err) {
+  if (err) throw err;
+});
+```
+
+### jenkins.node.exists(options, callback)
+
+Check node exists.
+
+Options
+
+ * name (String): node name
+
+Usage
+
+``` javascript
+jenkins.node.exists('slave', function(err, exists) {
+  if (err) throw err;
+
+  console.log('exists', exists);
+});
+```
 
 ### jenkins.node.get(name, callback)
 
-Get node information. The callback gets two arguments `err, data`.
+Get node information.
 
-#### Data
+Options
+
+ * name (String): node name
+
+Usage
+
+``` javascript
+jenkins.node.get('slave', function(err, data) {
+  if (err) throw err;
+
+  console.log('node', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -309,9 +559,19 @@ Get node information. The callback gets two arguments `err, data`.
 
 ### jenkins.node.list(callback)
 
-List all nodes. The callback gets two arguments `err, data`.
+List all nodes.
 
-#### Data
+Usage
+
+``` javascript
+jenkins.node.list(function(err, data) {
+  if (err) throw err;
+
+  console.log('nodes', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -396,11 +656,21 @@ List all nodes. The callback gets two arguments `err, data`.
 }
 ```
 
-### jenkins.queue.list([opts], callback)
+### jenkins.queue.list(callback)
 
-List queues. The callback gets two arguments `err, data`.
+List queues.
 
-#### Data
+Usage
+
+``` javascript
+jenkins.queue.list(function(err, data) {
+  if (err) throw err;
+
+  console.log('queues', data);
+});
+```
+
+Result
 
 ``` json
 {
@@ -438,7 +708,19 @@ List queues. The callback gets two arguments `err, data`.
 
 ### jenkins.queue.cancel(number, callback)
 
-Cancel build in queue. The callback gets one argument `err`.
+Cancel build in queue.
+
+Options
+
+ * number (Integer): queue item id
+
+Usage
+
+``` javascript
+jenkins.queue.cancel(23, function(err) {
+  if (err) throw err;
+});
+```
 
 ## License
 
