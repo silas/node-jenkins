@@ -73,7 +73,7 @@ describe('jenkins', function() {
 
       this.jenkins.build.get('nodejs-jenkins-test', 2, function(err, data) {
         should.exist(err);
-        should.equal(err.message, 'build nodejs-jenkins-test 2 not found');
+        should.equal(err.message, 'jenkins: build.get: nodejs-jenkins-test 2 not found');
 
         should.not.exist(data);
 
@@ -187,7 +187,7 @@ describe('jenkins', function() {
         nock(assets.url)
           .post('/createItem?name=nodejs-jenkins-test-copy&from=' +
                 'nodejs-jenkins-test&mode=copy')
-          .reply(200);
+          .reply(302);
 
         this.jenkins.job.copy(
           'nodejs-jenkins-test',
@@ -201,7 +201,7 @@ describe('jenkins', function() {
       });
     });
 
-    describe('copy', function() {
+    describe('create', function() {
       it('should work', function(done) {
         nock(assets.url)
           .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
@@ -216,7 +216,7 @@ describe('jenkins', function() {
       });
 
       it('should return an error if it already exists', function(done) {
-        var error = 'A job already exists with the name "nodejs-jenkins-test"';
+        var error = 'a job already exists with the name "nodejs-jenkins-test"';
 
         nock(assets.url)
           .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
@@ -225,7 +225,8 @@ describe('jenkins', function() {
         this.jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
           should.exist(err);
 
-          err.message.should.eql('A job already exists with the name "nodejs-jenkins-test"');
+          err.message.should.eql('jenkins: job.create: a job already exists with the name ' +
+                                 '"nodejs-jenkins-test"');
 
           done();
         });
@@ -253,7 +254,7 @@ describe('jenkins', function() {
         this.jenkins.job.delete('nodejs-jenkins-test', function(err) {
           should.exist(err);
 
-          err.message.should.eql('Failed to delete job: nodejs-jenkins-test');
+          err.message.should.eql('jenkins: job.destroy: failed to delete: nodejs-jenkins-test');
 
           done();
         });
@@ -354,7 +355,7 @@ describe('jenkins', function() {
 
         this.jenkins.job.get('nodejs-jenkins-test', function(err, data) {
           should.exist(err);
-          should.equal(err.message, 'job nodejs-jenkins-test not found');
+          should.equal(err.message, 'jenkins: job.get: nodejs-jenkins-test not found');
 
           should.not.exist(data);
 
@@ -393,7 +394,7 @@ describe('jenkins', function() {
           should.exist(err);
           should.exist(err.message);
 
-          err.message.should.eql('job list returned bad data');
+          err.message.should.eql('jenkins: job.list: returned bad data');
 
           done();
         });
