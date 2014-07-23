@@ -22,7 +22,6 @@ describe('jenkins', function() {
 
   before(function() {
     if (!nockOff) nock.disableNetConnect();
-    if (nockRec) nock.recorder.rec();
   });
 
   beforeEach(function(done) {
@@ -48,7 +47,17 @@ describe('jenkins', function() {
       });
     };
 
-    async.auto(jobs, done);
+    async.auto(jobs, function(err) {
+      should.not.exist(err);
+
+      if (nockRec) nock.recorder.rec();
+
+      done();
+    });
+  });
+
+  afterEach(function() {
+    if (nockRec) nock.restore();
   });
 
   after(function(done) {
