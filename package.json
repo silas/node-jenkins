@@ -2,6 +2,7 @@
   "name": "jenkins",
   "description": "Client for Jenkins",
   "version": "0.4.0",
+  "main": "./lib",
   "dependencies": {
     "rapi": "^0.11.0"
   },
@@ -28,6 +29,5 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/mocha test/unit.js --timeout 15000"
-  },
-  "main": "./lib/jenkins"
+  }
 }
