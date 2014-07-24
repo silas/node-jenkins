@@ -1,0 +1,31 @@
+{
+  "items": [
+    {
+      "timestamp": 1406175214812,
+      "why": "In the quiet period. Expires in 4.9 sec",
+      "url": "queue/item/5/",
+      "actions": [
+        {
+          "causes": [
+            {
+              "userName": "anonymous",
+              "userId": null,
+              "shortDescription": "Started by user anonymous"
+            }
+          ]
+        }
+      ],
+      "blocked": false,
+      "buildable": false,
+      "id": 5,
+      "inQueueSince": 1406175209812,
+      "params": "",
+      "stuck": false,
+      "task": {
+        "color": "notbuilt",
+        "url": "http://localhost:8080/job/test-c0b39940-1b81-4d76-b74c-ed91e9f1c892/",
+        "name": "test-c0b39940-1b81-4d76-b74c-ed91e9f1c892"
+      }
+    }
+  ]
+}

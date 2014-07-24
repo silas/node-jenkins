@@ -21,22 +21,6 @@ describe('jenkins', function() {
     this.jenkins = jenkins(assets.url + '/');
   });
 
-  it('should get', function(done) {
-    nock(assets.url)
-      .get('/api/json')
-      .reply(200, assets.get);
-
-    this.jenkins.get(function(err, data) {
-      should.not.exist(err);
-
-      should(data).have.properties('nodeDescription');
-
-      data.nodeDescription.should.eql('the master Jenkins node');
-
-      done();
-    });
-  });
-
   describe('build', function() {
     it('should get', function(done) {
       nock(assets.url)
@@ -96,30 +80,6 @@ describe('jenkins', function() {
 
   describe('job', function() {
     describe('build', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/job/nodejs-jenkins-test/build')
-          .reply(201, assets.url + '/job/nodejs-jenkins-test');
-
-        this.jenkins.job.build('nodejs-jenkins-test', function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
-      it('should work with a token', function(done) {
-        nock(assets.url)
-          .post('/job/nodejs-jenkins-test/build?token=secret')
-          .reply(201, assets.url + '/job/nodejs-jenkins-test');
-
-        this.jenkins.job.build('nodejs-jenkins-test', { token: 'secret' }, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
       it('should work with parameters', function(done) {
         nock(assets.url)
           .post('/job/nodejs-jenkins-test/buildWithParameters?hello=world')
@@ -153,68 +113,7 @@ describe('jenkins', function() {
       });
     });
 
-    describe('config', function() {
-      it('should return xml', function(done) {
-        nock(assets.url)
-          .get('/job/nodejs-jenkins-test/config.xml')
-          .reply(200, assets.job.create);
-
-        this.jenkins.job.config('nodejs-jenkins-test', function(err, xml) {
-          should.not.exist(err);
-
-          xml.should.eql(assets.job.create);
-
-          done();
-        });
-      });
-
-      it('should update xml', function(done) {
-        nock(assets.url)
-          .matchHeader('content-type', 'text/xml')
-          .post('/job/nodejs-jenkins-test/config.xml', assets.job.update)
-          .reply(200);
-
-        this.jenkins.job.config('nodejs-jenkins-test', assets.job.update, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-    });
-
-    describe('copy', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/createItem?name=nodejs-jenkins-test-copy&from=' +
-                'nodejs-jenkins-test&mode=copy')
-          .reply(302);
-
-        this.jenkins.job.copy(
-          'nodejs-jenkins-test',
-          'nodejs-jenkins-test-copy',
-          function(err) {
-            should.not.exist(err);
-
-            done();
-          }
-        );
-      });
-    });
-
     describe('create', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/createItem?name=nodejs-jenkins-test', assets.job.create)
-          .matchHeader('content-type', 'text/xml')
-          .reply(200);
-
-        this.jenkins.job.create('nodejs-jenkins-test', assets.job.create, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
       it('should return an error if it already exists', function(done) {
         var error = 'a job already exists with the name "nodejs-jenkins-test"';
 
@@ -234,18 +133,6 @@ describe('jenkins', function() {
     });
 
     describe('delete', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/job/nodejs-jenkins-test/doDelete')
-          .reply(302);
-
-        this.jenkins.job.delete('nodejs-jenkins-test', function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
       it('should return error on failure', function(done) {
         nock(assets.url)
           .post('/job/nodejs-jenkins-test/doDelete')
@@ -261,79 +148,7 @@ describe('jenkins', function() {
       });
     });
 
-    describe('disable', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/job/nodejs-jenkins-test/disable')
-          .reply(302);
-
-        this.jenkins.job.disable('nodejs-jenkins-test', function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-    });
-
-    describe('enable', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .post('/job/nodejs-jenkins-test/enable')
-          .reply(302);
-
-        this.jenkins.job.enable('nodejs-jenkins-test', function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-    });
-
-    describe('exists', function() {
-      it('should return true', function(done) {
-        nock(assets.url)
-          .head('/job/nodejs-jenkins-test/api/json?depth=0')
-          .reply(200);
-
-        this.jenkins.job.exists('nodejs-jenkins-test', function(err, data) {
-          should.not.exist(err);
-
-          data.should.equal(true);
-
-          done();
-        });
-      });
-
-      it('should return false', function(done) {
-        nock(assets.url)
-          .head('/job/nodejs-jenkins-test/api/json?depth=0')
-          .reply(404);
-
-        this.jenkins.job.exists('nodejs-jenkins-test', function(err, data) {
-          should.not.exist(err);
-
-          data.should.equal(false);
-
-          done();
-        });
-      });
-    });
-
     describe('get', function() {
-      it('should work', function(done) {
-        nock(assets.url)
-          .get('/job/nodejs-jenkins-test/api/json?depth=0')
-          .reply(200, assets.job.get);
-
-        this.jenkins.job.get('nodejs-jenkins-test', function(err, data) {
-          should.not.exist(err);
-
-          data.displayName.should.eql('nodejs-jenkins-test');
-
-          done();
-        });
-      });
-
       it('should work with options', function(done) {
         nock(assets.url)
           .get('/job/nodejs-jenkins-test/api/json?depth=1')

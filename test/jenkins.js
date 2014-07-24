@@ -1,5 +1,7 @@
 'use strict';
 
+/* jshint expr: true */
+
 /**
  * Module dependencies.
  */
@@ -9,7 +11,7 @@ var nock = require('nock');
 var should = require('should');
 var uuid = require('node-uuid');
 
-var assets = require('./assets');
+var fixtures = require('./fixtures');
 var jenkins = require('../lib');
 
 /**
@@ -27,7 +29,7 @@ describe('jenkins', function() {
   beforeEach(function(done) {
     var self = this;
 
-    this.url = process.env.JENKINS_TEST_URL || assets.url;
+    this.url = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
 
     this.nock = nock(this.url);
 
@@ -40,7 +42,7 @@ describe('jenkins', function() {
     var jobs = {};
 
     jobs.job = function(next) {
-      self.jenkins.job.create(self.jobName, assets.job.create, function(err) {
+      self.jenkins.job.create(self.jobName, fixtures.jobCreate, function(err) {
         should.not.exist(err);
 
         next();
@@ -92,11 +94,87 @@ describe('jenkins', function() {
   });
 
   describe('job', function() {
+    describe('build', function() {
+      it('should start build', function(done) {
+        var self = this;
+
+        self.nock
+          .post('/job/' + this.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' })
+          .get('/queue/api/json?depth=0')
+          .reply(200, fixtures.queueList);
+
+        var jobs = [];
+
+        jobs.push(function(next) {
+          self.jenkins.job.build(self.jobName, function(err, number) {
+            should.not.exist(err);
+
+            number.should.be.type('number');
+            number.should.be.above(0);
+
+            next(null, number);
+          });
+        });
+
+        jobs.push(function(number, next) {
+          self.jenkins.queue.list(function(err, data) {
+            var ids = data.map(function(item) {
+              return item.id;
+            });
+
+            ids.should.containEql(number);
+
+            next();
+          });
+        });
+
+        async.waterfall(jobs, done);
+      });
+
+      it('should start build with token', function(done) {
+        var self = this;
+
+        self.nock
+          .post('/job/' + this.jobName + '/build?token=secret')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' })
+          .get('/queue/api/json?depth=0')
+          .reply(200, fixtures.queueList);
+
+        var jobs = [];
+
+        jobs.push(function(next) {
+          self.jenkins.job.build(self.jobName, { token: 'secret' }, function(err, number) {
+            should.not.exist(err);
+
+            number.should.be.type('number');
+            number.should.be.above(0);
+
+            next(null, number);
+          });
+        });
+
+        jobs.push(function(number, next) {
+          self.jenkins.queue.list(function(err, data) {
+            var ids = data.map(function(item) {
+              return item.id;
+            });
+
+            ids.should.containEql(number);
+
+            next();
+          });
+        });
+
+        async.waterfall(jobs, done);
+      });
+    });
+
     describe('config', function() {
       it('should get job config', function(done) {
         this.nock
           .get('/job/' + this.jobName + '/config.xml')
-          .reply(200, assets.job.create);
+          .reply(200, fixtures.jobCreate);
 
         this.jenkins.job.config(this.jobName, function(err, config) {
           should.not.exist(err);
@@ -113,11 +191,11 @@ describe('jenkins', function() {
 
         this.nock
           .get('/job/' + self.jobName + '/config.xml')
-          .reply(200, assets.job.create)
+          .reply(200, fixtures.jobCreate)
           .post('/job/' + self.jobName + '/config.xml')
           .reply(200)
           .get('/job/' + self.jobName + '/config.xml')
-          .reply(200, assets.job.update);
+          .reply(200, fixtures.jobUpdate);
 
         var jobs = {};
 
@@ -188,6 +266,162 @@ describe('jenkins', function() {
       });
     });
 
+    describe('create', function() {
+      it('should create job', function(done) {
+        var self = this;
+
+        var name = self.jobName + '-new';
+
+        this.nock
+          .head('/job/' + name + '/api/json?depth=0')
+          .reply(404)
+          .post('/createItem?name=' + name, fixtures.jobCreate)
+          .reply(200)
+          .head('/job/' + name + '/api/json?depth=0')
+          .reply(200);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.job.exists(name, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          self.jenkins.job.create(name, fixtures.jobCreate, next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.job.exists(name, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.should.equal(false);
+          results.after.should.equal(true);
+
+          done();
+        });
+      });
+    });
+
+    describe('destroy', function() {
+      it('should delete job', function(done) {
+        var self = this;
+
+        this.nock
+          .head('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(200)
+          .post('/job/' + self.jobName + '/doDelete')
+          .reply(302)
+          .head('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(404);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.job.exists(self.jobName, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          self.jenkins.job.destroy(self.jobName, next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.job.exists(self.jobName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.should.equal(true);
+          results.after.should.equal(false);
+
+          done();
+        });
+      });
+    });
+
+    describe('disable', function() {
+      it('should disable job', function(done) {
+        var self = this;
+
+        this.nock
+          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(200, fixtures.jobGet)
+          .post('/job/' + self.jobName + '/disable')
+          .reply(302)
+          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(200, fixtures.jobGetDisabled);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.job.get(self.jobName, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          self.jenkins.job.disable(self.jobName, next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.job.get(self.jobName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.buildable.should.equal(true);
+          results.after.buildable.should.equal(false);
+
+          done();
+        });
+      });
+    });
+
+    describe('enable', function() {
+      it('should enable job', function(done) {
+        var self = this;
+
+        self.nock
+          .post('/job/' + self.jobName + '/disable')
+          .reply(302)
+          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(200, fixtures.jobGetDisabled)
+          .post('/job/' + self.jobName + '/enable')
+          .reply(302)
+          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .reply(200, fixtures.jobGet);
+
+        var jobs = {};
+
+        jobs.setup = function(next) {
+          self.jenkins.job.disable(self.jobName, next);
+        };
+
+        jobs.before = ['setup', function(next) {
+          self.jenkins.job.get(self.jobName, next);
+        }];
+
+        jobs.enable = ['before', function(next) {
+          self.jenkins.job.enable(self.jobName, next);
+        }];
+
+        jobs.after = ['enable', function(next) {
+          self.jenkins.job.get(self.jobName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.buildable.should.equal(false);
+          results.after.buildable.should.equal(true);
+
+          done();
+        });
+      });
+    });
+
     describe('exists', function() {
       it('should not find job', function(done) {
         var name = this.jobName + '-nope';
@@ -214,6 +448,63 @@ describe('jenkins', function() {
           should.not.exist(err);
 
           exists.should.equal(true);
+
+          done();
+        });
+      });
+    });
+
+    describe('get', function() {
+      it('should not get job', function(done) {
+        var name = this.jobName + '-nope';
+
+        this.nock
+          .get('/job/' + name + '/api/json?depth=0')
+          .reply(404);
+
+        this.jenkins.job.get(name, function(err, data) {
+          should.exist(err);
+          should.not.exist(data);
+
+          done();
+        });
+      });
+
+      it('should get job', function(done) {
+        this.nock
+          .get('/job/' + this.jobName + '/api/json?depth=0')
+          .reply(200, fixtures.jobGet);
+
+        this.jenkins.job.get(this.jobName, function(err, data) {
+          should.not.exist(err);
+
+          should.exist(data);
+
+          data.should.properties('name', 'url');
+
+          done();
+        });
+      });
+    });
+
+    describe('list', function() {
+      it('should list jobs', function(done) {
+        var self = this;
+
+        self.nock
+          .get('/api/json')
+          .reply(200, fixtures.jobList);
+
+        self.jenkins.job.list(function(err, data) {
+          should.not.exist(err);
+
+          should.exist(data);
+
+          data.should.not.be.empty;
+
+          data.forEach(function(job) {
+            job.should.have.properties('name');
+          });
 
           done();
         });
