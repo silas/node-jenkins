@@ -29,13 +29,13 @@ describe('jenkins', function() {
   beforeEach(function(done) {
     var self = this;
 
-    this.url = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
+    self.url = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
 
-    this.nock = nock(this.url);
+    self.nock = nock(self.url);
 
-    this.jenkins = jenkins(this.url);
+    self.jenkins = jenkins(self.url);
 
-    this.jobName = 'test-' + uuid.v4();
+    self.jobName = 'test-' + uuid.v4();
 
     if (!nockOff) return done();
 
@@ -65,7 +65,7 @@ describe('jenkins', function() {
   after(function(done) {
     var self = this;
 
-    this.jobName = 'test-' + uuid.v4();
+    self.jobName = 'test-' + uuid.v4();
 
     if (!nockOff) {
       nock.enableNetConnect();
@@ -93,80 +93,119 @@ describe('jenkins', function() {
     async.auto(jobs, done);
   });
 
-  describe('job', function() {
-    describe('build', function() {
-      it('should start build', function(done) {
+  describe('build', function() {
+    describe('get', function() {
+      it('should return build details', function(done) {
         var self = this;
 
-        self.nock
-          .post('/job/' + this.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' })
-          .get('/queue/api/json?depth=0')
-          .reply(200, fixtures.queueList);
-
         var jobs = [];
+
+        self.nock
+          .post('/job/' + self.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
+          .get('/job/' + self.jobName + '/1/api/json?depth=0')
+          .reply(200, fixtures.buildGet);
 
         jobs.push(function(next) {
           self.jenkins.job.build(self.jobName, function(err, number) {
             should.not.exist(err);
 
-            number.should.be.type('number');
-            number.should.be.above(0);
-
             next(null, number);
           });
         });
 
-        jobs.push(function(number, next) {
-          self.jenkins.queue.list(function(err, data) {
-            var ids = data.map(function(item) {
-              return item.id;
-            });
+        jobs.push(function(next) {
+          async.retry(
+            100,
+            function(next) {
+              self.jenkins.build.get(self.jobName, 1, function(err, data) {
+                if (err) return setTimeout(function() { return next(err); }, 100);
 
-            ids.should.containEql(number);
+                data.should.have.property('number');
+                data.number.should.equal(1);
 
-            next();
-          });
+                next();
+              });
+            },
+            next
+          );
+
         });
 
-        async.waterfall(jobs, done);
+        async.series(jobs, done);
       });
+    });
 
-      it('should start build with token', function(done) {
+    describe('stop', function() {
+      it('should stop build', function(done) {
         var self = this;
-
-        self.nock
-          .post('/job/' + this.jobName + '/build?token=secret')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' })
-          .get('/queue/api/json?depth=0')
-          .reply(200, fixtures.queueList);
 
         var jobs = [];
 
-        jobs.push(function(next) {
-          self.jenkins.job.build(self.jobName, { token: 'secret' }, function(err, number) {
-            should.not.exist(err);
+        self.nock
+          .post('/job/' + self.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
+          .get('/job/' + self.jobName + '/1/stop')
+          .reply(302);
 
-            number.should.be.type('number');
-            number.should.be.above(0);
+        jobs.push(function(next) {
+          self.jenkins.job.build(self.jobName, function(err, number) {
+            should.not.exist(err);
 
             next(null, number);
           });
         });
 
-        jobs.push(function(number, next) {
-          self.jenkins.queue.list(function(err, data) {
-            var ids = data.map(function(item) {
-              return item.id;
-            });
+        jobs.push(function(next) {
+          async.retry(
+            100,
+            function(next) {
+              self.jenkins.build.stop(self.jobName, 1, function(err) {
+                if (err) return setTimeout(function() { return next(err); }, 100);
 
-            ids.should.containEql(number);
+                next();
+              });
+            },
+            next
+          );
 
-            next();
-          });
         });
 
-        async.waterfall(jobs, done);
+        async.series(jobs, done);
+      });
+    });
+  });
+
+  describe('job', function() {
+    describe('build', function() {
+      it('should start build', function(done) {
+        this.nock
+          .post('/job/' + this.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+
+        this.jenkins.job.build(this.jobName, function(err, number) {
+          should.not.exist(err);
+
+          number.should.be.type('number');
+          number.should.be.above(0);
+
+          done();
+        });
+      });
+
+      it('should start build with token', function(done) {
+        this.nock
+          .post('/job/' + this.jobName + '/build?token=secret')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+
+        this.jenkins.job.build(this.jobName, { token: 'secret' }, function(err, number) {
+          should.not.exist(err);
+
+          number.should.be.type('number');
+          number.should.be.above(0);
+
+          done();
+        });
       });
     });
 
@@ -189,7 +228,7 @@ describe('jenkins', function() {
       it('should update config', function(done) {
         var self = this;
 
-        this.nock
+        self.nock
           .get('/job/' + self.jobName + '/config.xml')
           .reply(200, fixtures.jobCreate)
           .post('/job/' + self.jobName + '/config.xml')
@@ -233,7 +272,7 @@ describe('jenkins', function() {
 
         var name = self.jobName + '-new';
 
-        this.nock
+        self.nock
           .head('/job/' + name + '/api/json?depth=0')
           .reply(404)
           .post('/createItem?name=' + name + '&from=' + self.jobName + '&mode=copy')
@@ -272,7 +311,7 @@ describe('jenkins', function() {
 
         var name = self.jobName + '-new';
 
-        this.nock
+        self.nock
           .head('/job/' + name + '/api/json?depth=0')
           .reply(404)
           .post('/createItem?name=' + name, fixtures.jobCreate)
@@ -309,7 +348,7 @@ describe('jenkins', function() {
       it('should delete job', function(done) {
         var self = this;
 
-        this.nock
+        self.nock
           .head('/job/' + self.jobName + '/api/json?depth=0')
           .reply(200)
           .post('/job/' + self.jobName + '/doDelete')
@@ -346,7 +385,7 @@ describe('jenkins', function() {
       it('should disable job', function(done) {
         var self = this;
 
-        this.nock
+        self.nock
           .get('/job/' + self.jobName + '/api/json?depth=0')
           .reply(200, fixtures.jobGet)
           .post('/job/' + self.jobName + '/disable')
@@ -505,6 +544,34 @@ describe('jenkins', function() {
           data.forEach(function(job) {
             job.should.have.properties('name');
           });
+
+          done();
+        });
+      });
+    });
+  });
+
+  describe('node', function() {
+    describe('config', function() {
+      it('should get master config', function(done) {
+        this.nock
+          .get('/computer/(master)/config.xml')
+          .reply(200, fixtures.nodeConfigMaster);
+
+        this.jenkins.node.config('master', function(err, data) {
+          should.not.exist(err);
+
+          data.should.containEql('numExecutors');
+
+          done();
+        });
+      });
+
+      it('should error on master update', function(done) {
+        this.jenkins.node.config('master', 'xml', function(err) {
+          should.exist(err);
+
+          err.message.should.eql('jenkins: master not supported');
 
           done();
         });

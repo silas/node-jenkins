@@ -1,13 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
+  <actions/>
   <description>after</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class='jenkins.scm.NullSCM'/>
+  <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers class='vector'/>
+  <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <jenkins.tasks.Shell>
