@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "async": "^0.9.0",
+    "istanbul": "^0.3.0",
     "jscs": "^1.5.8",
     "jshint": "^2.5.2",
     "lodash": "^2.4.1",
@@ -28,6 +29,6 @@
     "url": "https://github.com/silas/node-jenkins/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/mocha test/unit.js --timeout 15000"
+    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- test/unit.js test/jenkins.js --recursive --timeout 15000"
   }
 }
