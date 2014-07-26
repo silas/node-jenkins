@@ -1,0 +1,108 @@
+{
+  "busyExecutors": 0,
+  "computer": [
+    {
+      "actions": [],
+      "displayName": "master",
+      "executors": [
+        {},
+        {},
+        {}
+      ],
+      "icon": "computer.png",
+      "idle": true,
+      "jnlpAgent": false,
+      "launchSupported": true,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.SwapSpaceMonitor": {
+          "availablePhysicalMemory": 128483328,
+          "availableSwapSpace": 805302272,
+          "totalPhysicalMemory": 515358720,
+          "totalSwapSpace": 805302272
+        },
+        "hudson.node_monitors.ArchitectureMonitor": "Linux (amd64)",
+        "hudson.node_monitors.ResponseTimeMonitor": {
+          "average": 0
+        },
+        "hudson.node_monitors.TemporarySpaceMonitor": {
+          "path": "/tmp",
+          "size": 77652922368
+        },
+        "hudson.node_monitors.DiskSpaceMonitor": {
+          "path": "/var/lib/jenkins",
+          "size": 77652922368
+        },
+        "hudson.node_monitors.ClockMonitor": {
+          "diff": 0
+        }
+      },
+      "numExecutors": 3,
+      "offline": false,
+      "offlineCause": null,
+      "offlineCauseReason": "",
+      "oneOffExecutors": [],
+      "temporarilyOffline": false
+    },
+    {
+      "actions": [],
+      "displayName": "test",
+      "executors": [
+        {}
+      ],
+      "icon": "computer-x.png",
+      "idle": true,
+      "jnlpAgent": false,
+      "launchSupported": true,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.SwapSpaceMonitor": null,
+        "hudson.node_monitors.ArchitectureMonitor": null,
+        "hudson.node_monitors.ResponseTimeMonitor": {
+          "average": 5000
+        },
+        "hudson.node_monitors.TemporarySpaceMonitor": null,
+        "hudson.node_monitors.DiskSpaceMonitor": null,
+        "hudson.node_monitors.ClockMonitor": null
+      },
+      "numExecutors": 1,
+      "offline": true,
+      "offlineCause": {},
+      "offlineCauseReason": "<span class=error style='display:inline-block'>Time out for last 5 try</span>",
+      "oneOffExecutors": [],
+      "temporarilyOffline": true
+    },
+    {
+      "actions": [],
+      "displayName": "test-node-abc00edf-4e7e-4dfe-a6d6-157d19d592bc",
+      "executors": [
+        {},
+        {}
+      ],
+      "icon": "computer-x.png",
+      "idle": true,
+      "jnlpAgent": true,
+      "launchSupported": false,
+      "loadStatistics": {},
+      "manualLaunchAllowed": true,
+      "monitorData": {
+        "hudson.node_monitors.SwapSpaceMonitor": null,
+        "hudson.node_monitors.ArchitectureMonitor": null,
+        "hudson.node_monitors.ResponseTimeMonitor": null,
+        "hudson.node_monitors.TemporarySpaceMonitor": null,
+        "hudson.node_monitors.DiskSpaceMonitor": null,
+        "hudson.node_monitors.ClockMonitor": null
+      },
+      "numExecutors": 2,
+      "offline": true,
+      "offlineCause": null,
+      "offlineCauseReason": "",
+      "oneOffExecutors": [],
+      "temporarilyOffline": false
+    }
+  ],
+  "displayName": "nodes",
+  "totalExecutors": 3
+}

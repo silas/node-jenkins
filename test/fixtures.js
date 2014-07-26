@@ -36,7 +36,7 @@ fs.readdirSync(rootPath).forEach(function(fileName) {
       data = require(filePath);
       break;
     default:
-      data = fs.readFileSync(filePath, { encoding: 'utf8' });
+      data = fs.readFileSync(filePath, { encoding: 'utf8' }).trim();
       break;
   }
 

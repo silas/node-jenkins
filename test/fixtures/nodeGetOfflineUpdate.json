@@ -1,0 +1,30 @@
+{
+  "actions": [],
+  "displayName": "test-node-a532b0f8-6079-4efa-80ea-ad61c05bef5b",
+  "executors": [
+    {},
+    {}
+  ],
+  "icon": "computer-x.png",
+  "idle": true,
+  "jnlpAgent": true,
+  "launchSupported": false,
+  "loadStatistics": {},
+  "manualLaunchAllowed": true,
+  "monitorData": {
+    "hudson.node_monitors.SwapSpaceMonitor": null,
+    "hudson.node_monitors.ArchitectureMonitor": null,
+    "hudson.node_monitors.ResponseTimeMonitor": {
+      "average": 5000
+    },
+    "hudson.node_monitors.TemporarySpaceMonitor": null,
+    "hudson.node_monitors.DiskSpaceMonitor": null,
+    "hudson.node_monitors.ClockMonitor": null
+  },
+  "numExecutors": 2,
+  "offline": true,
+  "offlineCause": {},
+  "offlineCauseReason": "update",
+  "oneOffExecutors": [],
+  "temporarilyOffline": true
+}

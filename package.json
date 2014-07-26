@@ -29,6 +29,6 @@
     "url": "https://github.com/silas/node-jenkins/issues"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- test/unit.js test/jenkins.js --recursive --timeout 15000"
+    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive --timeout 15000"
   }
 }

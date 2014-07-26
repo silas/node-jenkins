@@ -11,7 +11,11 @@
   <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
-  <builders/>
+  <builders>
+    <jenkins.tasks.Shell>
+      <command>sleep 1</command>
+    </jenkins.tasks.Shell>
+  </builders>
   <publishers/>
   <buildWrappers/>
 </project>

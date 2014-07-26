@@ -1,31 +1,32 @@
 {
   "items": [
     {
-      "timestamp": 1406175214812,
-      "why": "In the quiet period. Expires in 4.9 sec",
-      "url": "queue/item/5/",
       "actions": [
         {
           "causes": [
             {
-              "userName": "anonymous",
+              "shortDescription": "Started by user anonymous",
               "userId": null,
-              "shortDescription": "Started by user anonymous"
+              "userName": "anonymous"
             }
           ]
         }
       ],
       "blocked": false,
-      "buildable": false,
-      "id": 5,
-      "inQueueSince": 1406175209812,
+      "buildable": true,
+      "id": 130,
+      "inQueueSince": 1406363479853,
       "params": "",
       "stuck": false,
       "task": {
-        "color": "notbuilt",
-        "url": "http://localhost:8080/job/test-c0b39940-1b81-4d76-b74c-ed91e9f1c892/",
-        "name": "test-c0b39940-1b81-4d76-b74c-ed91e9f1c892"
-      }
+        "name": "test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18",
+        "url": "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/",
+        "color": "notbuilt"
+      },
+      "url": "queue/item/130/",
+      "why": "Waiting for next available executor",
+      "buildableStartMilliseconds": 1406363479854,
+      "pending": true
     }
   ]
 }
