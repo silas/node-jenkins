@@ -1,4 +1,5 @@
 .env
+.istanbul.yml
 .jscs.json
 .jshintrc
 .npmignore

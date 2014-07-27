@@ -663,7 +663,7 @@ describe('jenkins', function() {
         this.jenkins.node.config('master', 'xml', function(err) {
           should.exist(err);
 
-          err.message.should.eql('jenkins: master not supported');
+          err.message.should.eql('jenkins: node.config: master not supported');
 
           done();
         });
