@@ -1,6 +1,6 @@
 {
   "name": "jenkins",
-  "description": "Client for Jenkins",
+  "description": "Jenkins client",
   "version": "0.6.0",
   "main": "./lib",
   "dependencies": {
