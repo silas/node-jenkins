@@ -10,6 +10,8 @@ Vagrant.configure('2') do |config|
     echo 'deb http://pkg.jenkins-ci.org/debian binary/' > /etc/apt/sources.list.d/jenkins.list
     apt-get update
     apt-get install -y jenkins
+
+    /etc/init.d/jenkins start
   eof
 
   config.vm.provider :virtualbox do |v|
