@@ -84,6 +84,44 @@ describe('jenkins', function() {
         async.series(jobs, done);
       });
 
+      it('should return build log', function(done) {
+        var self = this;
+
+        var jobs = [];
+
+        self.nock
+        .post('/job/' + self.jobName + '/build')
+        .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
+        .get('/job/' + self.jobName + '/1/consoleText')
+        .reply(200, fixtures.consoleText);
+
+        jobs.push(function(next) {
+          self.jenkins.job.build(self.jobName, function(err, number) {
+            should.not.exist(err);
+
+            next(null, number);
+          });
+        });
+
+        jobs.push(function(next) {
+          async.retry(
+            100,
+            function(next) {
+              self.jenkins.build.log(self.jobName, 1, function(err, data) {
+                if (err) return setTimeout(function() { return next(err); }, 100);
+                data.toString().should.be.equal(fixtures.consoleText);
+
+                next();
+              });
+            },
+            next
+          );
+
+        });
+
+        async.series(jobs, done);
+      });
+
       nit('should get with options', function(done) {
         this.nock
           .get('/job/test/1/api/json?depth=1')
