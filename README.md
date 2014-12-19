@@ -149,6 +149,25 @@ Result
 }
 ```
 
+### jenkins.build.log(options, callback)
+
+Get build log.
+
+Options
+
+* name (String): job name
+* number (Integer): build number
+
+Usage
+
+``` javascript
+jenkins.build.log('example', 1, function(err, data) {
+  if (err) throw err;
+
+  console.log('buildLog', data.toString());
+});
+```
+
 ### jenkins.build.stop(options, callback)
 
 Stop build.
