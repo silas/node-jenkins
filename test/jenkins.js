@@ -90,10 +90,10 @@ describe('jenkins', function() {
         var jobs = [];
 
         self.nock
-        .post('/job/' + self.jobName + '/build')
-        .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-        .get('/job/' + self.jobName + '/1/consoleText')
-        .reply(200, fixtures.consoleText);
+          .post('/job/' + self.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
+          .get('/job/' + self.jobName + '/1/consoleText')
+          .reply(200, fixtures.consoleText, { 'Content-Type': 'text/plain;charset=UTF-8' });
 
         jobs.push(function(next) {
           self.jenkins.job.build(self.jobName, function(err, number) {
@@ -109,7 +109,7 @@ describe('jenkins', function() {
             function(next) {
               self.jenkins.build.log(self.jobName, 1, function(err, data) {
                 if (err) return setTimeout(function() { return next(err); }, 100);
-                data.toString().should.be.equal(fixtures.consoleText);
+                data.should.be.String.and.containEql('Started by user anonymous');
 
                 next();
               });

@@ -164,7 +164,7 @@ Usage
 jenkins.build.log('example', 1, function(err, data) {
   if (err) throw err;
 
-  console.log('buildLog', data.toString());
+  console.log('buildLog', data);
 });
 ```
 
