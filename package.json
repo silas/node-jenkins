@@ -4,18 +4,18 @@
   "version": "0.7.0",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.15.0"
+    "papi": "^0.16.1"
   },
   "devDependencies": {
     "async": "^0.9.0",
     "istanbul": "^0.3.0",
     "jscs": "^1.5.8",
     "jshint": "^2.5.2",
-    "lodash": "^2.4.1",
+    "lodash": "^3.2.0",
     "mocha": "^2.0.1",
-    "nock": "^0.52.2",
+    "nock": "^0.59.1",
     "node-uuid": "^1.4.1",
-    "should": "^4.0.4"
+    "should": "^5.0.0"
   },
   "keywords": [
     "jenkins"
