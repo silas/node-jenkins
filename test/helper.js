@@ -27,8 +27,16 @@ function setup(opts, done) {
   var test = opts.test;
   var jenkins = test.jenkins;
 
-  test.jobName = 'test-job-' + uuid.v4();
-  test.nodeName = 'test-node-' + uuid.v4();
+  var unique = function(name) {
+    if (NOCK_OFF) {
+      name += '-' + uuid.v4();
+    }
+    return 'test-' + name;
+  };
+
+  test.jobName = unique('job');
+  test.nodeName = unique('node');
+  test.viewName = unique('view');
 
   if (!NOCK_OFF) {
     nock.disableNetConnect();
@@ -46,6 +54,12 @@ function setup(opts, done) {
   if (opts.node) {
     jobs.createNode = function(next) {
       jenkins.node.create(test.nodeName, next);
+    };
+  }
+
+  if (opts.view) {
+    jobs.createView = function(next) {
+      jenkins.view.create(test.viewName, next);
     };
   }
 
@@ -90,6 +104,10 @@ function cleanup(opts, done) {
     test.jenkins.node.list(next);
   };
 
+  jobs.listViews = function(next) {
+    test.jenkins.view.list(next);
+  };
+
   jobs.destroyJobs = ['listJobs', function(next, results) {
     var names = results.listJobs.map(function(job) {
       return job.name;
@@ -114,6 +132,18 @@ function cleanup(opts, done) {
     }, next);
   }];
 
+  jobs.destroyViews = ['listViews', function(next, results) {
+    var names = results.listViews.map(function(node) {
+      return node.name;
+    }).filter(function(name) {
+      return name.match(/^test-view-/);
+    });
+
+    async.map(names, function(name, next) {
+      test.jenkins.view.destroy(name, next);
+    }, next);
+  }];
+
   async.auto(jobs, done);
 }
 
@@ -122,6 +152,7 @@ function cleanup(opts, done) {
  */
 
 exports.cleanup = cleanup;
+exports.nock = { on: !NOCK_OFF, off: NOCK_OFF };
 exports.ndescribe = NOCK_OFF ? describe.skip : describe;
 exports.nit = NOCK_OFF ? it.skip : it;
 exports.setup = setup;

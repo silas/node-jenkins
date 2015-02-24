@@ -1,0 +1,5 @@
+{
+  "name": "test-view",
+  "mode": "hudson.model.ListView",
+  "json": "{\"name\":\"test-view\",\"mode\":\"hudson.model.ListView\"}"
+}

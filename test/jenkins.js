@@ -1100,4 +1100,220 @@ describe('jenkins', function() {
       });
     });
   });
+
+  describe('view', function() {
+    beforeEach(function(done) {
+      helper.setup({ view: true, test: this }, done);
+    });
+
+    describe('create', function() {
+      it('should create view', function(done) {
+        var self = this;
+
+        var name = self.viewName + '-new';
+
+        self.nock
+          .head('/view/' + name + '/api/json?depth=0')
+          .reply(404)
+          .post('/createView', JSON.parse(
+            JSON.stringify(fixtures.viewCreate).replace(/test-view/g, name)
+          ))
+          .reply(302)
+          .head('/view/' + name + '/api/json?depth=0')
+          .reply(200);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.view.exists(name, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          self.jenkins.view.create(name, 'list', next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.view.exists(name, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.should.equal(false);
+          results.after.should.equal(true);
+
+          done();
+        });
+      });
+
+      nit('should return an error if it already exists', function(done) {
+        var error = 'A view already exists with the name "test-view"';
+
+        this.nock
+          .post('/createView', fixtures.viewCreate)
+          .reply(400, '', { 'x-error': error });
+
+        this.jenkins.view.create(this.viewName, 'list', function(err) {
+          should.exist(err);
+
+          err.message.should.eql('jenkins: view.create: A view already exists ' +
+                                 'with the name "test-view"');
+
+          done();
+        });
+      });
+    });
+
+    describe('destroy', function() {
+      it('should delete view', function(done) {
+        var self = this;
+
+        self.nock
+          .head('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200)
+          .post('/view/' + self.viewName + '/doDelete')
+          .reply(302)
+          .head('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(404);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.view.exists(self.viewName, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          self.jenkins.view.destroy(self.viewName, next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.view.exists(self.viewName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.should.equal(true);
+          results.after.should.equal(false);
+
+          done();
+        });
+      });
+
+      nit('should return error on failure', function(done) {
+        this.nock
+          .post('/view/test/doDelete')
+          .reply(200);
+
+        this.jenkins.view.destroy('test', function(err) {
+          should.exist(err);
+
+          err.message.should.eql('jenkins: view.destroy: failed to delete: test');
+
+          done();
+        });
+      });
+    });
+
+    describe('get', function() {
+      it('should not get view', function(done) {
+        var name = this.viewName + '-nope';
+
+        this.nock
+          .get('/view/' + name + '/api/json?depth=0')
+          .reply(404);
+
+        this.jenkins.view.get(name, function(err, data) {
+          should.exist(err);
+          should.not.exist(data);
+
+          done();
+        });
+      });
+
+      it('should get view', function(done) {
+        this.nock
+          .get('/view/' + this.viewName + '/api/json?depth=0')
+          .reply(200, fixtures.viewGet);
+
+        this.jenkins.view.get(this.viewName, function(err, data) {
+          should.not.exist(err);
+
+          should.exist(data);
+
+          data.should.properties('name', 'url');
+
+          done();
+        });
+      });
+
+      nit('should work with options', function(done) {
+        this.nock
+          .get('/view/test/api/json?depth=1')
+          .reply(200, fixtures.viewCreate);
+
+        this.jenkins.view.get('test', { depth: 1 }, function(err) {
+          should.not.exist(err);
+
+          done();
+        });
+      });
+
+      nit('should return error when not found', function(done) {
+        this.nock
+          .get('/view/test/api/json?depth=0')
+          .reply(404);
+
+        this.jenkins.view.get('test', function(err, data) {
+          should.exist(err);
+          should.equal(err.message, 'jenkins: view.get: test not found');
+
+          should.not.exist(data);
+
+          done();
+        });
+      });
+    });
+
+    describe('list', function() {
+      it('should list views', function(done) {
+        var self = this;
+
+        self.nock
+          .get('/api/json')
+          .reply(200, fixtures.viewList);
+
+        self.jenkins.view.list(function(err, data) {
+          should.not.exist(err);
+
+          should.exist(data);
+
+          data.should.not.be.empty;
+
+          data.forEach(function(view) {
+            view.should.have.properties('name');
+          });
+
+          done();
+        });
+      });
+
+      nit('should handle corrupt responses', function(done) {
+        var data = '"trash';
+
+        this.nock
+          .get('/api/json')
+          .reply(200, data);
+
+        this.jenkins.view.list(function(err) {
+          should.exist(err);
+          should.exist(err.message);
+
+          err.message.should.eql('jenkins: view.list: returned bad data');
+
+          done();
+        });
+      });
+    });
+  });
 });
