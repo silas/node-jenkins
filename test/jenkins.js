@@ -15,6 +15,8 @@ var fixtures = require('./fixtures');
 var helper = require('./helper');
 var jenkins = require('../lib');
 
+var Jenkins = jenkins;
+
 var ndescribe = helper.ndescribe;
 var nit = helper.nit;
 
@@ -36,6 +38,14 @@ describe('jenkins', function() {
 
   after(function(done) {
     helper.cleanup({ test: this }, done);
+  });
+
+  describe('exports', function() {
+    it('should support new on module', function() {
+      var j = new Jenkins(this.url);
+
+      should(j).be.an.instanceof(jenkins.Jenkins);
+    });
   });
 
   describe('build', function() {
