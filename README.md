@@ -11,6 +11,13 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * queue: [list](#queue-list), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
+<a name="common-options"/>
+### Common Options
+
+These options will be passed along with any call, although only certain endpoints support them.
+
+ * depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
+
 <a name="init"/>
 ### jenkins([options])
 

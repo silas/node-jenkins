@@ -62,7 +62,7 @@ describe('jenkins', function() {
         self.nock
           .post('/job/' + self.jobName + '/build')
           .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .get('/job/' + self.jobName + '/1/api/json?depth=0')
+          .get('/job/' + self.jobName + '/1/api/json')
           .reply(200, fixtures.buildGet);
 
         jobs.push(function(next) {
@@ -148,7 +148,7 @@ describe('jenkins', function() {
 
       nit('should return error when it does not exist', function(done) {
         this.nock
-          .get('/job/test/2/api/json?depth=0')
+          .get('/job/test/2/api/json')
           .reply(404);
 
         this.jenkins.build.get('test', 2, function(err, data) {
@@ -334,11 +334,11 @@ describe('jenkins', function() {
         var name = self.jobName + '-new';
 
         self.nock
-          .head('/job/' + name + '/api/json?depth=0')
+          .head('/job/' + name + '/api/json')
           .reply(404)
           .post('/createItem?name=' + name + '&from=' + self.jobName + '&mode=copy')
           .reply(302)
-          .head('/job/' + name + '/api/json?depth=0')
+          .head('/job/' + name + '/api/json')
           .reply(200);
 
         var jobs = {};
@@ -373,11 +373,11 @@ describe('jenkins', function() {
         var name = self.jobName + '-new';
 
         self.nock
-          .head('/job/' + name + '/api/json?depth=0')
+          .head('/job/' + name + '/api/json')
           .reply(404)
           .post('/createItem?name=' + name, fixtures.jobCreate)
           .reply(200)
-          .head('/job/' + name + '/api/json?depth=0')
+          .head('/job/' + name + '/api/json')
           .reply(200);
 
         var jobs = {};
@@ -427,11 +427,11 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .head('/job/' + self.jobName + '/api/json?depth=0')
+          .head('/job/' + self.jobName + '/api/json')
           .reply(200)
           .post('/job/' + self.jobName + '/doDelete')
           .reply(302)
-          .head('/job/' + self.jobName + '/api/json?depth=0')
+          .head('/job/' + self.jobName + '/api/json')
           .reply(404);
 
         var jobs = {};
@@ -478,11 +478,11 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .get('/job/' + self.jobName + '/api/json')
           .reply(200, fixtures.jobGet)
           .post('/job/' + self.jobName + '/disable')
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .get('/job/' + self.jobName + '/api/json')
           .reply(200, fixtures.jobGetDisabled);
 
         var jobs = {};
@@ -517,11 +517,11 @@ describe('jenkins', function() {
         self.nock
           .post('/job/' + self.jobName + '/disable')
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .get('/job/' + self.jobName + '/api/json')
           .reply(200, fixtures.jobGetDisabled)
           .post('/job/' + self.jobName + '/enable')
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json?depth=0')
+          .get('/job/' + self.jobName + '/api/json')
           .reply(200, fixtures.jobGet);
 
         var jobs = {};
@@ -558,7 +558,7 @@ describe('jenkins', function() {
         var name = this.jobName + '-nope';
 
         this.nock
-          .head('/job/' + name + '/api/json?depth=0')
+          .head('/job/' + name + '/api/json')
           .reply(404);
 
         this.jenkins.job.exists(name, function(err, exists) {
@@ -572,7 +572,7 @@ describe('jenkins', function() {
 
       it('should find job', function(done) {
         this.nock
-          .head('/job/' + this.jobName + '/api/json?depth=0')
+          .head('/job/' + this.jobName + '/api/json')
           .reply(200);
 
         this.jenkins.job.exists(this.jobName, function(err, exists) {
@@ -590,7 +590,7 @@ describe('jenkins', function() {
         var name = this.jobName + '-nope';
 
         this.nock
-          .get('/job/' + name + '/api/json?depth=0')
+          .get('/job/' + name + '/api/json')
           .reply(404);
 
         this.jenkins.job.get(name, function(err, data) {
@@ -603,7 +603,7 @@ describe('jenkins', function() {
 
       it('should get job', function(done) {
         this.nock
-          .get('/job/' + this.jobName + '/api/json?depth=0')
+          .get('/job/' + this.jobName + '/api/json')
           .reply(200, fixtures.jobGet);
 
         this.jenkins.job.get(this.jobName, function(err, data) {
@@ -631,7 +631,7 @@ describe('jenkins', function() {
 
       nit('should return error when not found', function(done) {
         this.nock
-          .get('/job/test/api/json?depth=0')
+          .get('/job/test/api/json')
           .reply(404);
 
         this.jenkins.job.get('test', function(err, data) {
@@ -739,11 +739,11 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .head('/computer/' + self.nodeName + '/api/json?depth=0')
+          .head('/computer/' + self.nodeName + '/api/json')
           .reply(200)
           .post('/computer/' + self.nodeName + '/doDelete')
           .reply(302, '')
-          .head('/computer/' + self.nodeName + '/api/json?depth=0')
+          .head('/computer/' + self.nodeName + '/api/json')
           .reply(404);
 
         var jobs = {};
@@ -784,21 +784,21 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet)
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet)
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
           .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGetOffline)
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGetOffline)
           .post('/computer/' + self.nodeName + '/changeOfflineCause',
             'offlineMessage=update&json=%7B%22offlineMessage%22%3A%22update%22%7D&' +
             'Submit=Update%20reason')
           .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGetOfflineUpdate);
 
         var jobs = {};
@@ -854,15 +854,15 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet)
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
           .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGetOffline)
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGetOffline)
-          .get('/computer/' + self.nodeName + '/api/json?depth=0')
+          .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet)
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=')
           .reply(302, '');
@@ -909,7 +909,7 @@ describe('jenkins', function() {
         var name = this.nodeName + '-nope';
 
         this.nock
-          .head('/computer/' + name + '/api/json?depth=0')
+          .head('/computer/' + name + '/api/json')
           .reply(404);
 
         this.jenkins.node.exists(name, function(err, exists) {
@@ -923,7 +923,7 @@ describe('jenkins', function() {
 
       it('should find node', function(done) {
         this.nock
-          .head('/computer/' + this.nodeName + '/api/json?depth=0')
+          .head('/computer/' + this.nodeName + '/api/json')
           .reply(200);
 
         this.jenkins.node.exists(this.nodeName, function(err, exists) {
@@ -939,7 +939,7 @@ describe('jenkins', function() {
     describe('get', function() {
       it('should get node details', function(done) {
         this.nock
-          .get('/computer/' + this.nodeName + '/api/json?depth=0')
+          .get('/computer/' + this.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet);
 
         this.jenkins.node.get(this.nodeName, function(err, node) {
@@ -955,7 +955,7 @@ describe('jenkins', function() {
 
       it('should get master', function(done) {
         this.nock
-          .get('/computer/(master)/api/json?depth=0')
+          .get('/computer/(master)/api/json')
           .reply(200, fixtures.nodeGet);
 
         this.jenkins.node.get('master', function(err, node) {
@@ -973,7 +973,7 @@ describe('jenkins', function() {
     describe('list', function() {
       it('should list nodes', function(done) {
         this.nock
-          .get('/computer/api/json?depth=0')
+          .get('/computer/api/json')
           .reply(200, fixtures.nodeList);
 
         this.jenkins.node.list(function(err, nodes) {
@@ -1000,7 +1000,7 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .get('/queue/api/json?depth=0')
+          .get('/queue/api/json')
           .reply(200, fixtures.queueList)
           .post('/job/' + self.jobName + '/build')
           .reply(201, '', { location: 'http://localhost:8080/queue/item/124/' });
@@ -1057,7 +1057,7 @@ describe('jenkins', function() {
     describe('get', function() {
       nit('should work', function(done) {
         this.nock
-          .get('/computer/(master)/api/json?depth=0')
+          .get('/computer/(master)/api/json')
           .reply(200, fixtures.nodeGet);
 
         this.jenkins.node.get('master', function(err, data) {
@@ -1123,13 +1123,13 @@ describe('jenkins', function() {
         var name = self.viewName + '-new';
 
         self.nock
-          .head('/view/' + name + '/api/json?depth=0')
+          .head('/view/' + name + '/api/json')
           .reply(404)
           .post('/createView', JSON.parse(
             JSON.stringify(fixtures.viewCreate).replace(/test-view/g, name)
           ))
           .reply(302)
-          .head('/view/' + name + '/api/json?depth=0')
+          .head('/view/' + name + '/api/json')
           .reply(200);
 
         var jobs = {};
@@ -1236,11 +1236,11 @@ describe('jenkins', function() {
         var self = this;
 
         self.nock
-          .head('/view/' + self.viewName + '/api/json?depth=0')
+          .head('/view/' + self.viewName + '/api/json')
           .reply(200)
           .post('/view/' + self.viewName + '/doDelete')
           .reply(302)
-          .head('/view/' + self.viewName + '/api/json?depth=0')
+          .head('/view/' + self.viewName + '/api/json')
           .reply(404);
 
         var jobs = {};
@@ -1287,7 +1287,7 @@ describe('jenkins', function() {
         var name = this.viewName + '-nope';
 
         this.nock
-          .get('/view/' + name + '/api/json?depth=0')
+          .get('/view/' + name + '/api/json')
           .reply(404);
 
         this.jenkins.view.get(name, function(err, data) {
@@ -1300,7 +1300,7 @@ describe('jenkins', function() {
 
       it('should get view', function(done) {
         this.nock
-          .get('/view/' + this.viewName + '/api/json?depth=0')
+          .get('/view/' + this.viewName + '/api/json')
           .reply(200, fixtures.viewGet);
 
         this.jenkins.view.get(this.viewName, function(err, data) {
@@ -1328,7 +1328,7 @@ describe('jenkins', function() {
 
       nit('should return error when not found', function(done) {
         this.nock
-          .get('/view/test/api/json?depth=0')
+          .get('/view/test/api/json')
           .reply(404);
 
         this.jenkins.view.get('test', function(err, data) {
@@ -1391,11 +1391,11 @@ describe('jenkins', function() {
         before.jobs = [];
 
         self.nock
-          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .get('/view/' + self.viewName + '/api/json')
           .reply(200, before)
           .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
           .reply(200)
-          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .get('/view/' + self.viewName + '/api/json')
           .reply(200, fixtures.viewGetListView);
 
         var jobs = {};
@@ -1433,11 +1433,11 @@ describe('jenkins', function() {
         self.nock
           .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
           .reply(200)
-          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .get('/view/' + self.viewName + '/api/json')
           .reply(200, fixtures.viewGetListView)
           .post('/view/' + self.viewName + '/removeJobFromView?name=' + self.jobName)
           .reply(200)
-          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .get('/view/' + self.viewName + '/api/json')
           .reply(200, after);
 
         var jobs = {};
