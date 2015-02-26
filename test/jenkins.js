@@ -7,11 +7,11 @@
  */
 
 var async = require('async');
+var fixtures = require('fixturefiles');
 var nock = require('nock');
 var should = require('should');
 var uuid = require('node-uuid');
 
-var fixtures = require('./fixtures');
 var helper = require('./helper');
 var jenkins = require('../lib');
 
@@ -1113,7 +1113,7 @@ describe('jenkins', function() {
 
   describe('view', function() {
     beforeEach(function(done) {
-      helper.setup({ view: true, test: this }, done);
+      helper.setup({ job: true, view: true, test: this }, done);
     });
 
     describe('create', function() {
@@ -1174,41 +1174,57 @@ describe('jenkins', function() {
       });
     });
 
-    describe('configList', function() {
-      it('should configure list view', function(done) {
+    describe('config', function() {
+      it('should return xml', function(done) {
+        this.nock
+          .get('/view/' + this.viewName + '/config.xml')
+          .reply(200, fixtures.viewConfig);
+
+        this.jenkins.view.config(this.viewName, function(err, config) {
+          should.not.exist(err);
+
+          config.should.be.type('string');
+          config.should.containEql('<hudson.model.ListView>');
+
+          done();
+        });
+      });
+
+      it('should update config xml', function(done) {
         var self = this;
 
+        var src = '<filterQueue>false</filterQueue>';
+        var dst = '<filterQueue>true</filterQueue>';
+
         self.nock
-          .get('/view/' + self.viewName + '/api/json?depth=0')
-          .reply(200, fixtures.viewGet)
-          .post('/view/' + self.viewName + '/configSubmit')
-          .reply(302)
-          .get('/view/' + self.viewName + '/api/json?depth=0')
-          .reply(200, fixtures.viewGetListView);
+          .get('/view/' + self.viewName + '/config.xml')
+          .reply(200, fixtures.viewConfig)
+          .post('/view/' + self.viewName + '/config.xml')
+          .reply(200)
+          .get('/view/' + self.viewName + '/config.xml')
+          .reply(200, fixtures.viewConfig.replace(src, dst));
 
         var jobs = {};
 
         jobs.before = function(next) {
-          self.jenkins.view.get(self.viewName, next);
+          self.jenkins.view.config(self.viewName, next);
         };
 
-        jobs.create = ['before', function(next) {
-          var opts = {
-            name: self.viewName,
-            description: 'just a test',
-          };
-          self.jenkins.view.configList(opts, next);
+        jobs.config = ['before', function(next) {
+          var config = fixtures.viewConfig.replace(src, dst);
+
+          self.jenkins.view.config(self.viewName, config, next);
         }];
 
-        jobs.after = ['create', function(next) {
-          self.jenkins.view.get(self.viewName, next);
+        jobs.after = ['config', function(next) {
+          self.jenkins.view.config(self.viewName, next);
         }];
 
         async.auto(jobs, function(err, results) {
           should.not.exist(err);
 
-          should(results.before).have.property('description', null);
-          should(results.after).have.property('description', 'just a test');
+          results.before.should.containEql(src);
+          results.after.should.containEql(dst);
 
           done();
         });
@@ -1361,6 +1377,92 @@ describe('jenkins', function() {
           should.exist(err.message);
 
           err.message.should.eql('jenkins: view.list: returned bad data');
+
+          done();
+        });
+      });
+    });
+
+    describe('add', function() {
+      it('should add job to view', function(done) {
+        var self = this;
+
+        var before = fixtures.viewGetListView;
+        before.jobs = [];
+
+        self.nock
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, before)
+          .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
+          .reply(200)
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, fixtures.viewGetListView);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        };
+
+        jobs.add = ['before', function(next) {
+          self.jenkins.view.add(self.viewName, self.jobName, next);
+        }];
+
+        jobs.after = ['add', function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.jobs.should.be.empty;
+          results.after.jobs.should.not.be.empty;
+
+          done();
+        });
+      });
+    });
+
+    describe('remove', function() {
+      it('should remove job from view', function(done) {
+        var self = this;
+
+        var after = fixtures.viewGetListView;
+        after.jobs = [];
+
+        self.nock
+          .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
+          .reply(200)
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, fixtures.viewGetListView)
+          .post('/view/' + self.viewName + '/removeJobFromView?name=' + self.jobName)
+          .reply(200)
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, after);
+
+        var jobs = {};
+
+        jobs.add = function(next) {
+          self.jenkins.view.add(self.viewName, self.jobName, next);
+        };
+
+        jobs.before = ['add', function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        }];
+
+        jobs.remove = ['before', function(next) {
+          self.jenkins.view.remove(self.viewName, self.jobName, next);
+        }];
+
+        jobs.after = ['remove', function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.before.jobs.should.not.be.empty;
+          results.after.jobs.should.be.empty;
 
           done();
         });

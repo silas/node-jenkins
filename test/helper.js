@@ -7,10 +7,9 @@
 require('should');
 
 var async = require('async');
+var fixtures = require('fixturefiles');
 var nock = require('nock');
 var uuid = require('node-uuid');
-
-var fixtures = require('./fixtures');
 
 /**
  * Variables.
