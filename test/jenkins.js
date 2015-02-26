@@ -1174,6 +1174,47 @@ describe('jenkins', function() {
       });
     });
 
+    describe('configList', function() {
+      it('should configure list view', function(done) {
+        var self = this;
+
+        self.nock
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, fixtures.viewGet)
+          .post('/view/' + self.viewName + '/configSubmit')
+          .reply(302)
+          .get('/view/' + self.viewName + '/api/json?depth=0')
+          .reply(200, fixtures.viewGetListView);
+
+        var jobs = {};
+
+        jobs.before = function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        };
+
+        jobs.create = ['before', function(next) {
+          var opts = {
+            name: self.viewName,
+            description: 'just a test',
+          };
+          self.jenkins.view.configList(opts, next);
+        }];
+
+        jobs.after = ['create', function(next) {
+          self.jenkins.view.get(self.viewName, next);
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          should(results.before).have.property('description', null);
+          should(results.after).have.property('description', 'just a test');
+
+          done();
+        });
+      });
+    });
+
     describe('destroy', function() {
       it('should delete view', function(done) {
         var self = this;

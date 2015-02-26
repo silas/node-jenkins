@@ -1,0 +1,13 @@
+{
+  "description": "just a test",
+  "jobs": [
+    {
+      "name": "test",
+      "url": "http://localhost:8080/job/test/",
+      "color": "blue"
+    }
+  ],
+  "name": "test",
+  "property": [],
+  "url": "http://localhost:8080/view/test-view/"
+}
