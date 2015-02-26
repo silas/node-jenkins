@@ -9,7 +9,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * node: [create](#node-create), [destroy](#node-destroy), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [cancel](#queue-cancel)
- * view: [get config](#view-config-get), [set config](#view-config-set), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
+ * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
 <a name="init"/>
 ### jenkins([options])
