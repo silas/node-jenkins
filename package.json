@@ -1,7 +1,7 @@
 {
   "name": "jenkins",
   "description": "Jenkins client",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "main": "./lib",
   "dependencies": {
     "papi": "^0.19.1"
