@@ -1,10 +1,10 @@
 {
   "name": "jenkins",
   "description": "Jenkins client",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.18.0"
+    "papi": "^0.19.1"
   },
   "devDependencies": {
     "async": "^0.9.0",
@@ -14,7 +14,7 @@
     "jshint": "^2.5.2",
     "lodash": "^3.3.1",
     "mocha": "^2.0.1",
-    "nock": "^0.59.1",
+    "nock": "^1.4.0",
     "node-uuid": "^1.4.1",
     "should": "^5.0.1"
   },
