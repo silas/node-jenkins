@@ -212,6 +212,8 @@ Trigger build.
 Options
 
  * name (String): job name
+ * parameters (Object, optional): build parameters
+ * token (String, optional): authorization token
 
 Usage
 
