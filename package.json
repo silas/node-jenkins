@@ -1,10 +1,10 @@
 {
   "name": "jenkins",
   "description": "Jenkins client",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.19.2"
+    "papi": "^0.22.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
