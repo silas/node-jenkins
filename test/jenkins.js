@@ -171,7 +171,7 @@ describe('jenkins', function() {
         self.nock
           .post('/job/' + self.jobName + '/build')
           .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .get('/job/' + self.jobName + '/1/stop')
+          .post('/job/' + self.jobName + '/1/stop')
           .reply(302);
 
         jobs.push(function(next) {
