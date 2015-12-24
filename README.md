@@ -11,14 +11,14 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * queue: [list](#queue-list), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
-<a name="common-options"/>
+<a name="common-options"></a>
 ### Common Options
 
 These options will be passed along with any call, although only certain endpoints support them.
 
  * depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
 
-<a name="init"/>
+<a name="init"></a>
 ### jenkins([options])
 
 Initialize a new Jenkins client.
@@ -34,7 +34,7 @@ Usage
 var jenkins = require('jenkins')('http://user:pass@localhost:8080');
 ```
 
-<a name="info"/>
+<a name="info"></a>
 ### jenkins.info(callback)
 
 Get server information.
@@ -87,7 +87,7 @@ Result
 }
 ```
 
-<a name="build-get"/>
+<a name="build-get"></a>
 ### jenkins.build.get(options, callback)
 
 Get build information.
@@ -167,7 +167,7 @@ Result
 }
 ```
 
-<a name="build-log"/>
+<a name="build-log"></a>
 ### jenkins.build.log(options, callback)
 
 Get build log.
@@ -186,7 +186,7 @@ jenkins.build.log('example', 1, function(err, data) {
   console.log('buildLog', data);
 });
 ```
-<a name="build-stop"/>
+<a name="build-stop"></a>
 ### jenkins.build.stop(options, callback)
 
 Stop build.
@@ -204,7 +204,7 @@ jenkins.build.stop('example', 1, function(err) {
 });
 ```
 
-<a name="job-build"/>
+<a name="job-build"></a>
 ### jenkins.job.build(options, callback)
 
 Trigger build.
@@ -223,7 +223,7 @@ jenkins.job.build('example', function(err) {
 });
 ```
 
-<a name="job-config-get"/>
+<a name="job-config-get"></a>
 ### jenkins.job.config(options, callback)
 
 Get job XML configuration.
@@ -242,7 +242,7 @@ jenkins.job.config('example', function(err, data) {
 });
 ```
 
-<a name="job-config-set"/>
+<a name="job-config-set"></a>
 ### jenkins.job.config(options, callback)
 
 Update job XML configuration.
@@ -260,7 +260,7 @@ jenkins.job.config('example', xml, function(err) {
 });
 ```
 
-<a name="job-config-copy"/>
+<a name="job-config-copy"></a>
 ### jenkins.job.copy(options, callback)
 
 Create job by copying existing job.
@@ -278,7 +278,7 @@ jenkins.job.copy('fromJob', 'example', function(err) {
 });
 ```
 
-<a name="job-create"/>
+<a name="job-create"></a>
 ### jenkins.job.create(options, callback)
 
 Create job from scratch.
@@ -296,7 +296,7 @@ jenkins.job.create('example', xml, function(err) {
 });
 ```
 
-<a name="job-destroy"/>
+<a name="job-destroy"></a>
 ### jenkins.job.destroy(options, callback)
 
 Delete job.
@@ -313,7 +313,7 @@ jenkins.job.destroy('example', function(err) {
 });
 ```
 
-<a name="job-disable"/>
+<a name="job-disable"></a>
 ### jenkins.job.disable(options, callback)
 
 Disable job.
@@ -330,7 +330,7 @@ jenkins.job.disable('example', function(err) {
 });
 ```
 
-<a name="job-enable"/>
+<a name="job-enable"></a>
 ### jenkins.job.enable(options, callback)
 
 Enable job.
@@ -347,7 +347,7 @@ jenkins.job.enable('example', function(err) {
 });
 ```
 
-<a name="job-exists"/>
+<a name="job-exists"></a>
 ### jenkins.job.exists(options, callback)
 
 Check job exists.
@@ -366,7 +366,7 @@ jenkins.job.exists('example', function(err, exists) {
 });
 ```
 
-<a name="job-get"/>
+<a name="job-get"></a>
 ### jenkins.job.get(options, callback)
 
 Get job information.
@@ -445,7 +445,7 @@ Result
 }
 ```
 
-<a name="job-list"/>
+<a name="job-list"></a>
 ### jenkins.job.list(callback)
 
 List all jobs.
@@ -472,7 +472,7 @@ Result
 ]
 ```
 
-<a name="node-create"/>
+<a name="node-create"></a>
 ### jenkins.node.create(options, callback)
 
 Create node.
@@ -489,7 +489,7 @@ jenkins.node.create('slave', function(err) {
 });
 ```
 
-<a name="node-destroy"/>
+<a name="node-destroy"></a>
 ### jenkins.node.destroy(options, callback)
 
 Delete node.
@@ -506,7 +506,7 @@ jenkins.node.destroy('slave', function(err) {
 });
 ```
 
-<a name="node-disable"/>
+<a name="node-disable"></a>
 ### jenkins.node.disable(options, callback)
 
 Disable node.
@@ -524,7 +524,7 @@ jenkins.node.disable('slave', 'network failure', function(err) {
 });
 ```
 
-<a name="node-enable"/>
+<a name="node-enable"></a>
 ### jenkins.node.enable(options, callback)
 
 Enable node.
@@ -541,7 +541,7 @@ jenkins.node.enable('slave', function(err) {
 });
 ```
 
-<a name="node-exists"/>
+<a name="node-exists"></a>
 ### jenkins.node.exists(options, callback)
 
 Check node exists.
@@ -560,7 +560,7 @@ jenkins.node.exists('slave', function(err, exists) {
 });
 ```
 
-<a name="node-get"/>
+<a name="node-get"></a>
 ### jenkins.node.get(options, callback)
 
 Get node information.
@@ -614,7 +614,7 @@ Result
 }
 ```
 
-<a name="node-list"/>
+<a name="node-list"></a>
 ### jenkins.node.list(callback)
 
 List all nodes.
@@ -714,7 +714,7 @@ Result
 }
 ```
 
-<a name="queue-list"/>
+<a name="queue-list"></a>
 ### jenkins.queue.list(callback)
 
 List queues.
@@ -765,7 +765,7 @@ Result
 }
 ```
 
-<a name="queue-cancel"/>
+<a name="queue-cancel"></a>
 ### jenkins.queue.cancel(options, callback)
 
 Cancel build in queue.
@@ -782,7 +782,7 @@ jenkins.queue.cancel(23, function(err) {
 });
 ```
 
-<a name="view-config-get"/>
+<a name="view-config-get"></a>
 ### jenkins.view.config(options, callback)
 
 Get view XML configuration.
@@ -801,7 +801,7 @@ jenkins.view.config('example', function(err, data) {
 });
 ```
 
-<a name="view-config-set"/>
+<a name="view-config-set"></a>
 ### jenkins.job.config(options, callback)
 
 Update view XML configuration.
@@ -819,7 +819,7 @@ jenkins.view.config('example', xml, function(err) {
 });
 ```
 
-<a name="view-create"/>
+<a name="view-create"></a>
 ### jenkins.view.create(options, callback)
 
 Create view.
@@ -837,7 +837,7 @@ jenkins.view.create('example', 'list', function(err) {
 });
 ```
 
-<a name="view-destroy"/>
+<a name="view-destroy"></a>
 ### jenkins.view.destroy(options, callback)
 
 Delete view.
@@ -854,7 +854,7 @@ jenkins.view.destroy('example', function(err) {
 });
 ```
 
-<a name="view-exists"/>
+<a name="view-exists"></a>
 ### jenkins.view.exists(options, callback)
 
 Check view exists.
@@ -873,7 +873,7 @@ jenkins.view.exists('example', function(err, exists) {
 });
 ```
 
-<a name="view-get"/>
+<a name="view-get"></a>
 ### jenkins.view.get(options, callback)
 
 Get view information.
@@ -910,7 +910,7 @@ Result
 }
 ```
 
-<a name="view-list"/>
+<a name="view-list"></a>
 ### jenkins.view.list(callback)
 
 List all views.
@@ -967,7 +967,7 @@ Result
 }
 ```
 
-<a name="view-add"/>
+<a name="view-add"></a>
 ### jenkins.view.add(options, callback)
 
 Add job to view.
@@ -985,7 +985,7 @@ jenkins.view.add('example', 'jobExample', function(err) {
 });
 ```
 
-<a name="view-remove"/>
+<a name="view-remove"></a>
 ### jenkins.view.remove(options, callback)
 
 Remove job from view.
