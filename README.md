@@ -11,6 +11,11 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * queue: [list](#queue-list), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
+<a name="promise"></a>
+### Promise
+
+Promise support can be enabled by setting `promisify` to `true` in Node `>= 0.12` or passing a wrapper (ex: `bluebird.fromCallback`) in older versions.
+
 <a name="common-options"></a>
 ### Common Options
 
@@ -27,6 +32,7 @@ Options
 
  * baseUrl (String): Jenkins URL
  * headers (Object, optional): headers included in every request
+ * promisify (Boolean|Function, optional): convert callback methods to Promises
 
 Usage
 

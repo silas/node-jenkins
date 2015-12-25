@@ -4,10 +4,11 @@
   "version": "0.12.0",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.22.0"
+    "papi": "^0.25.0"
   },
   "devDependencies": {
     "async": "^0.9.0",
+    "bluebird": "^3.1.1",
     "fixturefiles": "^0.1.0",
     "istanbul": "^0.3.6",
     "jscs": "^1.5.8",
@@ -16,7 +17,8 @@
     "mocha": "^2.0.1",
     "nock": "^1.4.0",
     "node-uuid": "^1.4.1",
-    "should": "^5.0.1"
+    "should": "^5.0.1",
+    "sinon": "^1.17.2"
   },
   "keywords": [
     "jenkins"

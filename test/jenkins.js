@@ -7,9 +7,13 @@
  */
 
 var async = require('async');
+var bluebird = require('bluebird');
 var fixtures = require('fixturefiles');
+var lodash = require('lodash');
 var nock = require('nock');
+var papi = require('papi');
 var should = require('should');
+var sinon = require('sinon');
 var uuid = require('node-uuid');
 
 var helper = require('./helper');
@@ -27,12 +31,16 @@ var nit = helper.nit;
 describe('jenkins', function() {
 
   beforeEach(function() {
+    this.sinon = sinon.sandbox.create();
+
     this.url = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
     this.nock = nock(this.url);
     this.jenkins = jenkins(this.url);
   });
 
   afterEach(function(done) {
+    this.sinon.restore();
+
     helper.teardown({ test: this }, done);
   });
 
@@ -1463,6 +1471,166 @@ describe('jenkins', function() {
 
           results.before.jobs.should.not.be.empty;
           results.after.jobs.should.be.empty;
+
+          done();
+        });
+      });
+    });
+  });
+
+  describe('walk', function() {
+    it('should work', function() {
+      var setup = function(tree, depth, data) {
+        data = data || [];
+
+        var prefix = lodash.repeat(' ', depth);
+
+        data.push(prefix + tree.name);
+
+        lodash.each(tree.methods, function(method) {
+          data.push(prefix + ' - ' + method.name + ' (' + method.type + ')');
+        });
+
+        lodash.each(tree.objects, function(tree) {
+          setup(tree, depth + 1, data);
+        });
+
+        return data;
+      };
+
+      setup(jenkins.Jenkins.walk(), 0).should.eql([
+        'Jenkins',
+        ' - info (callback)',
+        ' - get (callback)',
+        ' - walk (sync)',
+        ' Build',
+        '  - get (callback)',
+        '  - stop (callback)',
+        '  - log (callback)',
+        ' Job',
+        '  - build (callback)',
+        '  - config (callback)',
+        '  - copy (callback)',
+        '  - create (callback)',
+        '  - destroy (callback)',
+        '  - delete (alias)',
+        '  - disable (callback)',
+        '  - enable (callback)',
+        '  - exists (callback)',
+        '  - get (callback)',
+        '  - list (callback)',
+        ' Node',
+        '  - config (callback)',
+        '  - create (callback)',
+        '  - destroy (callback)',
+        '  - delete (alias)',
+        '  - toggleOffline (callback)',
+        '  - changeOfflineCause (callback)',
+        '  - disable (callback)',
+        '  - enable (callback)',
+        '  - exists (callback)',
+        '  - get (callback)',
+        '  - list (callback)',
+        ' Queue',
+        '  - list (callback)',
+        '  - get (callback)',
+        '  - cancel (callback)',
+        ' View',
+        '  - create (callback)',
+        '  - config (callback)',
+        '  - destroy (callback)',
+        '  - delete (alias)',
+        '  - exists (callback)',
+        '  - get (callback)',
+        '  - list (callback)',
+        '  - add (callback)',
+        '  - remove (callback)',
+      ]);
+    });
+  });
+
+  describe('promisify', function() {
+    before(function() {
+      this.jenkins = jenkins({
+        baseUrl: this.url,
+        promisify: bluebird.fromCallback,
+      });
+    });
+
+    it('should prefix error message', function() {
+      var self = this;
+
+      self.sinon.stub(papi.tools, 'promisify', function() {
+        throw new Error('test');
+      });
+
+      should(function() {
+        jenkins({ baseUrl: self.url, promisify: true });
+      }).throw('promisify: test');
+    });
+
+    describe('default', function() {
+      it('should work', function() {
+        var self = this;
+
+        if (GLOBAL.Promise) {
+          jenkins({ baseUrl: self.url, promisify: true });
+        } else {
+          should(function() {
+            jenkins({ baseUrl: self.url, promisify: true });
+          }).throw('promisify: wrapper required');
+        }
+      });
+    });
+
+    describe('callback', function() {
+      it('should work', function(done) {
+        this.nock
+          .get('/api/json')
+          .reply(200, { ok: true });
+
+        this.jenkins.info(function(err, data) {
+          should.not.exist(err);
+
+          should(data).eql({ ok: true });
+
+          done();
+        });
+      });
+
+      it('should get error', function(done) {
+        this.nock
+          .get('/api/json')
+          .reply(500);
+
+        this.jenkins.info(function(err) {
+          should(err).have.property('message', 'jenkins: info: internal server error');
+
+          done();
+        });
+      });
+    });
+
+    describe('promise', function() {
+      it('should work', function(done) {
+        this.nock
+          .get('/api/json')
+          .reply(200, { ok: true });
+
+        this.jenkins.info().then(function(data) {
+          should(data).eql({ ok: true });
+
+          done();
+        });
+      });
+
+      it('should get error', function(done) {
+        this.nock
+          .get('/api/json')
+          .reply(500);
+
+        this.jenkins.info().catch(function(err) {
+          should(err).have.property('message', 'jenkins: info: internal server error');
 
           done();
         });
