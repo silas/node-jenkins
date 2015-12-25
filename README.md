@@ -32,7 +32,7 @@ Options
 
  * baseUrl (String): Jenkins URL
  * headers (Object, optional): headers included in every request
- * promisify (Boolean|Function, optional): convert callback methods to Promises
+ * promisify (Boolean|Function, optional): convert callback methods to promises
 
 Usage
 
