@@ -142,10 +142,10 @@ describe('jenkins', function() {
 
       nit('should get with options', function(done) {
         this.nock
-          .get('/job/test/1/api/json?depth=1')
+          .get('/job/test/1/api/json?tree=%5B*%5B*%5D%5D')
           .reply(200, fixtures.buildGet);
 
-        this.jenkins.build.get('test', 1, { depth: 1 }, function(err, data) {
+        this.jenkins.build.get('test', 1, { tree: '[*[*]]' }, function(err, data) {
           should.not.exist(err);
 
           data.should.have.property('number');

@@ -22,6 +22,7 @@ Promise support can be enabled by setting `promisify` to `true` in Node `>= 0.12
 These options will be passed along with any call, although only certain endpoints support them.
 
  * depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
+ * tree (String, optional): path expression (see Jenkins API documentation for more information)
 
 <a name="init"></a>
 ### jenkins([options])
