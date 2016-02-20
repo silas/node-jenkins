@@ -626,6 +626,10 @@ Result
 
 List all nodes.
 
+Options
+
+ * full (Boolean, default: false): include executor count in response
+
 Usage
 
 ``` javascript

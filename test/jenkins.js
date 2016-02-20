@@ -995,6 +995,29 @@ describe('jenkins', function() {
           done();
         });
       });
+
+      it('should include extra metadata', function(done) {
+        this.nock
+          .get('/computer/api/json')
+          .reply(200, fixtures.nodeList);
+
+        var opts = { full: true };
+
+        this.jenkins.node.list(opts, function(err, info) {
+          should.not.exist(err);
+
+          should.exist(info);
+
+          info.should.have.properties(
+            'busyExecutors',
+            'computer',
+            'displayName',
+            'totalExecutors'
+          );
+
+          done();
+        });
+      });
     });
   });
 
