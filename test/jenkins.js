@@ -1095,8 +1095,8 @@ describe('jenkins', function() {
     ndescribe('cancel', function() {
       it('should work', function(done) {
         this.nock
-          .post('/queue/items/1/cancelQueue', '')
-          .reply(200);
+          .post('/queue/item/1/cancelQueue', '')
+          .reply(302);
 
         this.jenkins.queue.cancel(1, function(err) {
           should.not.exist(err);
@@ -1107,7 +1107,7 @@ describe('jenkins', function() {
 
       it('should return error on failure', function(done) {
         this.nock
-          .post('/queue/items/1/cancelQueue', '')
+          .post('/queue/item/1/cancelQueue', '')
           .reply(500);
 
         this.jenkins.queue.cancel(1, function(err) {
