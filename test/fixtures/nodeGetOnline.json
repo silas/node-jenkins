@@ -22,9 +22,9 @@
     "hudson.node_monitors.ClockMonitor": null
   },
   "numExecutors": 2,
-  "offline": true,
-  "offlineCause": {},
-  "offlineCauseReason": "update",
+  "offline": false,
+  "offlineCause": null,
+  "offlineCauseReason": "",
   "oneOffExecutors": [],
   "temporarilyOffline": false
 }

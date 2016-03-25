@@ -799,15 +799,15 @@ describe('jenkins', function() {
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
           .reply(302, '')
           .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetOffline)
+          .reply(200, fixtures.nodeGetTempOffline)
           .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetOffline)
+          .reply(200, fixtures.nodeGetTempOffline)
           .post('/computer/' + self.nodeName + '/changeOfflineCause',
             'offlineMessage=update&json=%7B%22offlineMessage%22%3A%22update%22%7D&' +
             'Submit=Update%20reason')
           .reply(302, '')
           .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetOfflineUpdate);
+          .reply(200, fixtures.nodeGetTempOfflineUpdate);
 
         var jobs = {};
 
@@ -867,9 +867,9 @@ describe('jenkins', function() {
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
           .reply(302, '')
           .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetOffline)
+          .reply(200, fixtures.nodeGetTempOffline)
           .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetOffline)
+          .reply(200, fixtures.nodeGetTempOffline)
           .get('/computer/' + self.nodeName + '/api/json')
           .reply(200, fixtures.nodeGet)
           .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=')
@@ -906,6 +906,74 @@ describe('jenkins', function() {
 
           results.before.temporarilyOffline.should.equal(true);
           results.after.temporarilyOffline.should.equal(false);
+
+          done();
+        });
+      });
+    });
+
+    describe('disconnect', function() {
+      it('should disconnect node', function(done) {
+        var self = this;
+
+        self.nock
+            .get('/computer/' + self.nodeName + '/api/json')
+            .reply(200, fixtures.nodeGetOnline)
+            .get('/computer/' + self.nodeName + '/api/json')
+            .reply(200, fixtures.nodeGetOnline)
+            .post('/computer/' + self.nodeName + '/doDisconnect?offlineMessage=away')
+            .reply(302, '')
+            .get('/computer/' + self.nodeName + '/api/json')
+            .reply(200, fixtures.nodeGetOffline)
+            .get('/computer/' + self.nodeName + '/api/json')
+            .reply(200, fixtures.nodeGetOffline)
+            .post('/computer/' + self.nodeName + '/doDisconnect?offlineMessage=update')
+            .reply(302, '')
+            .get('/computer/' + self.nodeName + '/api/json')
+            .reply(200, fixtures.nodeGetOfflineUpdate);
+
+        var jobs = {};
+
+        jobs.beforeDisconnect = function(next) {
+          self.jenkins.node.get(self.nodeName, function(err, node) {
+            should.not.exist(err);
+
+            next(null, node);
+          });
+        };
+
+        jobs.disconnect = ['beforeDisconnect', function(next) {
+          self.jenkins.node.disconnect(self.nodeName, 'away', next);
+        }];
+
+        jobs.afterDisconnect = ['disconnect', function(next) {
+          self.jenkins.node.get(self.nodeName, function(err, node) {
+            should.not.exist(err);
+
+            next(null, node);
+          });
+        }];
+
+        jobs.update = ['afterDisconnect', function(next) {
+          self.jenkins.node.disconnect(self.nodeName, 'update', next);
+        }];
+
+        jobs.afterUpdate = ['update', function(next) {
+          self.jenkins.node.get(self.nodeName, function(err, node) {
+            should.not.exist(err);
+
+            next(null, node);
+          });
+        }];
+
+        async.auto(jobs, function(err, results) {
+          should.not.exist(err);
+
+          results.beforeDisconnect.offline.should.equal(false);
+          results.afterDisconnect.offline.should.equal(true);
+          results.afterDisconnect.offlineCauseReason.should.equal('away');
+          results.afterUpdate.offline.should.equal(true);
+          results.afterUpdate.offlineCauseReason.should.equal('update');
 
           done();
         });
@@ -1547,8 +1615,10 @@ describe('jenkins', function() {
         '  - create (callback)',
         '  - destroy (callback)',
         '  - delete (alias)',
+        '  - doDisconnect (callback)',
         '  - toggleOffline (callback)',
         '  - changeOfflineCause (callback)',
+        '  - disconnect (callback)',
         '  - disable (callback)',
         '  - enable (callback)',
         '  - exists (callback)',

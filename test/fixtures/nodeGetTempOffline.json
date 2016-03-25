@@ -24,7 +24,7 @@
   "numExecutors": 2,
   "offline": true,
   "offlineCause": {},
-  "offlineCauseReason": "update",
+  "offlineCauseReason": "away",
   "oneOffExecutors": [],
-  "temporarilyOffline": false
+  "temporarilyOffline": true
 }
