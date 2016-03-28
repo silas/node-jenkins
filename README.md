@@ -7,7 +7,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * jenkins: [init](#init), [info](#info)
  * build: [get](#build-get), [log](#build-log), [stop](#build-stop)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
- * node: [create](#node-create), [destroy](#node-destroy), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
+ * node: [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
@@ -509,6 +509,24 @@ Usage
 
 ``` javascript
 jenkins.node.destroy('slave', function(err) {
+  if (err) throw err;
+});
+```
+
+<a name="node-disconnect"></a>
+### jenkins.node.disconnect(options, callback)
+
+Disconnect node.
+
+Options
+
+ * name (String): node name
+ * message (String, optional): reason for being disconnected
+
+Usage
+
+``` javascript
+jenkins.node.disconnect('slave', 'no longer used', function(err) {
   if (err) throw err;
 });
 ```
