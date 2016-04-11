@@ -1626,6 +1626,7 @@ describe('jenkins', function() {
         '  - list (callback)',
         ' Queue',
         '  - list (callback)',
+        '  - item (callback)',
         '  - get (callback)',
         '  - cancel (callback)',
         ' View',
