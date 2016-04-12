@@ -1,0 +1,30 @@
+{
+  "actions": [
+    {
+      "causes": [
+        {
+          "shortDescription": "Started by user anonymous",
+          "userId": null,
+          "userName": "anonymous"
+        }
+      ]
+    }
+  ],
+  "blocked": false,
+  "buildable": false,
+  "id": 130,
+  "inQueueSince": 1406363479853,
+  "params": "",
+  "stuck": false,
+  "task": {
+    "name": "test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18",
+    "url": "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/",
+    "color": "blue"
+  },
+  "url": "queue/item/130/",
+  "why": null,
+  "executable" : {
+    "number" : 28,
+    "url" : "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
+  }
+}
