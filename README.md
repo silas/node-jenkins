@@ -794,6 +794,62 @@ Result
 }
 ```
 
+<a name="queue-item"></a>
+### jenkins.queue.item(options, callback)
+
+Lookup a queue item.
+
+Options
+
+ * number (Integer): queue item number
+
+Usage
+
+``` javascript
+jenkins.queue.item(130, function(err, data) {
+  if (err) throw err;
+
+  console.log('item', data);
+});
+```
+
+Result
+
+``` json
+{
+  "actions": [
+    {
+      "causes": [
+        {
+          "shortDescription": "Started by user anonymous",
+          "userId": null,
+          "userName": "anonymous"
+        }
+      ]
+    }
+  ],
+  "blocked": false,
+  "buildable": false,
+  "id": 130,
+  "inQueueSince": 1406363479853,
+  "params": "",
+  "stuck": false,
+  "task": {
+    "name": "test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18",
+    "url": "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/",
+    "color": "blue"
+  },
+  "url": "queue/item/130/",
+  "why": null,
+  "executable" : {
+    "number" : 28,
+    "url" : "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
+  }
+}
+```
+
+
+
 <a name="queue-cancel"></a>
 ### jenkins.queue.cancel(options, callback)
 
