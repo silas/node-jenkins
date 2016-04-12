@@ -1167,6 +1167,14 @@ describe('jenkins', function() {
           done();
         });
       });
+
+      it('should require a number', function(done) {
+        this.jenkins.queue.item(null, function(err, data) {
+          should.not.exist(data);
+          should.exist(err);
+          done();
+        });
+      });
     });
 
     describe('get', function() {
