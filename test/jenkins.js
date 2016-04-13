@@ -1153,6 +1153,30 @@ describe('jenkins', function() {
       });
     });
 
+    describe('item', function() {
+      it('should return a queue item', function(done) {
+        this.nock
+          .get('/queue/item/130/api/json')
+          .reply(200, fixtures.queueItem);
+
+        this.jenkins.queue.item(130, function(err, data) {
+          if (err) return done(err);
+          data.should.have.property('id');
+          data.id.should.equal(130);
+
+          done();
+        });
+      });
+
+      it('should require a number', function(done) {
+        this.jenkins.queue.item(null, function(err, data) {
+          should.not.exist(data);
+          should.exist(err);
+          done();
+        });
+      });
+    });
+
     describe('get', function() {
       nit('should work', function(done) {
         this.nock
@@ -1626,6 +1650,7 @@ describe('jenkins', function() {
         '  - list (callback)',
         ' Queue',
         '  - list (callback)',
+        '  - item (callback)',
         '  - get (callback)',
         '  - cancel (callback)',
         ' View',
