@@ -232,7 +232,7 @@ jenkins.job.build('example', function(err) {
 ```
 
 ``` javascript
-jenkins.job.build('example', {parameters:{'exampleParamName':'exampleParamValue'}}, function(err) {
+jenkins.job.build({ name: 'example': parameters: { name: 'value' } }, function(err) {
   if (err) throw err;
 });
 ```
