@@ -18,6 +18,9 @@ var uuid = require('node-uuid');
 var NOCK_REC = process.env.NOCK_REC === 'true';
 var NOCK_OFF = process.env.NOCK_OFF === 'true' || NOCK_REC;
 
+var URL = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
+var CRUMB_ISSUER = NOCK_OFF && process.env.CRUMB_ISSUER === 'true';
+
 /**
  * Setup.
  */
@@ -158,6 +161,7 @@ function cleanup(opts, done) {
  */
 
 exports.cleanup = cleanup;
+exports.config = { url: URL, crumbIssuer: CRUMB_ISSUER };
 exports.nock = { on: !NOCK_OFF, off: NOCK_OFF };
 exports.ndescribe = NOCK_OFF ? describe.skip : describe;
 exports.nit = NOCK_OFF ? it.skip : it;

@@ -32,6 +32,7 @@ Initialize a new Jenkins client.
 Options
 
  * baseUrl (String): Jenkins URL
+ * crumbIssuer (Boolean, default: false): enable CSRF Protection support
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
 

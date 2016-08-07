@@ -33,9 +33,12 @@ describe('jenkins', function() {
   beforeEach(function() {
     this.sinon = sinon.sandbox.create();
 
-    this.url = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
+    this.url = helper.config.url;
     this.nock = nock(this.url);
-    this.jenkins = jenkins(this.url);
+    this.jenkins = jenkins({
+      baseUrl: this.url,
+      crumbIssuer: helper.config.crumbIssuer,
+    });
   });
 
   afterEach(function(done) {
@@ -1614,6 +1617,8 @@ describe('jenkins', function() {
         '  - get (callback)',
         '  - stop (callback)',
         '  - log (callback)',
+        ' CrumbIssuer',
+        '  - get (callback)',
         ' Job',
         '  - build (callback)',
         '  - config (callback)',
