@@ -39,7 +39,7 @@ Options
 Usage
 
 ``` javascript
-var jenkins = require('jenkins')('http://user:pass@localhost:8080');
+var jenkins = require('jenkins')({ baseUrl: 'http://user:pass@localhost:8080', crumbIssuer: true });
 ```
 
 <a name="info"></a>
