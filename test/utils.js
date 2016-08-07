@@ -44,15 +44,15 @@ describe('utils', function() {
 
     describe('path', function() {
       it('should work', function() {
-        utils.FolderPath().path().should.eql({
+        utils.FolderPath().path().should.containEql({
           encode: false,
           value: '',
         });
-        utils.FolderPath('a').path().should.eql({
+        utils.FolderPath('a').path().should.containEql({
           encode: false,
           value: '/job/a',
         });
-        utils.FolderPath('a/b').path().should.eql({
+        utils.FolderPath('a/b').path().should.containEql({
           encode: false,
           value: '/job/a/job/b',
         });

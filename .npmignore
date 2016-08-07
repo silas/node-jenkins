@@ -3,10 +3,8 @@
 .jscs.json
 .jshintrc
 .npmignore
-.rock.yml
-.vagrant
-Vagrantfile
 config
 coverage
+docker-compose.yml
 test
 tmp

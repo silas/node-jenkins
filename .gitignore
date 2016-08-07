@@ -2,9 +2,8 @@
 *.pid
 *swp
 .env
-.rock.yml
-.vagrant
 config
 coverage
+docker-compose.yml
 node_modules
 tmp

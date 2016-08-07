@@ -52,7 +52,14 @@ function setup(opts, done) {
 
   if (opts.node) {
     jobs.createNode = function(next) {
-      jenkins.node.create(test.nodeName, next);
+      var opts = {
+        name: test.nodeName,
+        launcher: {
+          'stapler-class': 'hudson.slaves.CommandLauncher',
+          command: 'java -jar /var/jenkins_home/war/WEB-INF/slave.jar',
+        },
+      };
+      jenkins.node.create(opts, next);
     };
   }
 

@@ -17,7 +17,7 @@
     "mocha": "^2.0.1",
     "nock": "^1.4.0",
     "node-uuid": "^1.4.1",
-    "should": "^5.0.1",
+    "should": "^10.0.0",
     "sinon": "^1.17.2"
   },
   "keywords": [

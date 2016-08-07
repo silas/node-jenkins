@@ -127,7 +127,7 @@ describe('jenkins', function() {
             function(next) {
               self.jenkins.build.log(self.jobName, 1, function(err, data) {
                 if (err) return setTimeout(function() { return next(err); }, 100);
-                data.should.be.String.and.containEql('Started by user anonymous');
+                data.should.be.String().and.containEql('Started by user');
 
                 next();
               });
@@ -701,20 +701,6 @@ describe('jenkins', function() {
     });
 
     describe('config', function() {
-      it('should get master config', function(done) {
-        this.nock
-          .get('/computer/(master)/config.xml')
-          .reply(200, fixtures.nodeConfigMaster);
-
-        this.jenkins.node.config('master', function(err, data) {
-          should.not.exist(err);
-
-          data.should.containEql('numExecutors');
-
-          done();
-        });
-      });
-
       it('should error on master update', function(done) {
         this.jenkins.node.config('master', 'xml', function(err) {
           should.exist(err);
@@ -927,7 +913,7 @@ describe('jenkins', function() {
             .reply(200, fixtures.nodeGetOffline)
             .get('/computer/' + self.nodeName + '/api/json')
             .reply(200, fixtures.nodeGetOffline)
-            .post('/computer/' + self.nodeName + '/doDisconnect?offlineMessage=update')
+            .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=update')
             .reply(302, '')
             .get('/computer/' + self.nodeName + '/api/json')
             .reply(200, fixtures.nodeGetOfflineUpdate);
@@ -935,11 +921,17 @@ describe('jenkins', function() {
         var jobs = {};
 
         jobs.beforeDisconnect = function(next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
+          async.retry(
+            1000,
+            function(next) {
+              self.jenkins.node.get(self.nodeName, function(err, node) {
+                if (err) return next(err);
+                if (!node || node.offline) return next(new Error('node offline'));
+                next(null, node);
+              });
+            },
+            next
+          );
         };
 
         jobs.disconnect = ['beforeDisconnect', function(next) {
@@ -1154,7 +1146,7 @@ describe('jenkins', function() {
     });
 
     describe('item', function() {
-      it('should return a queue item', function(done) {
+      nit('should return a queue item', function(done) {
         this.nock
           .get('/queue/item/130/api/json')
           .reply(200, fixtures.queueItem);
@@ -1691,7 +1683,7 @@ describe('jenkins', function() {
       it('should work', function() {
         var self = this;
 
-        if (GLOBAL.Promise) {
+        if (global.Promise) {
           jenkins({ baseUrl: self.url, promisify: true });
         } else {
           should(function() {
@@ -1701,7 +1693,7 @@ describe('jenkins', function() {
       });
     });
 
-    describe('callback', function() {
+    ndescribe('callback', function() {
       it('should work', function(done) {
         this.nock
           .get('/api/json')
@@ -1729,7 +1721,7 @@ describe('jenkins', function() {
       });
     });
 
-    describe('promise', function() {
+    ndescribe('promise', function() {
       it('should work', function(done) {
         this.nock
           .get('/api/json')
