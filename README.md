@@ -231,6 +231,12 @@ jenkins.job.build('example', function(err) {
 });
 ```
 
+``` javascript
+jenkins.job.build('example', {parameters:{'exampleParamName':'exampleParamValue'}}, function(err) {
+  if (err) throw err;
+});
+```
+
 <a name="job-config-get"></a>
 ### jenkins.job.config(options, callback)
 
