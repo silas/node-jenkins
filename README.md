@@ -8,7 +8,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * build: [get](#build-get), [log](#build-log), [stop](#build-stop)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * node: [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
- * queue: [list](#queue-list), [cancel](#queue-cancel)
+ * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
 <a name="promise"></a>
@@ -226,8 +226,10 @@ Options
 Usage
 
 ``` javascript
-jenkins.job.build('example', function(err) {
+jenkins.job.build('example', function(err, data) {
   if (err) throw err;
+
+  console.log('queue item number', data);
 });
 ```
 
