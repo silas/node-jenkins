@@ -113,7 +113,7 @@ describe('jenkins', function() {
         self.nock
           .post('/job/' + self.jobName + '/build')
           .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .get('/job/' + self.jobName + '/1/consoleText')
+          .post('/job/' + self.jobName + '/1/logText/progressiveText')
           .reply(200, fixtures.consoleText, { 'Content-Type': 'text/plain;charset=UTF-8' });
 
         jobs.push(function(next) {
@@ -1617,6 +1617,7 @@ describe('jenkins', function() {
         '  - get (callback)',
         '  - stop (callback)',
         '  - log (callback)',
+        '  - logStream (eventemitter)',
         ' CrumbIssuer',
         '  - get (callback)',
         ' Job',

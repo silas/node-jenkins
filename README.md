@@ -5,7 +5,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 ## Documentation
 
  * jenkins: [init](#init), [info](#info)
- * build: [get](#build-get), [log](#build-log), [stop](#build-stop)
+ * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
@@ -184,6 +184,9 @@ Options
 
 * name (String): job name
 * number (Integer): build number
+* start (Integer, optional): start offset
+* type (String, enum: text, html, default: text): output format
+* meta (Boolean, default: false): return object with text (log data), more (boolean if there is more log data), and size (used with start to offset on subsequent calls)
 
 Usage
 
@@ -191,9 +194,40 @@ Usage
 jenkins.build.log('example', 1, function(err, data) {
   if (err) throw err;
 
-  console.log('buildLog', data);
+  console.log('log', data);
 });
 ```
+
+<a name="build-log-stream"></a>
+### jenkins.build.logStream(options, callback)
+
+Get build log stream.
+
+Options
+
+* name (String): job name
+* number (Integer): build number
+* type (String, enum: text, html, default: text): output format
+* delay (Integer, default: 1000): poll interval in milliseconds
+
+Usage
+
+``` javascript
+var log = jenkins.build.logStream('example', 1);
+
+log.on('data', function(text) {
+  process.stdout.write(text);
+});
+
+log.on('error', function(err) {
+  console.log('error', err);
+});
+
+log.on('end', function() {
+  console.log('end');
+});
+```
+
 <a name="build-stop"></a>
 ### jenkins.build.stop(options, callback)
 
