@@ -6,7 +6,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
  * jenkins: [init](#init), [info](#info)
  * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop)
- * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
+ * job: [build](#job-build), [buildMultiBranch](#job-build-multi), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
@@ -269,6 +269,34 @@ jenkins.job.build('example', function(err, data) {
 
 ``` javascript
 jenkins.job.build({ name: 'example': parameters: { name: 'value' } }, function(err) {
+  if (err) throw err;
+});
+```
+
+<a name="job-build-multi"></a>
+### jenkins.job.buildMultiBranch(options, callback)
+
+Trigger build.
+
+Options
+
+ * name (String): job name,
+ * branch (String): branch name,
+ * parameters (Object, optional): build parameters
+ * token (String, optional): authorization token
+
+Usage
+
+``` javascript
+jenkins.job.build('example', 'master',  function(err, data) {
+  if (err) throw err;
+
+  console.log('queue item number', data);
+});
+```
+
+``` javascript
+jenkins.job.build({ name: 'example', branch: 'master', parameters: { name: 'value' } }, function(err) {
   if (err) throw err;
 });
 ```
