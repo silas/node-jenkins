@@ -37,6 +37,7 @@ function setup(opts, done) {
   };
 
   test.jobName = unique('job');
+  test.branchName = unique('branch');
   test.nodeName = unique('node');
   test.viewName = unique('view');
 

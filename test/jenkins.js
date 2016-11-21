@@ -281,6 +281,39 @@ describe('jenkins', function() {
       });
     });
 
+    describe('buildMultiBranch', function() {
+      it('should start build', function(done) {
+        this.nock
+            .post('/job/' + this.jobName + '/job/' + this.branchName + '/build')
+            .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+
+        this.jenkins.job.buildMultiBranch(this.jobName, this.branchName, function(err, number) {
+          should.not.exist(err);
+
+          number.should.be.type('number');
+          number.should.be.above(0);
+
+          done();
+        });
+      });
+
+      it('should escape branch name properly', function(done) {
+        var branchName = 'feature/escape';
+
+        this.nock
+            .post('/job/' + this.jobName + '/job/' + encodeURIComponent(branchName) + '/build')
+            .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+
+        this.jenkins.job.buildMultiBranch(this.jobName, branchName, function(err, number) {
+          should.not.exist(err);
+
+          number.should.be.type('number');
+          number.should.be.above(0);
+
+          done();
+        });
+      });
+    });
     describe('config', function() {
       it('should get job config', function(done) {
         this.nock
@@ -1622,6 +1655,7 @@ describe('jenkins', function() {
         '  - get (callback)',
         ' Job',
         '  - build (callback)',
+        '  - buildMultiBranch (callback)',
         '  - config (callback)',
         '  - copy (callback)',
         '  - create (callback)',
