@@ -28,6 +28,21 @@ describe('utils', function() {
         utils.FolderPath('a/b/c').value.should.eql(['a', 'b', 'c']);
       });
 
+      it('should parse url', function() {
+        ['http://', 'https://'].forEach(function(p) {
+          utils.FolderPath(p).value.should.eql([]);
+          utils.FolderPath(p + 'example.org/').value.should.eql([]);
+          utils.FolderPath(p + 'example.org/job/one').value.should.eql(['one']);
+          utils.FolderPath(p + 'example.org/proxy/job/one').value.should.eql(['one']);
+          utils.FolderPath(p + 'example.org/job/one/hello/world').value.should.eql(['one']);
+          utils.FolderPath(p + 'example.org/job/one/hello/job/nope').value.should.eql(['one']);
+          utils.FolderPath(p + 'example.org/job/one/job/two').value.should.eql(['one', 'two']);
+          utils.FolderPath(p + 'example.org/job/one%2Ftwo').value.should.eql(['one/two']);
+          utils.FolderPath(p + 'example.org/job/one/job/two%252Fthree/').value
+            .should.eql(['one', 'two%2Fthree']);
+        });
+      });
+
       it('should parse array', function() {
         utils.FolderPath(['a']).value.should.eql(['a']);
         utils.FolderPath(['a', 'b']).value.should.eql(['a', 'b']);
