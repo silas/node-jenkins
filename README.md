@@ -268,7 +268,7 @@ jenkins.job.build('example', function(err, data) {
 ```
 
 ``` javascript
-jenkins.job.build({ name: 'example': parameters: { name: 'value' } }, function(err) {
+jenkins.job.build({ name: 'example', parameters: { name: 'value' } }, function(err) {
   if (err) throw err;
 });
 ```
