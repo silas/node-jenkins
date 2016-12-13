@@ -1661,6 +1661,9 @@ describe('jenkins', function() {
         '  - list (callback)',
         '  - add (callback)',
         '  - remove (callback)',
+        ' TestReport',
+        '  - get (callback)',
+        '  - logStream (eventemitter)'
       ]);
     });
   });
@@ -1747,6 +1750,80 @@ describe('jenkins', function() {
 
         this.jenkins.info().catch(function(err) {
           should(err).have.property('message', 'jenkins: info: internal server error');
+
+          done();
+        });
+      });
+    });
+  });
+
+  describe('testReport', function() {
+    beforeEach(function(done) {
+      helper.setup({ job: true, test: this }, done);
+    });
+
+    describe('get', function() {
+      it('should return test report details', function(done) {
+        var self = this;
+
+        var jobs = [];
+
+        self.nock
+          .get('/job/' + self.jobName + '/1/testReport/api/json')
+          .reply(200, fixtures.testReportGet);
+
+        jobs.push(function(next) {
+          async.retry(
+            100,
+            function(next) {
+              self.jenkins.testReport.get(self.jobName, 1, function(err, data) {
+                if (err) return setTimeout(function() { return next(err); }, 100);
+
+                data.should.have.property('failCount');
+                data.should.have.property('skipCount');
+                data.should.have.property('totalCount');
+                data.should.have.property('urlName');
+                data.should.have.property('childReports');
+
+                next();
+              });
+            },
+            next
+          );
+
+        });
+
+        async.series(jobs, done);
+      });
+
+      nit('should get with options', function(done) {
+        this.nock
+          .get('/job/test/1/testReport/api/json?tree=%5B*%5B*%5D%5D')
+          .reply(200, fixtures.testReportGet);
+
+        this.jenkins.testReport.get('test', 1, { tree: '[*[*]]' }, function(err, data) {
+          should.not.exist(err);
+
+          data.should.have.property('failCount');
+          data.should.have.property('skipCount');
+          data.should.have.property('totalCount');
+          data.should.have.property('urlName');
+          data.should.have.property('childReports');
+
+          done();
+        });
+      });
+
+      nit('should return error when it does not exist', function(done) {
+        this.nock
+          .get('/job/test/2/testReport/api/json')
+          .reply(404);
+
+        this.jenkins.testReport.get('test', 2, function(err, data) {
+          should.exist(err);
+          should.equal(err.message, 'jenkins: testReport.get: test 2 not found');
+
+          should.not.exist(data);
 
           done();
         });

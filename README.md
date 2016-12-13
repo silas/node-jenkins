@@ -1150,6 +1150,71 @@ jenkins.view.remove('example', 'jobExample', function(err) {
 });
 ```
 
+<a name="testReport-get"></a>
+### jenkins.testReport.get(options, callback)
+
+Get test report information.
+
+Options
+
+ * name (String): job name
+ * number (Integer): build number
+
+Usage
+
+``` javascript
+jenkins.testReport.get('example', 1, function(err, data) {
+  if (err) throw err;
+
+  console.log('build', data);
+});
+```
+
+Result
+
+``` json
+{
+  "failCount": 0,
+  "skipCount": 25,
+  "totalCount": 149,
+  "urlName": "testReport",
+  "childReports": [
+    {
+      "child": {
+        "number": 1,
+        "url": "http://localhost:8080/job/test-7ea39228-5841-4a0f-b83c-1d971713f9c6/child/1/"
+      },
+      "result": {
+        "duration": 799.911,
+        "empty": false,
+        "failCount": 0,
+        "passCount": 107,
+        "skipCount": 21,
+        "suites": [
+          {
+            "cases": [
+              {
+                "age": 0,
+                "className": "SomeClass",
+                "duration": 9.172,
+                "failedSince": 0,
+                "name": "it should display something",
+                "skipped": false,
+                "status": "PASSED"
+              }
+            ],
+            "duration": 9.172,
+            "id": null,
+            "name": "SomeClass",
+            "timestamp": "2016-12-12T16:09:43"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
 ## License
 
 This work is licensed under the MIT License (see the LICENSE file).
