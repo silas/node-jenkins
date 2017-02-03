@@ -35,6 +35,7 @@ Options
  * crumbIssuer (Boolean, default: false): enable CSRF Protection support
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
+ * Others options like: agent, pfx, key, passphrase, cert, ca, ciphers, rejectUnauthorized, secureProtocol, timeout.
 
 Usage
 
