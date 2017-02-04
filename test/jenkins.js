@@ -1662,8 +1662,7 @@ describe('jenkins', function() {
         '  - add (callback)',
         '  - remove (callback)',
         ' TestReport',
-        '  - get (callback)',
-        '  - logStream (eventemitter)'
+        '  - get (callback)'
       ]);
     });
   });
