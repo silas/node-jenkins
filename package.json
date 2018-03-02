@@ -4,7 +4,7 @@
   "version": "0.20.1",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.26.0"
+    "papi": "git://github.com/gaborcsardi/node-papi.git#feature/multipart-post"
   },
   "devDependencies": {
     "async": "^0.9.0",
