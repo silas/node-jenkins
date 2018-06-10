@@ -31,7 +31,7 @@ var nit = helper.nit;
 describe('jenkins', function() {
 
   beforeEach(function() {
-    this.sinon = sinon.sandbox.create();
+    this.sinon = sinon.createSandbox();
 
     this.url = helper.config.url;
     this.nock = nock(this.url);
@@ -314,7 +314,7 @@ describe('jenkins', function() {
           self.jenkins.job.config(self.jobName, next);
         };
 
-        jobs.update = ['before', function(next, results) {
+        jobs.update = ['before', function(results, next) {
           var config = results.before.replace(
             '<description>before</description>',
             '<description>after</description>'
@@ -323,7 +323,7 @@ describe('jenkins', function() {
           self.jenkins.job.config(self.jobName, config, next);
         }];
 
-        jobs.after = ['update', function(next) {
+        jobs.after = ['update', function(results, next) {
           self.jenkins.job.config(self.jobName, next);
         }];
 
@@ -358,11 +358,11 @@ describe('jenkins', function() {
           self.jenkins.job.exists(name, next);
         };
 
-        jobs.copy = ['before', function(next) {
+        jobs.copy = ['before', function(results, next) {
           self.jenkins.job.copy(self.jobName, name, next);
         }];
 
-        jobs.after = ['copy', function(next) {
+        jobs.after = ['copy', function(results, next) {
           self.jenkins.job.exists(name, next);
         }];
 
@@ -397,11 +397,11 @@ describe('jenkins', function() {
           self.jenkins.job.exists(name, next);
         };
 
-        jobs.create = ['before', function(next) {
+        jobs.create = ['before', function(results, next) {
           self.jenkins.job.create(name, fixtures.jobCreate, next);
         }];
 
-        jobs.after = ['create', function(next) {
+        jobs.after = ['create', function(results, next) {
           self.jenkins.job.exists(name, next);
         }];
 
@@ -451,11 +451,11 @@ describe('jenkins', function() {
           self.jenkins.job.exists(self.jobName, next);
         };
 
-        jobs.create = ['before', function(next) {
+        jobs.create = ['before', function(results, next) {
           self.jenkins.job.destroy(self.jobName, next);
         }];
 
-        jobs.after = ['create', function(next) {
+        jobs.after = ['create', function(results, next) {
           self.jenkins.job.exists(self.jobName, next);
         }];
 
@@ -502,11 +502,11 @@ describe('jenkins', function() {
           self.jenkins.job.get(self.jobName, next);
         };
 
-        jobs.create = ['before', function(next) {
+        jobs.create = ['before', function(results, next) {
           self.jenkins.job.disable(self.jobName, next);
         }];
 
-        jobs.after = ['create', function(next) {
+        jobs.after = ['create', function(results, next) {
           self.jenkins.job.get(self.jobName, next);
         }];
 
@@ -541,15 +541,15 @@ describe('jenkins', function() {
           self.jenkins.job.disable(self.jobName, next);
         };
 
-        jobs.before = ['setup', function(next) {
+        jobs.before = ['setup', function(results, next) {
           self.jenkins.job.get(self.jobName, next);
         }];
 
-        jobs.enable = ['before', function(next) {
+        jobs.enable = ['before', function(results, next) {
           self.jenkins.job.enable(self.jobName, next);
         }];
 
-        jobs.after = ['enable', function(next) {
+        jobs.after = ['enable', function(results, next) {
           self.jenkins.job.get(self.jobName, next);
         }];
 
@@ -753,11 +753,11 @@ describe('jenkins', function() {
           });
         };
 
-        jobs.destroy = ['before', function(next) {
+        jobs.destroy = ['before', function(results, next) {
           self.jenkins.node.destroy(self.nodeName, next);
         }];
 
-        jobs.after = ['destroy', function(next) {
+        jobs.after = ['destroy', function(results, next) {
           self.jenkins.node.exists(self.nodeName, function(err, exists) {
             should.not.exist(err);
 
@@ -808,11 +808,11 @@ describe('jenkins', function() {
           });
         };
 
-        jobs.disable = ['beforeDisable', function(next) {
+        jobs.disable = ['beforeDisable', function(results, next) {
           self.jenkins.node.disable(self.nodeName, 'away', next);
         }];
 
-        jobs.afterDisable = ['disable', function(next) {
+        jobs.afterDisable = ['disable', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -820,11 +820,11 @@ describe('jenkins', function() {
           });
         }];
 
-        jobs.update = ['afterDisable', function(next) {
+        jobs.update = ['afterDisable', function(results, next) {
           self.jenkins.node.disable(self.nodeName, 'update', next);
         }];
 
-        jobs.afterUpdate = ['update', function(next) {
+        jobs.afterUpdate = ['update', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -870,7 +870,7 @@ describe('jenkins', function() {
           self.jenkins.node.disable(self.nodeName, 'away', next);
         };
 
-        jobs.before = ['disable', function(next) {
+        jobs.before = ['disable', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -878,11 +878,11 @@ describe('jenkins', function() {
           });
         }];
 
-        jobs.enable = ['before', function(next) {
+        jobs.enable = ['before', function(results, next) {
           self.jenkins.node.enable(self.nodeName, next);
         }];
 
-        jobs.after = ['enable', function(next) {
+        jobs.after = ['enable', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -937,11 +937,11 @@ describe('jenkins', function() {
           );
         };
 
-        jobs.disconnect = ['beforeDisconnect', function(next) {
+        jobs.disconnect = ['beforeDisconnect', function(results, next) {
           self.jenkins.node.disconnect(self.nodeName, 'away', next);
         }];
 
-        jobs.afterDisconnect = ['disconnect', function(next) {
+        jobs.afterDisconnect = ['disconnect', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -949,11 +949,11 @@ describe('jenkins', function() {
           });
         }];
 
-        jobs.update = ['afterDisconnect', function(next) {
+        jobs.update = ['afterDisconnect', function(results, next) {
           self.jenkins.node.disconnect(self.nodeName, 'update', next);
         }];
 
-        jobs.afterUpdate = ['update', function(next) {
+        jobs.afterUpdate = ['update', function(results, next) {
           self.jenkins.node.get(self.nodeName, function(err, node) {
             should.not.exist(err);
 
@@ -1256,11 +1256,11 @@ describe('jenkins', function() {
           self.jenkins.view.exists(name, next);
         };
 
-        jobs.create = ['before', function(next) {
+        jobs.create = ['before', function(results, next) {
           self.jenkins.view.create(name, 'list', next);
         }];
 
-        jobs.after = ['create', function(next) {
+        jobs.after = ['create', function(results, next) {
           self.jenkins.view.exists(name, next);
         }];
 
@@ -1328,13 +1328,13 @@ describe('jenkins', function() {
           self.jenkins.view.config(self.viewName, next);
         };
 
-        jobs.config = ['before', function(next) {
+        jobs.config = ['before', function(results, next) {
           var config = fixtures.viewConfig.replace(src, dst);
 
           self.jenkins.view.config(self.viewName, config, next);
         }];
 
-        jobs.after = ['config', function(next) {
+        jobs.after = ['config', function(results, next) {
           self.jenkins.view.config(self.viewName, next);
         }];
 
@@ -1367,11 +1367,11 @@ describe('jenkins', function() {
           self.jenkins.view.exists(self.viewName, next);
         };
 
-        jobs.create = ['before', function(next) {
+        jobs.create = ['before', function(results, next) {
           self.jenkins.view.destroy(self.viewName, next);
         }];
 
-        jobs.after = ['create', function(next) {
+        jobs.after = ['create', function(results, next) {
           self.jenkins.view.exists(self.viewName, next);
         }];
 
@@ -1522,11 +1522,11 @@ describe('jenkins', function() {
           self.jenkins.view.get(self.viewName, next);
         };
 
-        jobs.add = ['before', function(next) {
+        jobs.add = ['before', function(results, next) {
           self.jenkins.view.add(self.viewName, self.jobName, next);
         }];
 
-        jobs.after = ['add', function(next) {
+        jobs.after = ['add', function(results, next) {
           self.jenkins.view.get(self.viewName, next);
         }];
 
@@ -1564,15 +1564,15 @@ describe('jenkins', function() {
           self.jenkins.view.add(self.viewName, self.jobName, next);
         };
 
-        jobs.before = ['add', function(next) {
+        jobs.before = ['add', function(results, next) {
           self.jenkins.view.get(self.viewName, next);
         }];
 
-        jobs.remove = ['before', function(next) {
+        jobs.remove = ['before', function(results, next) {
           self.jenkins.view.remove(self.viewName, self.jobName, next);
         }];
 
-        jobs.after = ['remove', function(next) {
+        jobs.after = ['remove', function(results, next) {
           self.jenkins.view.get(self.viewName, next);
         }];
 
@@ -1676,7 +1676,7 @@ describe('jenkins', function() {
     it('should prefix error message', function() {
       var self = this;
 
-      self.sinon.stub(papi.tools, 'promisify', function() {
+      self.sinon.stub(papi.tools, 'promisify').callsFake(function() {
         throw new Error('test');
       });
 

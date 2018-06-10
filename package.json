@@ -1,24 +1,24 @@
 {
   "name": "jenkins",
   "description": "Jenkins client",
-  "version": "0.20.1",
+  "version": "0.21.0",
   "main": "./lib",
   "dependencies": {
-    "papi": "^0.26.0"
+    "papi": "^0.28.0"
   },
   "devDependencies": {
-    "async": "^0.9.0",
-    "bluebird": "^3.1.1",
-    "fixturefiles": "^0.1.0",
-    "istanbul": "^0.3.6",
-    "jscs": "^1.5.8",
-    "jshint": "^2.5.2",
-    "lodash": "^3.3.1",
-    "mocha": "^2.0.1",
-    "nock": "^1.4.0",
-    "node-uuid": "^1.4.1",
-    "should": "^10.0.0",
-    "sinon": "^1.17.2"
+    "async": "^2.6.1",
+    "bluebird": "^3.5.1",
+    "fixturefiles": "^0.3.0",
+    "istanbul": "^0.4.5",
+    "jscs": "^3.0.7",
+    "jshint": "^2.9.5",
+    "lodash": "^4.17.10",
+    "mocha": "^5.2.0",
+    "nock": "^9.3.2",
+    "node-uuid": "^1.4.8",
+    "should": "^13.2.1",
+    "sinon": "^5.1.1"
   },
   "keywords": [
     "jenkins"
