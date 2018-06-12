@@ -1,0 +1,40 @@
+{
+  "failCount": 0,
+  "skipCount": 25,
+  "totalCount": 149,
+  "urlName": "testReport",
+  "childReports": [
+    {
+      "child": {
+        "number": 1,
+        "url": "http://localhost:8080/job/test-7ea39228-5841-4a0f-b83c-1d971713f9c6/child/1/"
+      },
+      "result": {
+        "duration": 799.911,
+        "empty": false,
+        "failCount": 0,
+        "passCount": 107,
+        "skipCount": 21,
+        "suites": [
+          {
+            "cases": [
+              {
+                "age": 0,
+                "className": "SomeClass",
+                "duration": 9.172,
+                "failedSince": 0,
+                "name": "it should display something",
+                "skipped": false,
+                "status": "PASSED"
+              }
+            ],
+            "duration": 9.172,
+            "id": null,
+            "name": "SomeClass",
+            "timestamp": "2016-12-12T16:09:43"
+          }
+        ]
+      }
+    }
+  ]
+}
