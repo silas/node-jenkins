@@ -37,6 +37,10 @@ Options
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
 
+Advanced options
+
+See [papi](https://github.com/silas/node-papi#client) for additional advanced options.
+
 Usage
 
 ``` javascript
