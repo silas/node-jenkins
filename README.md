@@ -36,6 +36,7 @@ Options
  * formData (Function, optional): enable file upload support on parameterized builds (must pass in `require('form-data')` as value for this option)
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
+ * Others options like: agent, pfx, key, passphrase, cert, ca, ciphers, rejectUnauthorized, secureProtocol, timeout.
 
 Usage
 
