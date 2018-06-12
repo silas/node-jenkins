@@ -36,10 +36,7 @@ Options
  * formData (Function, optional): enable file upload support on parameterized builds (must pass in `require('form-data')` as value for this option)
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
-
-Advanced options
-
-See [papi](https://github.com/silas/node-papi#client) for additional advanced options.
+ * and more via [papi](https://github.com/silas/node-papi#client)
 
 Usage
 
