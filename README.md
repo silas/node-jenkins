@@ -33,6 +33,7 @@ Options
 
  * baseUrl (String): Jenkins URL
  * crumbIssuer (Boolean, default: false): enable CSRF Protection support
+ * formData (Function, optional): enable file upload support on parameterized builds (must pass in `require('form-data')` as value for this option)
  * headers (Object, optional): headers included in every request
  * promisify (Boolean|Function, optional): convert callback methods to promises
 
@@ -269,6 +270,12 @@ jenkins.job.build('example', function(err, data) {
 
 ``` javascript
 jenkins.job.build({ name: 'example', parameters: { name: 'value' } }, function(err) {
+  if (err) throw err;
+});
+```
+
+``` javascript
+jenkins.job.build({ name: 'example', parameters: { file: fs.createReadStream('test.txt') } }, function(err) {
   if (err) throw err;
 });
 ```

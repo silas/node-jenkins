@@ -6,7 +6,8 @@
  * Module dependencies.
  */
 
-require('should');
+var fs = require('fs');
+var should = require('should');
 
 var utils = require('../lib/utils');
 
@@ -81,6 +82,20 @@ describe('utils', function() {
         utils.FolderPath('a/b').parent().value.should.eql(['a']);
         utils.FolderPath('a/b/c').parent().value.should.eql(['a', 'b']);
       });
+    });
+  });
+
+  describe('isFileLike', function() {
+    it('should work', function() {
+      should(utils.isFileLike()).is.false;
+      should(utils.isFileLike('test')).is.false;
+      should(utils.isFileLike({})).is.false;
+
+      should(utils.isFileLike(Buffer.from('test'))).is.true;
+
+      var stream = fs.createReadStream(__filename);
+      should(utils.isFileLike(stream)).is.true;
+      stream.close();
     });
   });
 });
