@@ -251,7 +251,7 @@ describe('jenkins', function() {
 
       nit('should work with parameters', function(done) {
         this.nock
-          .post('/job/test/buildWithParameters?hello=world')
+          .post('/job/test/buildWithParameters', { hello: 'world' })
           .reply(201);
 
         var opts = { parameters: { hello: 'world' } };
@@ -265,7 +265,7 @@ describe('jenkins', function() {
 
       nit('should work with a token and parameters', function(done) {
         this.nock
-          .post('/job/test/buildWithParameters?hello=world&token=secret')
+          .post('/job/test/buildWithParameters?token=secret', { hello: 'world' })
           .reply(201);
 
         var opts = {
