@@ -1158,6 +1158,22 @@ jenkins.view.remove('example', 'jobExample', function(err) {
 });
 ```
 
+## Test
+
+Run unit tests
+
+```sh
+$ npm test
+```
+
+Run acceptance tests
+
+```sh
+$ docker-compose -f test/docker-compose.yml up -d
+$ npm run acceptance
+$ docker-compose -f test/docker-compose.yml down
+```
+
 ## License
 
 This work is licensed under the MIT License (see the LICENSE file).

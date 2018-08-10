@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  jenkins:
+    build:
+      context: ./
+    ports:
+      - '8080:8080'

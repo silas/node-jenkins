@@ -59,7 +59,7 @@ function setup(opts, done) {
         name: test.nodeName,
         launcher: {
           'stapler-class': 'hudson.slaves.CommandLauncher',
-          command: 'java -jar /var/jenkins_home/war/WEB-INF/slave.jar',
+          command: 'java -jar /usr/share/jenkins/ref/slave.jar',
         },
       };
       jenkins.node.create(opts, next);
@@ -117,7 +117,7 @@ function cleanup(opts, done) {
     test.jenkins.view.list(next);
   };
 
-  jobs.destroyJobs = ['listJobs', function(next, results) {
+  jobs.destroyJobs = ['listJobs', function(results, next) {
     var names = results.listJobs.map(function(job) {
       return job.name;
     }).filter(function(name) {
@@ -129,7 +129,7 @@ function cleanup(opts, done) {
     }, next);
   }];
 
-  jobs.destroyNodes = ['listNodes', function(next, results) {
+  jobs.destroyNodes = ['listNodes', function(results, next) {
     var names = results.listNodes.map(function(node) {
       return node.displayName;
     }).filter(function(name) {
@@ -141,7 +141,7 @@ function cleanup(opts, done) {
     }, next);
   }];
 
-  jobs.destroyViews = ['listViews', function(next, results) {
+  jobs.destroyViews = ['listViews', function(results, next) {
     var names = results.listViews.map(function(node) {
       return node.name;
     }).filter(function(name) {

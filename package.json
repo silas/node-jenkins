@@ -34,7 +34,8 @@
     "url": "https://github.com/silas/node-jenkins/issues"
   },
   "scripts": {
-    "cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000 && open coverage/lcov-report/index.html",
-    "test": "./node_modules/.bin/jshint lib test && ./node_modules/.bin/jscs lib test && ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000"
+    "acceptance": "NOCK_OFF=true NOCK_REC=false JENKINS_TEST_URL=http://admin:admin@localhost:8080 mocha --recursive --check-leaks --timeout 15000",
+    "cover": "istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000 && open coverage/lcov-report/index.html",
+    "test": "jshint lib test && jscs lib test && istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000"
   }
 }
