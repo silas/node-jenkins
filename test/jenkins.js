@@ -211,6 +211,45 @@ describe('jenkins', function() {
         async.series(jobs, done);
       });
     });
+
+    describe('term', function() {
+      it('should terminate build', function(done) {
+        var self = this;
+
+        var jobs = [];
+
+        self.nock
+          .post('/job/' + self.jobName + '/build')
+          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
+          .post('/job/' + self.jobName + '/1/term')
+          .reply(200);
+
+        jobs.push(function(next) {
+          self.jenkins.job.build(self.jobName, function(err, number) {
+            should.not.exist(err);
+
+            next(null, number);
+          });
+        });
+
+        jobs.push(function(next) {
+          async.retry(
+            100,
+            function(next) {
+              self.jenkins.build.term(self.jobName, 1, function(err) {
+                if (err) return setTimeout(function() { return next(err); }, 100);
+
+                next();
+              });
+            },
+            next
+          );
+
+        });
+
+        async.series(jobs, done);
+      });
+    });
   });
 
   describe('job', function() {
@@ -1616,6 +1655,7 @@ describe('jenkins', function() {
         ' Build',
         '  - get (callback)',
         '  - stop (callback)',
+        '  - term (callback)',
         '  - log (callback)',
         '  - logStream (eventemitter)',
         ' CrumbIssuer',

@@ -5,7 +5,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 ## Documentation
 
  * jenkins: [init](#init), [info](#info)
- * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop)
+ * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
@@ -244,6 +244,24 @@ Usage
 
 ``` javascript
 jenkins.build.stop('example', 1, function(err) {
+  if (err) throw err;
+});
+```
+
+<a name="build-term"></a>
+### jenkins.build.term(options, callback)
+
+Terminates build.
+
+Options
+
+ * name (String): job name
+ * number (Integer): build number
+
+Usage
+
+``` javascript
+jenkins.build.term('example', 1, function(err) {
   if (err) throw err;
 });
 ```
