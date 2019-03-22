@@ -273,6 +273,21 @@ describe('jenkins', function() {
         });
       });
 
+      it('should not error on 302', function(done) {
+        this.nock
+          .post('/job/' + this.jobName + '/build')
+          .reply(302, '', { location: 'http://localhost:8080/queue/item/5/' });
+
+        this.jenkins.job.build(this.jobName, function(err, number) {
+          should.not.exist(err);
+
+          number.should.be.type('number');
+          number.should.be.above(0);
+
+          done();
+        });
+      });
+
       it('should start build with token', function(done) {
         this.nock
           .post('/job/' + this.jobName + '/build?token=secret')
