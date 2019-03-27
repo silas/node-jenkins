@@ -1,4 +1,4 @@
-# Jenkins [![Build Status](https://secure.travis-ci.org/silas/node-jenkins.png?branch=master)](http://travis-ci.org/silas/node-jenkins)
+# Jenkins
 
 This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
