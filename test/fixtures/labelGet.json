@@ -1,0 +1,22 @@
+{
+  "_class": "hudson.model.labels.LabelAtom",
+  "actions": [],
+  "busyExecutors": 0,
+  "clouds": [],
+  "description": null,
+  "idleExecutors": 2,
+  "loadStatistics": {
+    "_class": "hudson.model.Label$1"
+  },
+  "name": "master",
+  "nodes": [
+    {
+      "_class": "hudson.model.Hudson",
+      "nodeName": ""
+    }
+  ],
+  "offline": false,
+  "tiedJobs": [],
+  "totalExecutors": 2,
+  "propertiesList": []
+}

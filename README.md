@@ -7,6 +7,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
  * jenkins: [init](#init), [info](#info)
  * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
+ * label: [get](#label-get)
  * node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
  * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
  * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
@@ -546,6 +547,52 @@ Result
     "url": "http://localhost:8080/job/example/"
   }
 ]
+```
+
+<a name="label-get"></a>
+### jenkins.label.get(options, callback)
+
+Get label information.
+
+Options
+
+ * name (String): label name
+
+Usage
+
+``` javascript
+jenkins.label.get('master', function(err, data) {
+  if (err) throw err;
+
+  console.log('label', data);
+});
+```
+
+Result
+
+``` json
+{
+  "_class": "hudson.model.labels.LabelAtom",
+  "actions": [],
+  "busyExecutors": 0,
+  "clouds": [],
+  "description": null,
+  "idleExecutors": 2,
+  "loadStatistics": {
+    "_class": "hudson.model.Label$1"
+  },
+  "name": "master",
+  "nodes": [
+    {
+      "_class": "hudson.model.Hudson",
+      "nodeName": ""
+    }
+  ],
+  "offline": false,
+  "tiedJobs": [],
+  "totalExecutors": 2,
+  "propertiesList": []
+}
 ```
 
 <a name="node-config-get"></a>

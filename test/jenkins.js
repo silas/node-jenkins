@@ -752,6 +752,30 @@ describe('jenkins', function() {
     });
   });
 
+  describe('label', function() {
+    beforeEach(function(done) {
+      helper.setup({ test: this }, done);
+    });
+
+    describe('get', function() {
+      it('should get label details', function(done) {
+        this.nock
+          .get('/label/master/api/json')
+          .reply(200, fixtures.labelGet);
+
+        this.jenkins.label.get('master', function(err, label) {
+          should.not.exist(err);
+
+          should.exist(label);
+
+          label.should.have.properties('nodes');
+
+          done();
+        });
+      });
+    });
+  });
+
   describe('node', function() {
     beforeEach(function(done) {
       helper.setup({ node: true, test: this }, done);
@@ -1687,6 +1711,8 @@ describe('jenkins', function() {
         '  - exists (callback)',
         '  - get (callback)',
         '  - list (callback)',
+        ' Label',
+        '  - get (callback)',
         ' Node',
         '  - config (callback)',
         '  - create (callback)',
