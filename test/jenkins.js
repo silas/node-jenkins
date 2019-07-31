@@ -732,7 +732,7 @@ describe('jenkins', function() {
           done();
         });
       });
-      
+
       it('should list jobs with string options', function(done) {
         var self = this;
 
@@ -754,7 +754,7 @@ describe('jenkins', function() {
           done();
         });
       });
-      
+
       it('should list jobs with object options', function(done) {
         var self = this;
 
@@ -762,7 +762,7 @@ describe('jenkins', function() {
           .get('/job/test/api/json')
           .reply(200, fixtures.jobList);
 
-        self.jenkins.job.list({name: 'test'}, function(err, data) {
+        self.jenkins.job.list({ name: ['test'] }, function(err, data) {
           should.not.exist(err);
 
           should.exist(data);
