@@ -525,7 +525,11 @@ Result
 <a name="job-list"></a>
 ### jenkins.job.list(callback)
 
-List all jobs.
+List jobs.
+
+Options
+
+ * name (String, optional): folder name
 
 Usage
 
