@@ -733,50 +733,6 @@ describe('jenkins', function() {
         });
       });
 
-      it('should list jobs with string options', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/test/api/json')
-          .reply(200, fixtures.jobList);
-
-        self.jenkins.job.list('test', function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(job) {
-            job.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
-      it('should list jobs with object options', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/test/api/json')
-          .reply(200, fixtures.jobList);
-
-        self.jenkins.job.list({ name: ['test'] }, function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(job) {
-            job.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
       nit('should handle corrupt responses', function(done) {
         var data = '"trash';
 
