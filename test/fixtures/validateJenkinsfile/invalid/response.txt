@@ -1,5 +1,0 @@
-Errors encountered validating Jenkinsfile:
-WorkflowScript: 1: Ambiguous expression could be either a parameterless closure expression or an isolated open code block;
-   solution: Add an explicit closure parameter list, e.g. {it -> ...}, or force it to be treated as an open block by giving it a label, e.g. L:{...} @ line 1, column 1.
-   {}
-   ^

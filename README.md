@@ -4,7 +4,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 ## Documentation
 
- * jenkins: [init](#init), [info](#info)
+ * jenkins: [init](#init), [info](#info), [validateJenkinsfile](#validate-jenkinsfile)
  * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
  * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
  * label: [get](#label-get)
@@ -95,6 +95,50 @@ Result
       "url": "http://localhost:8080/"
     }
   ]
+}
+```
+
+<a name="validate-jenkinsfile"></a>
+### jenkins.validateJenkinsfile(Jenkinsfile, callback)
+
+Validates a Jenkinsfile.
+
+Usage
+
+``` javascript
+var jenkinsfile = getStringifiedJenkinsfileSomehow();
+
+jenkins.validateJenkinsfile(jenkinsfile, function(err, data) {
+  if (err) throw err;
+
+  console.log('info', data);
+});
+```
+
+Result
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "result": "success"
+  }
+}
+```
+
+_or_
+
+```json
+{
+  "status": "ok",
+  "data": {
+    "result": "failure",
+    "errors": [
+      {
+        "error": "some-error-message"
+      }
+    ]
+  }
 }
 ```
 

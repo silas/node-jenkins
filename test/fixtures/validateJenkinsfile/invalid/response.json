@@ -1,0 +1,11 @@
+{
+   "status": "ok",
+   "data": {
+       "result": "failure",
+       "errors": [
+           {
+               "error": "Ambiguous expression could be either a parameterless closure expression or an isolated open code block;\n   solution: Add an explicit closure parameter list, e.g. {it -> ...}, or force it to be treated as an open block by giving it a label, e.g. L:{...} @ line 1, column 1."
+           }
+       ]
+   }
+}

@@ -64,14 +64,17 @@ describe('jenkins', function() {
       var self = this;
 
       self.nock
-        .post('/pipeline-model-converter/validate')
+        .post('/pipeline-model-converter/validateJenkinsfile')
         .reply(200, fixtures.validateJenkinsfile.valid.response);
 
       self.jenkins.validateJenkinsfile(
         fixtures.validateJenkinsfile.valid.Jenkinsfile,
         function(err, res) {
+          var actual = res.body;
+          var expected = fixtures.validateJenkinsfile.valid.response;
           should.not.exist(err);
-          should.equal(res.body, fixtures.validateJenkinsfile.valid.response);
+          should.equal(actual.status, expected.status);
+          should.equal(actual.data.result, expected.data.result);
           done();
         }
       );
@@ -81,14 +84,17 @@ describe('jenkins', function() {
       var self = this;
 
       self.nock
-        .post('/pipeline-model-converter/validate')
+        .post('/pipeline-model-converter/validateJenkinsfile')
         .reply(200, fixtures.validateJenkinsfile.invalid.response);
 
-      self.jenkins.validateJenkinsfile('{}', function(err) {
-        should.exist(err);
-        err.message.should.containEql(fixtures.validateJenkinsfile.invalid.response);
-        done();
-      });
+      self.jenkins.validateJenkinsfile(
+        fixtures.validateJenkinsfile.invalid.Jenkinsfile,
+        function(err) {
+          should.exist(err);
+          err.message.should.containEql(fixtures.validateJenkinsfile.invalid.response);
+          done();
+        }
+      );
     });
   });
 
