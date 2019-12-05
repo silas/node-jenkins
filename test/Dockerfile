@@ -31,5 +31,6 @@ jdk-tool\n\
 script-security\n\
 command-launcher\n\
 cloudbees-folder\n\
+pipeline-model-definition\n\
 ' > /usr/share/jenkins/ref/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt

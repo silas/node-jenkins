@@ -59,6 +59,39 @@ describe('jenkins', function() {
     });
   });
 
+  describe('validateJenkinsfile', function() {
+    it('should return validation results', function(done) {
+      var self = this;
+
+      self.nock
+        .post('/pipeline-model-converter/validate')
+        .reply(200, fixtures.validateJenkinsfile.valid.response);
+
+      self.jenkins.validateJenkinsfile(
+        fixtures.validateJenkinsfile.valid.Jenkinsfile,
+        function(err, res) {
+          should.not.exist(err);
+          should.equal(res.body, fixtures.validateJenkinsfile.valid.response);
+          done();
+        }
+      );
+    });
+
+    it('should determine if linting errors are present', function(done) {
+      var self = this;
+
+      self.nock
+        .post('/pipeline-model-converter/validate')
+        .reply(200, fixtures.validateJenkinsfile.invalid.response);
+
+      self.jenkins.validateJenkinsfile('{}', function(err) {
+        should.exist(err);
+        err.message.should.containEql(fixtures.validateJenkinsfile.invalid.response);
+        done();
+      });
+    });
+  });
+
   describe('build', function() {
     beforeEach(function(done) {
       helper.setup({ job: true, test: this }, done);
@@ -1734,6 +1767,7 @@ describe('jenkins', function() {
         'Jenkins',
         ' - info (callback)',
         ' - get (callback)',
+        ' - validateJenkinsfile (callback)',
         ' - walk (sync)',
         ' Build',
         '  - get (callback)',
