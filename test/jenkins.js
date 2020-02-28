@@ -1710,6 +1710,37 @@ describe('jenkins', function() {
     });
   });
 
+  describe('plugin', function() {
+    beforeEach(function(done) {
+      helper.setup({ test: this }, done);
+    });
+
+    describe('list', function() {
+      it('should list plugins', function(done) {
+        var self = this;
+
+        self.nock
+          .get('/pluginManager/api/json?depth=2')
+          .reply(200, fixtures.pluginList);
+
+        self.jenkins.plugin.list({ depth: 2 }, function(err, plugins) {
+          should.not.exist(err);
+
+          should.exist(plugins);
+
+          plugins.should.be.instanceof(Array);
+          plugins.should.not.be.empty;
+
+          plugins.forEach(function(plugin) {
+            plugin.should.have.properties(['longName', 'shortName', 'dependencies']);
+          });
+
+          done();
+        });
+      });
+    });
+  });
+
   describe('walk', function() {
     it('should work', function() {
       var setup = function(tree, depth, data) {
@@ -1770,6 +1801,8 @@ describe('jenkins', function() {
         '  - enable (callback)',
         '  - exists (callback)',
         '  - get (callback)',
+        '  - list (callback)',
+        ' Plugin',
         '  - list (callback)',
         ' Queue',
         '  - list (callback)',
