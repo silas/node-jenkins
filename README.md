@@ -1072,7 +1072,7 @@ jenkins.view.config('example', function(err, data) {
 ```
 
 <a name="view-config-set"></a>
-### jenkins.job.config(options, callback)
+### jenkins.view.config(options, callback)
 
 Update view XML configuration.
 
