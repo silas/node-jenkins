@@ -88,6 +88,7 @@ describe('utils', function() {
   describe('isFileLike', function() {
     it('should work', function() {
       should(utils.isFileLike()).is.false;
+      should(utils.isFileLike(null)).is.false;
       should(utils.isFileLike('test')).is.false;
       should(utils.isFileLike({})).is.false;
 
