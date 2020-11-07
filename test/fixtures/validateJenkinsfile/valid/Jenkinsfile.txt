@@ -1,0 +1,40 @@
+#!/usr/bin/env groovy
+
+pipeline {
+	agent {
+		docker {
+			image 'image:tag'
+		}
+	}
+	stages {
+		stage('Initialize') {
+			steps {
+				sh 'some shell script'
+			}
+		}
+
+		stage('Lint') {
+			steps {
+				sh 'some shell script'
+			}
+		}
+
+		stage('Test') {
+			steps {
+				sh 'some shell script'
+			}
+		}
+
+		stage('Build') {
+			steps {
+				sh 'some shell script'
+			}
+		}
+
+		stage('Deliver') {
+			steps {
+				sh 'some shell script'
+			}
+		}
+	}
+}

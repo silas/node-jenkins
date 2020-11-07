@@ -59,6 +59,45 @@ describe('jenkins', function() {
     });
   });
 
+  describe('validateJenkinsfile', function() {
+    it('should return validation results', function(done) {
+      var self = this;
+
+      self.nock
+        .post('/pipeline-model-converter/validateJenkinsfile')
+        .reply(200, fixtures.validateJenkinsfile.valid.response);
+
+      self.jenkins.validateJenkinsfile(
+        fixtures.validateJenkinsfile.valid.Jenkinsfile,
+        function(err, res) {
+          var actual = res.body;
+          var expected = fixtures.validateJenkinsfile.valid.response;
+          should.not.exist(err);
+          should.equal(actual.status, expected.status);
+          should.equal(actual.data.result, expected.data.result);
+          done();
+        }
+      );
+    });
+
+    it('should determine if linting errors are present', function(done) {
+      var self = this;
+
+      self.nock
+        .post('/pipeline-model-converter/validateJenkinsfile')
+        .reply(200, fixtures.validateJenkinsfile.invalid.response);
+
+      self.jenkins.validateJenkinsfile(
+        fixtures.validateJenkinsfile.invalid.Jenkinsfile,
+        function(err) {
+          should.exist(err);
+          err.message.should.containEql(fixtures.validateJenkinsfile.invalid.response);
+          done();
+        }
+      );
+    });
+  });
+
   describe('build', function() {
     beforeEach(function(done) {
       helper.setup({ job: true, test: this }, done);
@@ -1765,6 +1804,7 @@ describe('jenkins', function() {
         'Jenkins',
         ' - info (callback)',
         ' - get (callback)',
+        ' - validateJenkinsfile (callback)',
         ' - walk (sync)',
         ' Build',
         '  - get (callback)',
