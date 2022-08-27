@@ -6,7 +6,7 @@
 
 require('should');
 
-var async = require('async');
+var async_ = require('async');
 var fixtures = require('fixturefiles');
 var nock = require('nock');
 var uuid = require('node-uuid');
@@ -19,7 +19,7 @@ var NOCK_REC = process.env.NOCK_REC === 'true';
 var NOCK_OFF = process.env.NOCK_OFF === 'true' || NOCK_REC;
 
 var URL = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
-var CRUMB_ISSUER = NOCK_OFF && process.env.CRUMB_ISSUER === 'true';
+var CRUMB_ISSUER = NOCK_OFF && process.env.CRUMB_ISSUER !== 'false';
 
 /**
  * Setup.
@@ -72,7 +72,7 @@ function setup(opts, done) {
     };
   }
 
-  async.auto(jobs, function(err) {
+  async_.auto(jobs, function(err) {
     if (err) return done(err);
 
     if (NOCK_REC) nock.recorder.rec();
@@ -124,7 +124,7 @@ function cleanup(opts, done) {
       return name.match(/^test-job-/);
     });
 
-    async.map(names, function(name, next) {
+    async_.map(names, function(name, next) {
       test.jenkins.job.destroy(name, next);
     }, next);
   }];
@@ -136,7 +136,7 @@ function cleanup(opts, done) {
       return name.match(/^test-node-/);
     });
 
-    async.map(names, function(name, next) {
+    async_.map(names, function(name, next) {
       test.jenkins.node.destroy(name, next);
     }, next);
   }];
@@ -148,12 +148,12 @@ function cleanup(opts, done) {
       return name.match(/^test-view-/);
     });
 
-    async.map(names, function(name, next) {
+    async_.map(names, function(name, next) {
       test.jenkins.view.destroy(name, next);
     }, next);
   }];
 
-  async.auto(jobs, done);
+  async_.auto(jobs, done);
 }
 
 /**

@@ -7,19 +7,18 @@
     "papi": "^0.29.0"
   },
   "devDependencies": {
-    "async": "^2.6.1",
+    "async": "^3.2.4",
     "bluebird": "^3.5.1",
     "fixturefiles": "^0.3.0",
-    "form-data": "^2.3.2",
+    "form-data": "^4.0.0",
     "istanbul": "^0.4.5",
-    "jscs": "^3.0.7",
     "jshint": "^2.9.5",
     "lodash": "^4.17.10",
-    "mocha": "^5.2.0",
-    "nock": "^9.3.2",
+    "mocha": "^10.0.0",
+    "nock": "^13.2.9",
     "node-uuid": "^1.4.8",
     "should": "^13.2.1",
-    "sinon": "^5.1.1"
+    "sinon": "^14.0.0"
   },
   "keywords": [
     "jenkins"
@@ -36,6 +35,6 @@
   "scripts": {
     "acceptance": "NOCK_OFF=true NOCK_REC=false JENKINS_TEST_URL=http://admin:admin@localhost:8080 mocha --recursive --check-leaks --timeout 15000",
     "cover": "istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000 && open coverage/lcov-report/index.html",
-    "test": "jshint lib test && jscs lib test && istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000"
+    "test": "jshint lib test && istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000"
   }
 }

@@ -6,8 +6,7 @@
  * Module dependencies.
  */
 
-var async = require('async');
-var bluebird = require('bluebird');
+var async_ = require('async');
 var fixtures = require('fixturefiles');
 var lodash = require('lodash');
 var nock = require('nock');
@@ -85,7 +84,7 @@ describe('jenkins', function() {
         });
 
         jobs.push(function(next) {
-          async.retry(
+          async_.retry(
             100,
             function(next) {
               self.jenkins.build.get(self.jobName, 1, function(err, data) {
@@ -102,7 +101,7 @@ describe('jenkins', function() {
 
         });
 
-        async.series(jobs, done);
+        async_.series(jobs, done);
       });
 
       it('should return build log', function(done) {
@@ -125,7 +124,7 @@ describe('jenkins', function() {
         });
 
         jobs.push(function(next) {
-          async.retry(
+          async_.retry(
             100,
             function(next) {
               self.jenkins.build.log(self.jobName, 1, function(err, data) {
@@ -140,7 +139,7 @@ describe('jenkins', function() {
 
         });
 
-        async.series(jobs, done);
+        async_.series(jobs, done);
       });
 
       nit('should get with options', function(done) {
@@ -194,7 +193,7 @@ describe('jenkins', function() {
         });
 
         jobs.push(function(next) {
-          async.retry(
+          async_.retry(
             100,
             function(next) {
               self.jenkins.build.stop(self.jobName, 1, function(err) {
@@ -208,12 +207,12 @@ describe('jenkins', function() {
 
         });
 
-        async.series(jobs, done);
+        async_.series(jobs, done);
       });
     });
 
     describe('term', function() {
-      it('should terminate build', function(done) {
+      nit('should terminate build', function(done) {
         var self = this;
 
         var jobs = [];
@@ -233,7 +232,7 @@ describe('jenkins', function() {
         });
 
         jobs.push(function(next) {
-          async.retry(
+          async_.retry(
             100,
             function(next) {
               self.jenkins.build.term(self.jobName, 1, function(err) {
@@ -247,7 +246,7 @@ describe('jenkins', function() {
 
         });
 
-        async.series(jobs, done);
+        async_.series(jobs, done);
       });
     });
   });
@@ -381,7 +380,7 @@ describe('jenkins', function() {
           self.jenkins.job.config(self.jobName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.not.eql(results.after);
@@ -420,7 +419,7 @@ describe('jenkins', function() {
           self.jenkins.job.exists(name, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(false);
@@ -459,7 +458,7 @@ describe('jenkins', function() {
           self.jenkins.job.exists(name, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(false);
@@ -513,7 +512,7 @@ describe('jenkins', function() {
           self.jenkins.job.exists(self.jobName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(true);
@@ -564,7 +563,7 @@ describe('jenkins', function() {
           self.jenkins.job.get(self.jobName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.buildable.should.equal(true);
@@ -607,7 +606,7 @@ describe('jenkins', function() {
           self.jenkins.job.get(self.jobName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.buildable.should.equal(false);
@@ -887,7 +886,7 @@ describe('jenkins', function() {
           });
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(true);
@@ -954,7 +953,7 @@ describe('jenkins', function() {
           });
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.beforeDisable.temporarilyOffline.should.equal(false);
@@ -1012,7 +1011,7 @@ describe('jenkins', function() {
           });
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.temporarilyOffline.should.equal(true);
@@ -1046,7 +1045,7 @@ describe('jenkins', function() {
         var jobs = {};
 
         jobs.beforeDisconnect = function(next) {
-          async.retry(
+          async_.retry(
             1000,
             function(next) {
               self.jenkins.node.get(self.nodeName, function(err, node) {
@@ -1083,7 +1082,7 @@ describe('jenkins', function() {
           });
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.beforeDisconnect.offline.should.equal(false);
@@ -1225,7 +1224,7 @@ describe('jenkins', function() {
         var stop = false;
 
         jobs.list = function(next) {
-          async.retry(
+          async_.retry(
             1000,
             function(next) {
               self.jenkins.queue.list(function(err, queue) {
@@ -1246,7 +1245,7 @@ describe('jenkins', function() {
         };
 
         jobs.builds = function(next) {
-          async.retry(
+          async_.retry(
             1000,
             function(next) {
               if (stop) return next();
@@ -1262,7 +1261,7 @@ describe('jenkins', function() {
           );
         };
 
-        async.parallel(jobs, function(err) {
+        async_.parallel(jobs, function(err) {
           should.not.exist(err);
 
           done();
@@ -1386,7 +1385,7 @@ describe('jenkins', function() {
           self.jenkins.view.exists(name, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(false);
@@ -1460,7 +1459,7 @@ describe('jenkins', function() {
           self.jenkins.view.config(self.viewName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.containEql(src);
@@ -1497,7 +1496,7 @@ describe('jenkins', function() {
           self.jenkins.view.exists(self.viewName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.should.equal(true);
@@ -1652,7 +1651,7 @@ describe('jenkins', function() {
           self.jenkins.view.get(self.viewName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.jobs.should.be.empty;
@@ -1698,7 +1697,7 @@ describe('jenkins', function() {
           self.jenkins.view.get(self.viewName, next);
         }];
 
-        async.auto(jobs, function(err, results) {
+        async_.auto(jobs, function(err, results) {
           should.not.exist(err);
 
           results.before.jobs.should.not.be.empty;
@@ -1827,7 +1826,7 @@ describe('jenkins', function() {
     before(function() {
       this.jenkins = jenkins({
         baseUrl: this.url,
-        promisify: bluebird.fromCallback,
+        promisify: true,
       });
     });
 
