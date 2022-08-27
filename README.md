@@ -1284,9 +1284,9 @@ $ npm test
 Run acceptance tests
 
 ```sh
-$ docker-compose -f test/docker-compose.yml up -d
+$ docker compose -f test/compose.yml up -d --build
 $ npm run acceptance
-$ docker-compose -f test/docker-compose.yml down
+$ docker compose -f test/compose.yml down
 ```
 
 ## License
