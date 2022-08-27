@@ -1,722 +1,722 @@
 {
-	"_class": "hudson.LocalPluginManager",
-	"plugins": [
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "junit",
-					"version": "1.2"
-				},
-				{
-					"optional": false,
-					"shortName": "script-security",
-					"version": "1.13"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Matrix Project Plugin",
-			"pinned": false,
-			"shortName": "matrix-project",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin",
-			"version": "1.7.1"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "structs",
-					"version": "1.2"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "JUnit Plugin",
-			"pinned": false,
-			"shortName": "junit",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin",
-			"version": "1.19"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Structs Plugin",
-			"pinned": false,
-			"shortName": "structs",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/Structs+plugin",
-			"version": "1.5"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Script Security Plugin",
-			"pinned": false,
-			"shortName": "script-security",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin",
-			"version": "1.27"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "javadoc",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "junit",
-					"version": "1.6"
-				},
-				{
-					"optional": false,
-					"shortName": "mailer",
-					"version": "1.7"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.1;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Maven Integration plugin",
-			"pinned": false,
-			"shortName": "maven-plugin",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin",
-			"version": "2.14"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Javadoc Plugin",
-			"pinned": false,
-			"shortName": "javadoc",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/Javadoc+Plugin",
-			"version": "1.4"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "display-url-api",
-					"version": "0.2"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Jenkins Mailer Plugin",
-			"pinned": false,
-			"shortName": "mailer",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/Mailer",
-			"version": "1.18"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "junit",
-					"version": "1.3"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Display URL API",
-			"pinned": false,
-			"shortName": "display-url-api",
-			"supportsDynamicLoad": "YES",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/Display+URL+API+Plugin",
-			"version": "0.5"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Token Macro Plugin",
-			"pinned": false,
-			"shortName": "token-macro",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/Token+Macro+Plugin",
-			"version": "2.0"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": false,
-			"longName": "JavaScript GUI Lib: ACE Editor bundle plugin",
-			"pinned": false,
-			"shortName": "ace-editor",
-			"supportsDynamicLoad": "YES",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/ACE+Editor+Plugin",
-			"version": "1.1"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "tasks",
-					"version": "4.46;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "warnings",
-					"version": "4.49;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "findbugs",
-					"version": "4.62;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "dry",
-					"version": "2.42;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "pmd",
-					"version": "3.42;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "checkstyle",
-					"version": "3.43;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Static Analysis Collector Plug-in",
-			"pinned": false,
-			"shortName": "analysis-collector",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/tgeIAg",
-			"version": "1.50"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Task Scanner Plug-in",
-			"pinned": false,
-			"shortName": "tasks",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/XoAs",
-			"version": "4.50"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.3"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "junit",
-					"version": "1.0"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Dashboard View",
-			"pinned": false,
-			"shortName": "dashboard-view",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View",
-			"version": "2.9.10"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.4"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "ant",
-					"version": "1.1;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Static Analysis Utilities",
-			"pinned": false,
-			"shortName": "analysis-core",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/CwDgAQ",
-			"version": "1.82"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "structs",
-					"version": "1.3"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Ant Plugin",
-			"pinned": false,
-			"shortName": "ant",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "https://wiki.jenkins-ci.org/display/JENKINS/Ant+Plugin",
-			"version": "1.4"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.82"
-				},
-				{
-					"optional": false,
-					"shortName": "script-security",
-					"version": "1.17"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "violations",
-					"version": "0.7.11;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Warnings Plug-in",
-			"pinned": false,
-			"shortName": "warnings",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/G4CGAQ",
-			"version": "4.59"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "1.399"
-				},
-				{
-					"optional": false,
-					"shortName": "ant",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "javadoc",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "external-monitor-job",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "ldap",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "pam-auth",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "mailer",
-					"version": "1.2"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-auth",
-					"version": "1.0.2"
-				},
-				{
-					"optional": false,
-					"shortName": "windows-slaves",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "antisamy-markup-formatter",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.0"
-				},
-				{
-					"optional": false,
-					"shortName": "junit",
-					"version": "1.0"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": false,
-			"longName": "Jenkins Violations plugin",
-			"pinned": false,
-			"shortName": "violations",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "wiki.jenkins-ci.org/display/JENKINS/Violations",
-			"version": "0.7.11"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "FindBugs Plug-in",
-			"pinned": false,
-			"shortName": "findbugs",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/GYAs",
-			"version": "4.69"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "DRY Plug-in",
-			"pinned": false,
-			"shortName": "dry",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/X4IuAg",
-			"version": "2.46"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "PMD Plug-in",
-			"pinned": false,
-			"shortName": "pmd",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/GAAHAQ",
-			"version": "3.46"
-		},
-		{
-			"active": true,
-			"backupVersion": null,
-			"bundled": false,
-			"deleted": false,
-			"dependencies": [
-				{
-					"optional": false,
-					"shortName": "matrix-project",
-					"version": "1.2.1"
-				},
-				{
-					"optional": false,
-					"shortName": "analysis-core",
-					"version": "1.80"
-				},
-				{
-					"optional": false,
-					"shortName": "maven-plugin",
-					"version": "2.9"
-				},
-				{
-					"optional": true,
-					"shortName": "dashboard-view",
-					"version": "2.9.4;resolution:=optional"
-				},
-				{
-					"optional": true,
-					"shortName": "token-macro",
-					"version": "1.10;resolution:=optional"
-				}
-			],
-			"downgradable": false,
-			"enabled": true,
-			"hasUpdate": true,
-			"longName": "Checkstyle Plug-in",
-			"pinned": false,
-			"shortName": "checkstyle",
-			"supportsDynamicLoad": "MAYBE",
-			"url": "http://wiki.jenkins-ci.org/x/GYCGAQ",
-			"version": "3.47"
-		}
-	]
+  "_class": "hudson.LocalPluginManager",
+  "plugins": [
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "junit",
+          "version": "1.2"
+        },
+        {
+          "optional": false,
+          "shortName": "script-security",
+          "version": "1.13"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Matrix Project Plugin",
+      "pinned": false,
+      "shortName": "matrix-project",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/Matrix+Project+Plugin",
+      "version": "1.7.1"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "structs",
+          "version": "1.2"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "JUnit Plugin",
+      "pinned": false,
+      "shortName": "junit",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/JUnit+Plugin",
+      "version": "1.19"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Structs Plugin",
+      "pinned": false,
+      "shortName": "structs",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/Structs+plugin",
+      "version": "1.5"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Script Security Plugin",
+      "pinned": false,
+      "shortName": "script-security",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/Script+Security+Plugin",
+      "version": "1.27"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "javadoc",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "junit",
+          "version": "1.6"
+        },
+        {
+          "optional": false,
+          "shortName": "mailer",
+          "version": "1.7"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.1;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Maven Integration plugin",
+      "pinned": false,
+      "shortName": "maven-plugin",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin",
+      "version": "2.14"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Javadoc Plugin",
+      "pinned": false,
+      "shortName": "javadoc",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/Javadoc+Plugin",
+      "version": "1.4"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "display-url-api",
+          "version": "0.2"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Jenkins Mailer Plugin",
+      "pinned": false,
+      "shortName": "mailer",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/Mailer",
+      "version": "1.18"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "junit",
+          "version": "1.3"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Display URL API",
+      "pinned": false,
+      "shortName": "display-url-api",
+      "supportsDynamicLoad": "YES",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/Display+URL+API+Plugin",
+      "version": "0.5"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Token Macro Plugin",
+      "pinned": false,
+      "shortName": "token-macro",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/Token+Macro+Plugin",
+      "version": "2.0"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": false,
+      "longName": "JavaScript GUI Lib: ACE Editor bundle plugin",
+      "pinned": false,
+      "shortName": "ace-editor",
+      "supportsDynamicLoad": "YES",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/ACE+Editor+Plugin",
+      "version": "1.1"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "tasks",
+          "version": "4.46;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "warnings",
+          "version": "4.49;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "findbugs",
+          "version": "4.62;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "dry",
+          "version": "2.42;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "pmd",
+          "version": "3.42;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "checkstyle",
+          "version": "3.43;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Static Analysis Collector Plug-in",
+      "pinned": false,
+      "shortName": "analysis-collector",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/tgeIAg",
+      "version": "1.50"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Task Scanner Plug-in",
+      "pinned": false,
+      "shortName": "tasks",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/XoAs",
+      "version": "4.50"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.3"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "junit",
+          "version": "1.0"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Dashboard View",
+      "pinned": false,
+      "shortName": "dashboard-view",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/display/JENKINS/Dashboard+View",
+      "version": "2.9.10"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.4"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "ant",
+          "version": "1.1;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Static Analysis Utilities",
+      "pinned": false,
+      "shortName": "analysis-core",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/CwDgAQ",
+      "version": "1.82"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "structs",
+          "version": "1.3"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Ant Plugin",
+      "pinned": false,
+      "shortName": "ant",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "https://wiki.jenkins-ci.org/display/JENKINS/Ant+Plugin",
+      "version": "1.4"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.82"
+        },
+        {
+          "optional": false,
+          "shortName": "script-security",
+          "version": "1.17"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "violations",
+          "version": "0.7.11;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Warnings Plug-in",
+      "pinned": false,
+      "shortName": "warnings",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/G4CGAQ",
+      "version": "4.59"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "1.399"
+        },
+        {
+          "optional": false,
+          "shortName": "ant",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "javadoc",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "external-monitor-job",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "ldap",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "pam-auth",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "mailer",
+          "version": "1.2"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-auth",
+          "version": "1.0.2"
+        },
+        {
+          "optional": false,
+          "shortName": "windows-slaves",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "antisamy-markup-formatter",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.0"
+        },
+        {
+          "optional": false,
+          "shortName": "junit",
+          "version": "1.0"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": false,
+      "longName": "Jenkins Violations plugin",
+      "pinned": false,
+      "shortName": "violations",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "wiki.jenkins-ci.org/display/JENKINS/Violations",
+      "version": "0.7.11"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "FindBugs Plug-in",
+      "pinned": false,
+      "shortName": "findbugs",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/GYAs",
+      "version": "4.69"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "DRY Plug-in",
+      "pinned": false,
+      "shortName": "dry",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/X4IuAg",
+      "version": "2.46"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "PMD Plug-in",
+      "pinned": false,
+      "shortName": "pmd",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/GAAHAQ",
+      "version": "3.46"
+    },
+    {
+      "active": true,
+      "backupVersion": null,
+      "bundled": false,
+      "deleted": false,
+      "dependencies": [
+        {
+          "optional": false,
+          "shortName": "matrix-project",
+          "version": "1.2.1"
+        },
+        {
+          "optional": false,
+          "shortName": "analysis-core",
+          "version": "1.80"
+        },
+        {
+          "optional": false,
+          "shortName": "maven-plugin",
+          "version": "2.9"
+        },
+        {
+          "optional": true,
+          "shortName": "dashboard-view",
+          "version": "2.9.4;resolution:=optional"
+        },
+        {
+          "optional": true,
+          "shortName": "token-macro",
+          "version": "1.10;resolution:=optional"
+        }
+      ],
+      "downgradable": false,
+      "enabled": true,
+      "hasUpdate": true,
+      "longName": "Checkstyle Plug-in",
+      "pinned": false,
+      "shortName": "checkstyle",
+      "supportsDynamicLoad": "MAYBE",
+      "url": "http://wiki.jenkins-ci.org/x/GYCGAQ",
+      "version": "3.47"
+    }
+  ]
 }

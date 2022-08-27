@@ -3,28 +3,33 @@
   "description": "Jenkins client",
   "version": "0.28.1",
   "main": "./lib",
+  "files": [
+    "./lib"
+  ],
   "dependencies": {
-    "papi": "^0.29.0"
+    "papi": "^1.1.0"
   },
   "devDependencies": {
     "async": "^3.2.4",
-    "bluebird": "^3.5.1",
+    "debug": "^4.3.1",
     "fixturefiles": "^0.3.0",
     "form-data": "^4.0.0",
-    "istanbul": "^0.4.5",
-    "jshint": "^2.9.5",
-    "lodash": "^4.17.10",
     "mocha": "^10.0.0",
     "nock": "^13.2.9",
     "node-uuid": "^1.4.8",
+    "nyc": "^15.1.0",
+    "prettier": "^2.7.1",
     "should": "^13.2.1",
     "sinon": "^14.0.0"
+  },
+  "scripts": {
+    "format": "prettier -w .",
+    "test": "prettier -c . && nyc mocha -- --recursive --check-leaks --timeout 15000",
+    "acceptance": "NOCK_OFF=true NOCK_REC=false JENKINS_TEST_URL=http://admin:admin@localhost:8080 mocha --recursive --check-leaks --timeout 15000"
   },
   "keywords": [
     "jenkins"
   ],
-  "author": "Silas Sewell <silas@sewell.org>",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/silas/node-jenkins.git"
@@ -32,9 +37,6 @@
   "bugs": {
     "url": "https://github.com/silas/node-jenkins/issues"
   },
-  "scripts": {
-    "acceptance": "NOCK_OFF=true NOCK_REC=false JENKINS_TEST_URL=http://admin:admin@localhost:8080 mocha --recursive --check-leaks --timeout 15000",
-    "cover": "istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000 && open coverage/lcov-report/index.html",
-    "test": "jshint lib test && istanbul cover ./node_modules/.bin/_mocha -- --recursive --check-leaks --timeout 15000"
-  }
+  "author": "Silas Sewell <silas@sewell.org>",
+  "license": "MIT"
 }

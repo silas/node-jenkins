@@ -1,164 +1,158 @@
-'use strict';
+require("should");
 
-/**
- * Module dependencies.
- */
+const async_ = require("async");
+const fixtures = require("fixturefiles");
+const nock = require("nock");
+const uuid = require("node-uuid");
 
-require('should');
+const NOCK_REC = process.env.NOCK_REC === "true";
+const NOCK_OFF = process.env.NOCK_OFF === "true" || NOCK_REC;
 
-var async_ = require('async');
-var fixtures = require('fixturefiles');
-var nock = require('nock');
-var uuid = require('node-uuid');
+const URL = process.env.JENKINS_TEST_URL || "http://localhost:8080";
+const CRUMB_ISSUER = NOCK_OFF && process.env.CRUMB_ISSUER !== "false";
 
-/**
- * Variables.
- */
+function setup(opts) {
+  return new Promise((resolve, reject) => {
+    const test = opts.test;
+    const jenkins = test.jenkins;
 
-var NOCK_REC = process.env.NOCK_REC === 'true';
-var NOCK_OFF = process.env.NOCK_OFF === 'true' || NOCK_REC;
+    const unique = function (name) {
+      if (NOCK_OFF) {
+        name += "-" + uuid.v4();
+      }
+      return "test-" + name;
+    };
 
-var URL = process.env.JENKINS_TEST_URL || 'http://localhost:8080';
-var CRUMB_ISSUER = NOCK_OFF && process.env.CRUMB_ISSUER !== 'false';
+    test.jobName = unique("job");
+    test.nodeName = unique("node");
+    test.viewName = unique("view");
 
-/**
- * Setup.
- */
-
-function setup(opts, done) {
-  var test = opts.test;
-  var jenkins = test.jenkins;
-
-  var unique = function(name) {
-    if (NOCK_OFF) {
-      name += '-' + uuid.v4();
+    if (!NOCK_OFF) {
+      nock.disableNetConnect();
+      return resolve();
     }
-    return 'test-' + name;
-  };
 
-  test.jobName = unique('job');
-  test.nodeName = unique('node');
-  test.viewName = unique('view');
+    const jobs = {};
 
-  if (!NOCK_OFF) {
-    nock.disableNetConnect();
-    return done();
-  }
-
-  var jobs = {};
-
-  if (opts.job) {
-    jobs.createJob = function(next) {
-      jenkins.job.create(test.jobName, fixtures.jobCreate, next);
-    };
-  }
-
-  if (opts.node) {
-    jobs.createNode = function(next) {
-      var opts = {
-        name: test.nodeName,
-        launcher: {
-          'stapler-class': 'hudson.slaves.CommandLauncher',
-          command: 'java -jar /usr/share/jenkins/ref/slave.jar',
-        },
+    if (opts.job) {
+      jobs.createJob = async function () {
+        return jenkins.job.create(test.jobName, fixtures.jobCreate);
       };
-      jenkins.node.create(opts, next);
-    };
-  }
+    }
 
-  if (opts.view) {
-    jobs.createView = function(next) {
-      jenkins.view.create(test.viewName, next);
-    };
-  }
+    if (opts.node) {
+      jobs.createNode = async function () {
+        const opts = {
+          name: test.nodeName,
+          launcher: {
+            "stapler-class": "hudson.slaves.CommandLauncher",
+            command: "java -jar /usr/share/jenkins/ref/slave.jar",
+          },
+        };
+        return jenkins.node.create(opts);
+      };
+    }
 
-  async_.auto(jobs, function(err) {
-    if (err) return done(err);
+    if (opts.view) {
+      jobs.createView = async function () {
+        return jenkins.view.create(test.viewName);
+      };
+    }
 
-    if (NOCK_REC) nock.recorder.rec();
+    async_.auto(jobs, function (err) {
+      if (err) return reject(err);
 
-    done();
+      if (NOCK_REC) nock.recorder.rec();
+
+      resolve();
+    });
   });
 }
 
-/**
- * Teardown.
- */
-
-function teardown(opts, done) {
+async function teardown(opts) {
   if (NOCK_REC) nock.restore();
-
-  done();
 }
 
-/**
- * Cleanup.
- */
+function cleanup(opts) {
+  return new Promise((resolve, reject) => {
+    const test = opts.test;
 
-function cleanup(opts, done) {
-  var test = opts.test;
+    if (!NOCK_OFF) {
+      nock.enableNetConnect();
+      return resolve();
+    }
 
-  if (!NOCK_OFF) {
-    nock.enableNetConnect();
-    return done();
-  }
+    const jobs = {};
 
-  var jobs = {};
+    jobs.listJobs = async function () {
+      return test.jenkins.job.list();
+    };
 
-  jobs.listJobs = function(next) {
-    test.jenkins.job.list(next);
-  };
+    jobs.listNodes = async function () {
+      return test.jenkins.node.list();
+    };
 
-  jobs.listNodes = function(next) {
-    test.jenkins.node.list(next);
-  };
+    jobs.listViews = async function () {
+      return test.jenkins.view.list();
+    };
 
-  jobs.listViews = function(next) {
-    test.jenkins.view.list(next);
-  };
+    jobs.destroyJobs = [
+      "listJobs",
+      async function (results) {
+        const names = results.listJobs
+          .map(function (job) {
+            return job.name;
+          })
+          .filter(function (name) {
+            return name.match(/^test-job-/);
+          });
 
-  jobs.destroyJobs = ['listJobs', function(results, next) {
-    var names = results.listJobs.map(function(job) {
-      return job.name;
-    }).filter(function(name) {
-      return name.match(/^test-job-/);
+        return async_.map(names, async function (name) {
+          return test.jenkins.job.destroy(name);
+        });
+      },
+    ];
+
+    jobs.destroyNodes = [
+      "listNodes",
+      async function (results) {
+        const names = results.listNodes
+          .map(function (node) {
+            return node.displayName;
+          })
+          .filter(function (name) {
+            return name.match(/^test-node-/);
+          });
+
+        return async_.map(names, async function (name) {
+          return test.jenkins.node.destroy(name);
+        });
+      },
+    ];
+
+    jobs.destroyViews = [
+      "listViews",
+      async function (results) {
+        const names = results.listViews
+          .map(function (node) {
+            return node.name;
+          })
+          .filter(function (name) {
+            return name.match(/^test-view-/);
+          });
+
+        return async_.map(names, async function (name) {
+          return test.jenkins.view.destroy(name);
+        });
+      },
+    ];
+
+    async_.auto(jobs, (err) => {
+      if (err) return reject(err);
+      resolve();
     });
-
-    async_.map(names, function(name, next) {
-      test.jenkins.job.destroy(name, next);
-    }, next);
-  }];
-
-  jobs.destroyNodes = ['listNodes', function(results, next) {
-    var names = results.listNodes.map(function(node) {
-      return node.displayName;
-    }).filter(function(name) {
-      return name.match(/^test-node-/);
-    });
-
-    async_.map(names, function(name, next) {
-      test.jenkins.node.destroy(name, next);
-    }, next);
-  }];
-
-  jobs.destroyViews = ['listViews', function(results, next) {
-    var names = results.listViews.map(function(node) {
-      return node.name;
-    }).filter(function(name) {
-      return name.match(/^test-view-/);
-    });
-
-    async_.map(names, function(name, next) {
-      test.jenkins.view.destroy(name, next);
-    }, next);
-  }];
-
-  async_.auto(jobs, done);
+  });
 }
-
-/**
- * Module exports.
- */
 
 exports.cleanup = cleanup;
 exports.config = { url: URL, crumbIssuer: CRUMB_ISSUER };

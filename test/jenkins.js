@@ -1,1913 +1,1045 @@
-'use strict';
+"use strict";
 
-/* jshint expr: true */
+const retry = require("async/retry");
+const debug = require("debug");
+const fixtures = require("fixturefiles");
+const nock = require("nock");
+const papi = require("papi");
+const should = require("should");
+const sinon = require("sinon");
+const uuid = require("node-uuid");
 
-/**
- * Module dependencies.
- */
+const helper = require("./helper");
+const Jenkins = require("../lib");
 
-var async_ = require('async');
-var fixtures = require('fixturefiles');
-var lodash = require('lodash');
-var nock = require('nock');
-var papi = require('papi');
-var should = require('should');
-var sinon = require('sinon');
-var uuid = require('node-uuid');
+const ndescribe = helper.ndescribe;
+const nit = helper.nit;
 
-var helper = require('./helper');
-var jenkins = require('../lib');
-
-var Jenkins = jenkins;
-
-var ndescribe = helper.ndescribe;
-var nit = helper.nit;
-
-/**
- * Tests.
- */
-
-describe('jenkins', function() {
-
-  beforeEach(function() {
+describe("jenkins", function () {
+  beforeEach(function () {
     this.sinon = sinon.createSandbox();
 
     this.url = helper.config.url;
     this.nock = nock(this.url);
-    this.jenkins = jenkins({
+    this.jenkins = new Jenkins({
       baseUrl: this.url,
       crumbIssuer: helper.config.crumbIssuer,
     });
+    this.jenkins.on("log", debug("jenkins:client"));
   });
 
-  afterEach(function(done) {
+  afterEach(async function () {
+    nock.cleanAll();
+
     this.sinon.restore();
 
-    helper.teardown({ test: this }, done);
+    return helper.teardown({ test: this });
   });
 
-  after(function(done) {
-    helper.cleanup({ test: this }, done);
+  after(async function () {
+    return helper.cleanup({ test: this });
   });
 
-  describe('exports', function() {
-    it('should support new on module', function() {
-      var j = new Jenkins(this.url);
-
-      should(j).be.an.instanceof(jenkins.Jenkins);
-    });
-  });
-
-  describe('build', function() {
-    beforeEach(function(done) {
-      helper.setup({ job: true, test: this }, done);
+  describe("build", function () {
+    beforeEach(async function () {
+      return helper.setup({ job: true, test: this });
     });
 
-    describe('get', function() {
-      it('should return build details', function(done) {
-        var self = this;
-
-        var jobs = [];
-
-        self.nock
-          .post('/job/' + self.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .get('/job/' + self.jobName + '/1/api/json')
+    describe("get", function () {
+      it("should return build details", async function () {
+        this.nock
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
+          .get("/job/" + this.jobName + "/1/api/json")
           .reply(200, fixtures.buildGet);
 
-        jobs.push(function(next) {
-          self.jenkins.job.build(self.jobName, function(err, number) {
-            should.not.exist(err);
+        await this.jenkins.job.build(this.jobName);
 
-            next(null, number);
-          });
+        const data = await retry(100, async () => {
+          return this.jenkins.build.get(this.jobName, 1);
         });
 
-        jobs.push(function(next) {
-          async_.retry(
-            100,
-            function(next) {
-              self.jenkins.build.get(self.jobName, 1, function(err, data) {
-                if (err) return setTimeout(function() { return next(err); }, 100);
-
-                data.should.have.property('number');
-                data.number.should.equal(1);
-
-                next();
-              });
-            },
-            next
-          );
-
-        });
-
-        async_.series(jobs, done);
+        should(data).have.property("number");
+        should(data.number).equal(1);
       });
 
-      it('should return build log', function(done) {
-        var self = this;
-
-        var jobs = [];
-
-        self.nock
-          .post('/job/' + self.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .post('/job/' + self.jobName + '/1/logText/progressiveText')
-          .reply(200, fixtures.consoleText, { 'Content-Type': 'text/plain;charset=UTF-8' });
-
-        jobs.push(function(next) {
-          self.jenkins.job.build(self.jobName, function(err, number) {
-            should.not.exist(err);
-
-            next(null, number);
-          });
-        });
-
-        jobs.push(function(next) {
-          async_.retry(
-            100,
-            function(next) {
-              self.jenkins.build.log(self.jobName, 1, function(err, data) {
-                if (err) return setTimeout(function() { return next(err); }, 100);
-                data.should.be.String().and.containEql('Started by user');
-
-                next();
-              });
-            },
-            next
-          );
-
-        });
-
-        async_.series(jobs, done);
-      });
-
-      nit('should get with options', function(done) {
+      it("should return build log", async function () {
         this.nock
-          .get('/job/test/1/api/json?tree=%5B*%5B*%5D%5D')
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
+          .post("/job/" + this.jobName + "/1/logText/progressiveText")
+          .reply(200, fixtures.consoleText, {
+            "Content-Type": "text/plain;charset=UTF-8",
+          });
+
+        await this.jenkins.job.build(this.jobName);
+
+        await retry(100, async () => {
+          return this.jenkins.build.log(this.jobName, 1);
+        });
+      });
+
+      nit("should get with options", async function () {
+        this.nock
+          .get("/job/test/1/api/json?tree=%5B*%5B*%5D%5D")
           .reply(200, fixtures.buildGet);
 
-        this.jenkins.build.get('test', 1, { tree: '[*[*]]' }, function(err, data) {
-          should.not.exist(err);
-
-          data.should.have.property('number');
-
-          done();
+        const data = await this.jenkins.build.get("test", 1, {
+          tree: "[*[*]]",
         });
+        should(data).have.property("number");
       });
 
-      nit('should return error when it does not exist', function(done) {
-        this.nock
-          .get('/job/test/2/api/json')
-          .reply(404);
+      nit("should return error when it does not exist", async function () {
+        this.nock.get("/job/test/2/api/json").reply(404);
 
-        this.jenkins.build.get('test', 2, function(err, data) {
-          should.exist(err);
-          should.equal(err.message, 'jenkins: build.get: test 2 not found');
-
-          should.not.exist(data);
-
-          done();
-        });
+        await shouldThrow(async () => {
+          await this.jenkins.build.get("test", 2);
+        }, "jenkins: build.get: test 2 not found");
       });
     });
 
-    describe('stop', function() {
-      it('should stop build', function(done) {
-        var self = this;
-
-        var jobs = [];
-
-        self.nock
-          .post('/job/' + self.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .post('/job/' + self.jobName + '/1/stop')
+    describe("stop", function () {
+      it("should stop build", async function () {
+        this.nock
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
+          .post("/job/" + this.jobName + "/1/stop")
           .reply(302);
 
-        jobs.push(function(next) {
-          self.jenkins.job.build(self.jobName, function(err, number) {
-            should.not.exist(err);
+        await this.jenkins.job.build(this.jobName);
 
-            next(null, number);
-          });
+        await retry(100, async () => {
+          return this.jenkins.build.stop(this.jobName, 1);
         });
-
-        jobs.push(function(next) {
-          async_.retry(
-            100,
-            function(next) {
-              self.jenkins.build.stop(self.jobName, 1, function(err) {
-                if (err) return setTimeout(function() { return next(err); }, 100);
-
-                next();
-              });
-            },
-            next
-          );
-
-        });
-
-        async_.series(jobs, done);
       });
     });
 
-    describe('term', function() {
-      nit('should terminate build', function(done) {
-        var self = this;
-
-        var jobs = [];
-
-        self.nock
-          .post('/job/' + self.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/1/' })
-          .post('/job/' + self.jobName + '/1/term')
+    describe("term", function () {
+      nit("should terminate build", async function () {
+        this.nock
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
+          .post("/job/" + this.jobName + "/1/term")
           .reply(200);
 
-        jobs.push(function(next) {
-          self.jenkins.job.build(self.jobName, function(err, number) {
-            should.not.exist(err);
+        await this.jenkins.job.build(this.jobName);
 
-            next(null, number);
-          });
+        await retry(100, async () => {
+          await this.jenkins.build.term(this.jobName, 1);
         });
-
-        jobs.push(function(next) {
-          async_.retry(
-            100,
-            function(next) {
-              self.jenkins.build.term(self.jobName, 1, function(err) {
-                if (err) return setTimeout(function() { return next(err); }, 100);
-
-                next();
-              });
-            },
-            next
-          );
-
-        });
-
-        async_.series(jobs, done);
       });
     });
   });
 
-  describe('job', function() {
-    beforeEach(function(done) {
-      helper.setup({ job: true, test: this }, done);
+  describe("job", function () {
+    beforeEach(async function () {
+      return helper.setup({ job: true, test: this });
     });
 
-    describe('build', function() {
-      it('should start build', function(done) {
+    describe("build", function () {
+      it("should start build", async function () {
         this.nock
-          .post('/job/' + this.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/5/" });
 
-        this.jenkins.job.build(this.jobName, function(err, number) {
-          should.not.exist(err);
-
-          number.should.be.type('number');
-          number.should.be.above(0);
-
-          done();
-        });
+        const number = await this.jenkins.job.build(this.jobName);
+        should(number).be.type("number");
+        should(number).be.above(0);
       });
 
-      it('should not error on 302', function(done) {
+      it("should not error on 302", async function () {
         this.nock
-          .post('/job/' + this.jobName + '/build')
-          .reply(302, '', { location: 'http://localhost:8080/queue/item/5/' });
+          .post("/job/" + this.jobName + "/build")
+          .reply(302, "", { location: "http://localhost:8080/queue/item/5/" });
 
-        this.jenkins.job.build(this.jobName, function(err, number) {
-          should.not.exist(err);
-
-          number.should.be.type('number');
-          number.should.be.above(0);
-
-          done();
-        });
+        const number = await this.jenkins.job.build(this.jobName);
+        should(number).be.type("number");
+        should(number).be.above(0);
       });
 
-      it('should start build with token', function(done) {
+      it("should start build with token", async function () {
         this.nock
-          .post('/job/' + this.jobName + '/build?token=secret')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/5/' });
+          .post("/job/" + this.jobName + "/build?token=secret")
+          .reply(201, "", { location: "http://localhost:8080/queue/item/5/" });
 
-        this.jenkins.job.build(this.jobName, { token: 'secret' }, function(err, number) {
-          should.not.exist(err);
-
-          number.should.be.type('number');
-          number.should.be.above(0);
-
-          done();
+        const number = await this.jenkins.job.build(this.jobName, {
+          token: "secret",
         });
+        should(number).be.type("number");
+        should(number).be.above(0);
       });
 
-      nit('should work with parameters', function(done) {
+      nit("should work with parameters", async function () {
         this.nock
-          .post('/job/test/buildWithParameters', { hello: 'world' })
+          .post("/job/test/buildWithParameters", { hello: "world" })
           .reply(201);
 
-        var opts = { parameters: { hello: 'world' } };
-
-        this.jenkins.job.build('test', opts, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
+        const opts = { parameters: { hello: "world" } };
+        await this.jenkins.job.build("test", opts);
       });
 
-      nit('should work with a token and parameters', function(done) {
+      nit("should work with a token and parameters", async function () {
         this.nock
-          .post('/job/test/buildWithParameters?token=secret', { hello: 'world' })
+          .post("/job/test/buildWithParameters?token=secret", {
+            hello: "world",
+          })
           .reply(201);
 
-        var opts = {
-          parameters: { hello: 'world' },
-          token: 'secret',
+        const opts = {
+          parameters: { hello: "world" },
+          token: "secret",
         };
-
-        this.jenkins.job.build('test', opts, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
+        await this.jenkins.job.build("test", opts);
       });
     });
 
-    describe('config', function() {
-      it('should get job config', function(done) {
+    describe("config", function () {
+      it("should get job config", async function () {
         this.nock
-          .get('/job/' + this.jobName + '/config.xml')
+          .get("/job/" + this.jobName + "/config.xml")
           .reply(200, fixtures.jobCreate);
 
-        this.jenkins.job.config(this.jobName, function(err, config) {
-          should.not.exist(err);
-
-          config.should.be.type('string');
-          config.should.containEql('<project>');
-
-          done();
-        });
+        const config = await this.jenkins.job.config(this.jobName);
+        should(config).be.type("string");
+        should(config).containEql("<project>");
       });
 
-      it('should update config', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/' + self.jobName + '/config.xml')
+      it("should update config", async function () {
+        this.nock
+          .get("/job/" + this.jobName + "/config.xml")
           .reply(200, fixtures.jobCreate)
-          .post('/job/' + self.jobName + '/config.xml')
+          .post("/job/" + this.jobName + "/config.xml")
           .reply(200)
-          .get('/job/' + self.jobName + '/config.xml')
+          .get("/job/" + this.jobName + "/config.xml")
           .reply(200, fixtures.jobUpdate);
 
-        var jobs = {};
+        const before = await this.jenkins.job.config(this.jobName);
 
-        jobs.before = function(next) {
-          self.jenkins.job.config(self.jobName, next);
-        };
+        const config = before.replace(
+          "<description>before</description>",
+          "<description>after</description>"
+        );
+        await this.jenkins.job.config(this.jobName, config);
 
-        jobs.update = ['before', function(results, next) {
-          var config = results.before.replace(
-            '<description>before</description>',
-            '<description>after</description>'
-          );
+        const after = await this.jenkins.job.config(this.jobName);
 
-          self.jenkins.job.config(self.jobName, config, next);
-        }];
-
-        jobs.after = ['update', function(results, next) {
-          self.jenkins.job.config(self.jobName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.not.eql(results.after);
-          results.after.should.containEql('<description>after</description>');
-
-          done();
-        });
+        should(before).not.eql(after);
+        should(after).containEql("<description>after</description>");
       });
     });
 
-    describe('copy', function() {
-      it('should copy job', function(done) {
-        var self = this;
-
-        var name = self.jobName + '-new';
-
-        self.nock
-          .head('/job/' + name + '/api/json')
-          .reply(404)
-          .post('/createItem?name=' + name + '&from=' + self.jobName + '&mode=copy')
-          .reply(302)
-          .head('/job/' + name + '/api/json')
-          .reply(200);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.job.exists(name, next);
-        };
-
-        jobs.copy = ['before', function(results, next) {
-          self.jenkins.job.copy(self.jobName, name, next);
-        }];
-
-        jobs.after = ['copy', function(results, next) {
-          self.jenkins.job.exists(name, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(false);
-          results.after.should.equal(true);
-
-          done();
-        });
-      });
-    });
-
-    describe('create', function() {
-      it('should create job', function(done) {
-        var self = this;
-
-        var name = self.jobName + '-new';
-
-        self.nock
-          .head('/job/' + name + '/api/json')
-          .reply(404)
-          .post('/createItem?name=' + name, fixtures.jobCreate)
-          .reply(200)
-          .head('/job/' + name + '/api/json')
-          .reply(200);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.job.exists(name, next);
-        };
-
-        jobs.create = ['before', function(results, next) {
-          self.jenkins.job.create(name, fixtures.jobCreate, next);
-        }];
-
-        jobs.after = ['create', function(results, next) {
-          self.jenkins.job.exists(name, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(false);
-          results.after.should.equal(true);
-
-          done();
-        });
-      });
-
-      nit('should return an error if it already exists', function(done) {
-        var error = 'a job already exists with the name "nodejs-jenkins-test"';
+    describe("copy", function () {
+      it("should copy job", async function () {
+        const name = this.jobName + "-new";
 
         this.nock
-          .post('/createItem?name=test', fixtures.jobCreate)
-          .reply(400, '', { 'x-error': error });
+          .head("/job/" + name + "/api/json")
+          .reply(404)
+          .post(
+            "/createItem?name=" + name + "&from=" + this.jobName + "&mode=copy"
+          )
+          .reply(302)
+          .head("/job/" + name + "/api/json")
+          .reply(200);
 
-        this.jenkins.job.create('test', fixtures.jobCreate, function(err) {
-          should.exist(err);
+        const jobs = {};
 
-          err.message.should.eql('jenkins: job.create: a job already exists with the name ' +
-                                 '"nodejs-jenkins-test"');
+        const before = await this.jenkins.job.exists(name);
+        should(before).equal(false);
 
-          done();
-        });
+        await this.jenkins.job.copy(this.jobName, name);
+
+        const after = await this.jenkins.job.exists(name);
+        should(after).equal(true);
       });
     });
 
-    describe('destroy', function() {
-      it('should delete job', function(done) {
-        var self = this;
+    describe("create", function () {
+      it("should create job", async function () {
+        const name = this.jobName + "-new";
 
-        self.nock
-          .head('/job/' + self.jobName + '/api/json')
+        this.nock
+          .head("/job/" + name + "/api/json")
+          .reply(404)
+          .post("/createItem?name=" + name, fixtures.jobCreate)
           .reply(200)
-          .post('/job/' + self.jobName + '/doDelete')
+          .head("/job/" + name + "/api/json")
+          .reply(200);
+
+        const before = await this.jenkins.job.exists(name);
+        should(before).equal(false);
+
+        await this.jenkins.job.create(name, fixtures.jobCreate);
+
+        const after = await this.jenkins.job.exists(name);
+        should(after).equal(true);
+      });
+
+      nit("should return an error if it already exists", async function () {
+        const error =
+          'a job already exists with the name "nodejs-jenkins-test"';
+
+        this.nock
+          .post("/createItem?name=test", fixtures.jobCreate)
+          .reply(400, "", { "x-error": error });
+
+        await shouldThrow(async () => {
+          await this.jenkins.job.create("test", fixtures.jobCreate);
+        }, "jenkins: job.create: a job already exists with the name " + '"nodejs-jenkins-test"');
+      });
+    });
+
+    describe("destroy", function () {
+      it("should delete job", async function () {
+        this.nock
+          .head("/job/" + this.jobName + "/api/json")
+          .reply(200)
+          .post("/job/" + this.jobName + "/doDelete")
           .reply(302)
-          .head('/job/' + self.jobName + '/api/json')
+          .head("/job/" + this.jobName + "/api/json")
           .reply(404);
 
-        var jobs = {};
+        const before = await this.jenkins.job.exists(this.jobName);
+        should(before).equal(true);
 
-        jobs.before = function(next) {
-          self.jenkins.job.exists(self.jobName, next);
-        };
+        await this.jenkins.job.destroy(this.jobName);
 
-        jobs.create = ['before', function(results, next) {
-          self.jenkins.job.destroy(self.jobName, next);
-        }];
-
-        jobs.after = ['create', function(results, next) {
-          self.jenkins.job.exists(self.jobName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(true);
-          results.after.should.equal(false);
-
-          done();
-        });
+        const after = await this.jenkins.job.exists(this.jobName);
+        should(after).equal(false);
       });
 
-      nit('should return error on failure', function(done) {
-        this.nock
-          .post('/job/test/doDelete')
-          .reply(200);
+      nit("should return error on failure", async function () {
+        this.nock.post("/job/test/doDelete").reply(200);
 
-        this.jenkins.job.destroy('test', function(err) {
-          should.exist(err);
-
-          err.message.should.eql('jenkins: job.destroy: failed to delete: test');
-
-          done();
-        });
+        await shouldThrow(async () => {
+          await this.jenkins.job.destroy("test");
+        }, "jenkins: job.destroy: failed to delete: test");
       });
     });
 
-    describe('disable', function() {
-      it('should disable job', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/' + self.jobName + '/api/json')
+    describe("disable", function () {
+      it("should disable job", async function () {
+        this.nock
+          .get("/job/" + this.jobName + "/api/json")
           .reply(200, fixtures.jobGet)
-          .post('/job/' + self.jobName + '/disable')
+          .post("/job/" + this.jobName + "/disable")
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json')
+          .get("/job/" + this.jobName + "/api/json")
           .reply(200, fixtures.jobGetDisabled);
 
-        var jobs = {};
+        const before = await this.jenkins.job.get(this.jobName);
+        should(before?.buildable).equal(true);
 
-        jobs.before = function(next) {
-          self.jenkins.job.get(self.jobName, next);
-        };
+        await this.jenkins.job.disable(this.jobName);
 
-        jobs.create = ['before', function(results, next) {
-          self.jenkins.job.disable(self.jobName, next);
-        }];
-
-        jobs.after = ['create', function(results, next) {
-          self.jenkins.job.get(self.jobName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.buildable.should.equal(true);
-          results.after.buildable.should.equal(false);
-
-          done();
-        });
+        const after = await this.jenkins.job.get(this.jobName);
+        should(after?.buildable).equal(false);
       });
     });
 
-    describe('enable', function() {
-      it('should enable job', function(done) {
-        var self = this;
-
-        self.nock
-          .post('/job/' + self.jobName + '/disable')
+    describe("enable", function () {
+      it("should enable job", async function () {
+        this.nock
+          .post("/job/" + this.jobName + "/disable")
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json')
+          .get("/job/" + this.jobName + "/api/json")
           .reply(200, fixtures.jobGetDisabled)
-          .post('/job/' + self.jobName + '/enable')
+          .post("/job/" + this.jobName + "/enable")
           .reply(302)
-          .get('/job/' + self.jobName + '/api/json')
+          .get("/job/" + this.jobName + "/api/json")
           .reply(200, fixtures.jobGet);
 
-        var jobs = {};
+        await this.jenkins.job.disable(this.jobName);
 
-        jobs.setup = function(next) {
-          self.jenkins.job.disable(self.jobName, next);
-        };
+        const before = await this.jenkins.job.get(this.jobName);
+        should(before?.buildable).equal(false);
 
-        jobs.before = ['setup', function(results, next) {
-          self.jenkins.job.get(self.jobName, next);
-        }];
+        await this.jenkins.job.enable(this.jobName);
 
-        jobs.enable = ['before', function(results, next) {
-          self.jenkins.job.enable(self.jobName, next);
-        }];
-
-        jobs.after = ['enable', function(results, next) {
-          self.jenkins.job.get(self.jobName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.buildable.should.equal(false);
-          results.after.buildable.should.equal(true);
-
-          done();
-        });
+        const after = await this.jenkins.job.get(this.jobName);
+        should(after?.buildable).equal(true);
       });
     });
 
-    describe('exists', function() {
-      it('should not find job', function(done) {
-        var name = this.jobName + '-nope';
+    describe("exists", function () {
+      it("should not find job", async function () {
+        const name = this.jobName + "-nope";
 
-        this.nock
-          .head('/job/' + name + '/api/json')
-          .reply(404);
+        this.nock.head("/job/" + name + "/api/json").reply(404);
 
-        this.jenkins.job.exists(name, function(err, exists) {
-          should.not.exist(err);
-
-          exists.should.equal(false);
-
-          done();
-        });
+        const exists = await this.jenkins.job.exists(name);
+        should(exists).equal(false);
       });
 
-      it('should find job', function(done) {
-        this.nock
-          .head('/job/' + this.jobName + '/api/json')
-          .reply(200);
+      it("should find job", async function () {
+        this.nock.head("/job/" + this.jobName + "/api/json").reply(200);
 
-        this.jenkins.job.exists(this.jobName, function(err, exists) {
-          should.not.exist(err);
-
-          exists.should.equal(true);
-
-          done();
-        });
+        const exists = await this.jenkins.job.exists(this.jobName);
+        should(exists).equal(true);
       });
     });
 
-    describe('get', function() {
-      it('should not get job', function(done) {
-        var name = this.jobName + '-nope';
+    describe("get", function () {
+      it("should not get job", async function () {
+        const name = this.jobName + "-nope";
 
-        this.nock
-          .get('/job/' + name + '/api/json')
-          .reply(404);
+        this.nock.get("/job/" + name + "/api/json").reply(404);
 
-        this.jenkins.job.get(name, function(err, data) {
-          should.exist(err);
-          should.not.exist(data);
-
-          done();
-        });
+        await shouldThrow(async () => {
+          await this.jenkins.job.get(name);
+        }, `jenkins: job.get: ${name} not found`);
       });
 
-      it('should get job', function(done) {
+      it("should get job", async function () {
         this.nock
-          .get('/job/' + this.jobName + '/api/json')
+          .get("/job/" + this.jobName + "/api/json")
           .reply(200, fixtures.jobGet);
 
-        this.jenkins.job.get(this.jobName, function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.properties('name', 'url');
-
-          done();
-        });
+        const data = await this.jenkins.job.get(this.jobName);
+        should(data).properties("name", "url");
       });
 
-      nit('should work with options', function(done) {
+      nit("should work with options", async function () {
         this.nock
-          .get('/job/test/api/json?depth=1')
+          .get("/job/test/api/json?depth=1")
           .reply(200, fixtures.jobCreate);
 
-        this.jenkins.job.get('test', { depth: 1 }, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
+        await this.jenkins.job.get("test", { depth: 1 });
       });
 
-      nit('should return error when not found', function(done) {
-        this.nock
-          .get('/job/test/api/json')
-          .reply(404);
+      nit("should return error when not found", async function () {
+        this.nock.get("/job/test/api/json").reply(404);
 
-        this.jenkins.job.get('test', function(err, data) {
-          should.exist(err);
-          should.equal(err.message, 'jenkins: job.get: test not found');
-
-          should.not.exist(data);
-
-          done();
-        });
+        await shouldThrow(async () => {
+          await this.jenkins.job.get("test");
+        }, "jenkins: job.get: test not found");
       });
     });
 
-    describe('list', function() {
-      it('should list jobs', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/api/json')
-          .reply(200, fixtures.jobList);
-
-        self.jenkins.job.list(function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(job) {
-            job.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
-      it('should list jobs with string options', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/test/api/json')
-          .reply(200, fixtures.jobList);
-
-        self.jenkins.job.list('test', function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(job) {
-            job.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
-      it('should list jobs with object options', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/job/test/api/json')
-          .reply(200, fixtures.jobList);
-
-        self.jenkins.job.list({ name: ['test'] }, function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(job) {
-            job.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
-      nit('should handle corrupt responses', function(done) {
-        var data = '"trash';
-
-        this.nock
-          .get('/api/json')
-          .reply(200, data);
-
-        this.jenkins.job.list(function(err) {
-          should.exist(err);
-          should.exist(err.message);
-
-          err.message.should.eql('jenkins: job.list: returned bad data');
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('label', function() {
-    beforeEach(function(done) {
-      helper.setup({ test: this }, done);
-    });
-
-    describe('get', function() {
-      it('should get label details', function(done) {
-        this.nock
-          .get('/label/master/api/json')
-          .reply(200, fixtures.labelGet);
-
-        this.jenkins.label.get('master', function(err, label) {
-          should.not.exist(err);
-
-          should.exist(label);
-
-          label.should.have.properties('nodes');
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('node', function() {
-    beforeEach(function(done) {
-      helper.setup({ node: true, test: this }, done);
-    });
-
-    describe('config', function() {
-      it('should error on master update', function(done) {
-        this.jenkins.node.config('master', 'xml', function(err) {
-          should.exist(err);
-
-          err.message.should.eql('jenkins: node.config: master not supported');
-
-          done();
-        });
-      });
-    });
-
-    describe('create', function() {
-      it('should create node', function(done) {
-        var name = 'test-node-' + uuid.v4();
-
-        this.nock
-          .post('/computer/doCreateItem?' + fixtures.nodeCreateQuery.replace(/{name}/g, name))
-          .reply(302, '', { location: 'http://localhost:8080/computer/' });
-
-        this.jenkins.node.create(name, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-    });
-
-    describe('destroy', function() {
-      it('should delete node', function(done) {
-        var self = this;
-
-        self.nock
-          .head('/computer/' + self.nodeName + '/api/json')
-          .reply(200)
-          .post('/computer/' + self.nodeName + '/doDelete')
-          .reply(302, '')
-          .head('/computer/' + self.nodeName + '/api/json')
-          .reply(404);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.node.exists(self.nodeName, function(err, exists) {
-            should.not.exist(err);
-
-            next(null, exists);
-          });
-        };
-
-        jobs.destroy = ['before', function(results, next) {
-          self.jenkins.node.destroy(self.nodeName, next);
-        }];
-
-        jobs.after = ['destroy', function(results, next) {
-          self.jenkins.node.exists(self.nodeName, function(err, exists) {
-            should.not.exist(err);
-
-            next(null, exists);
-          });
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(true);
-          results.after.should.equal(false);
-
-          done();
-        });
-      });
-    });
-
-    describe('disable', function() {
-      it('should disable node', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGet)
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGet)
-          .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
-          .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetTempOffline)
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetTempOffline)
-          .post('/computer/' + self.nodeName + '/changeOfflineCause',
-            'offlineMessage=update&json=%7B%22offlineMessage%22%3A%22update%22%7D&' +
-            'Submit=Update%20reason')
-          .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetTempOfflineUpdate);
-
-        var jobs = {};
-
-        jobs.beforeDisable = function(next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        };
-
-        jobs.disable = ['beforeDisable', function(results, next) {
-          self.jenkins.node.disable(self.nodeName, 'away', next);
-        }];
-
-        jobs.afterDisable = ['disable', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        jobs.update = ['afterDisable', function(results, next) {
-          self.jenkins.node.disable(self.nodeName, 'update', next);
-        }];
-
-        jobs.afterUpdate = ['update', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.beforeDisable.temporarilyOffline.should.equal(false);
-          results.afterDisable.temporarilyOffline.should.equal(true);
-          results.afterDisable.offlineCauseReason.should.equal('away');
-          results.afterUpdate.temporarilyOffline.should.equal(true);
-          results.afterUpdate.offlineCauseReason.should.equal('update');
-
-          done();
-        });
-      });
-    });
-
-    describe('enable', function() {
-      it('should enable node', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGet)
-          .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=away')
-          .reply(302, '')
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetTempOffline)
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGetTempOffline)
-          .get('/computer/' + self.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGet)
-          .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=')
-          .reply(302, '');
-
-        var jobs = {};
-
-        jobs.disable = function(next) {
-          self.jenkins.node.disable(self.nodeName, 'away', next);
-        };
-
-        jobs.before = ['disable', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        jobs.enable = ['before', function(results, next) {
-          self.jenkins.node.enable(self.nodeName, next);
-        }];
-
-        jobs.after = ['enable', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.temporarilyOffline.should.equal(true);
-          results.after.temporarilyOffline.should.equal(false);
-
-          done();
-        });
-      });
-    });
-
-    describe('disconnect', function() {
-      it('should disconnect node', function(done) {
-        var self = this;
-
-        self.nock
-            .get('/computer/' + self.nodeName + '/api/json')
-            .reply(200, fixtures.nodeGetOnline)
-            .get('/computer/' + self.nodeName + '/api/json')
-            .reply(200, fixtures.nodeGetOnline)
-            .post('/computer/' + self.nodeName + '/doDisconnect?offlineMessage=away')
-            .reply(302, '')
-            .get('/computer/' + self.nodeName + '/api/json')
-            .reply(200, fixtures.nodeGetOffline)
-            .get('/computer/' + self.nodeName + '/api/json')
-            .reply(200, fixtures.nodeGetOffline)
-            .post('/computer/' + self.nodeName + '/toggleOffline?offlineMessage=update')
-            .reply(302, '')
-            .get('/computer/' + self.nodeName + '/api/json')
-            .reply(200, fixtures.nodeGetOfflineUpdate);
-
-        var jobs = {};
-
-        jobs.beforeDisconnect = function(next) {
-          async_.retry(
-            1000,
-            function(next) {
-              self.jenkins.node.get(self.nodeName, function(err, node) {
-                if (err) return next(err);
-                if (!node || node.offline) return next(new Error('node offline'));
-                next(null, node);
-              });
-            },
-            next
-          );
-        };
-
-        jobs.disconnect = ['beforeDisconnect', function(results, next) {
-          self.jenkins.node.disconnect(self.nodeName, 'away', next);
-        }];
-
-        jobs.afterDisconnect = ['disconnect', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        jobs.update = ['afterDisconnect', function(results, next) {
-          self.jenkins.node.disconnect(self.nodeName, 'update', next);
-        }];
-
-        jobs.afterUpdate = ['update', function(results, next) {
-          self.jenkins.node.get(self.nodeName, function(err, node) {
-            should.not.exist(err);
-
-            next(null, node);
-          });
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.beforeDisconnect.offline.should.equal(false);
-          results.afterDisconnect.offline.should.equal(true);
-          results.afterDisconnect.offlineCauseReason.should.equal('away');
-          results.afterUpdate.offline.should.equal(true);
-          results.afterUpdate.offlineCauseReason.should.equal('update');
-
-          done();
-        });
-      });
-    });
-
-    describe('exists', function() {
-      it('should not find node', function(done) {
-        var name = this.nodeName + '-nope';
-
-        this.nock
-          .head('/computer/' + name + '/api/json')
-          .reply(404);
-
-        this.jenkins.node.exists(name, function(err, exists) {
-          should.not.exist(err);
-
-          exists.should.equal(false);
-
-          done();
-        });
-      });
-
-      it('should find node', function(done) {
-        this.nock
-          .head('/computer/' + this.nodeName + '/api/json')
-          .reply(200);
-
-        this.jenkins.node.exists(this.nodeName, function(err, exists) {
-          should.not.exist(err);
-
-          exists.should.equal(true);
-
-          done();
-        });
-      });
-    });
-
-    describe('get', function() {
-      it('should get node details', function(done) {
-        this.nock
-          .get('/computer/' + this.nodeName + '/api/json')
-          .reply(200, fixtures.nodeGet);
-
-        this.jenkins.node.get(this.nodeName, function(err, node) {
-          should.not.exist(err);
-
-          should.exist(node);
-
-          node.should.have.properties('displayName');
-
-          done();
-        });
-      });
-
-      it('should get master', function(done) {
-        this.nock
-          .get('/computer/(master)/api/json')
-          .reply(200, fixtures.nodeGet);
-
-        this.jenkins.node.get('master', function(err, node) {
-          should.not.exist(err);
-
-          should.exist(node);
-
-          node.should.have.properties('displayName');
-
-          done();
-        });
-      });
-    });
-
-    describe('list', function() {
-      it('should list nodes', function(done) {
-        this.nock
-          .get('/computer/api/json')
-          .reply(200, fixtures.nodeList);
-
-        this.jenkins.node.list(function(err, nodes) {
-          should.not.exist(err);
-
-          should.exist(nodes);
-
-          nodes.should.be.instanceof(Array);
-          nodes.should.not.be.empty;
-
-          done();
-        });
-      });
-
-      it('should include extra metadata', function(done) {
-        this.nock
-          .get('/computer/api/json')
-          .reply(200, fixtures.nodeList);
-
-        var opts = { full: true };
-
-        this.jenkins.node.list(opts, function(err, info) {
-          should.not.exist(err);
-
-          should.exist(info);
-
-          info.should.have.properties(
-            'busyExecutors',
-            'computer',
-            'displayName',
-            'totalExecutors'
-          );
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('queue', function() {
-    beforeEach(function(done) {
-      helper.setup({ job: true, test: this }, done);
-    });
-
-    describe('list', function() {
-      it('should list queue', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/queue/api/json')
-          .reply(200, fixtures.queueList)
-          .post('/job/' + self.jobName + '/build')
-          .reply(201, '', { location: 'http://localhost:8080/queue/item/124/' });
-
-        var jobs = {};
-        var stop = false;
-
-        jobs.list = function(next) {
-          async_.retry(
-            1000,
-            function(next) {
-              self.jenkins.queue.list(function(err, queue) {
-                if (!err && queue && !queue.length) {
-                  err = new Error('no queue');
-                }
-                if (err) return next(err);
-
-                stop = true;
-
-                queue.should.be.instanceof(Array);
-
-                next();
-              });
-            },
-            next
-          );
-        };
-
-        jobs.builds = function(next) {
-          async_.retry(
-            1000,
-            function(next) {
-              if (stop) return next();
-
-              self.jenkins.job.build(self.jobName, function(err) {
-                if (err) return next(err);
-                if (!stop) return next(new Error('queue more'));
-
-                next();
-              });
-            },
-            next
-          );
-        };
-
-        async_.parallel(jobs, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-    });
-
-    describe('item', function() {
-      nit('should return a queue item', function(done) {
-        this.nock
-          .get('/queue/item/130/api/json')
-          .reply(200, fixtures.queueItem);
-
-        this.jenkins.queue.item(130, function(err, data) {
-          if (err) return done(err);
-          data.should.have.property('id');
-          data.id.should.equal(130);
-
-          done();
-        });
-      });
-
-      it('should require a number', function(done) {
-        this.jenkins.queue.item(null, function(err, data) {
-          should.not.exist(data);
-          should.exist(err);
-          done();
-        });
-      });
-    });
-
-    describe('get', function() {
-      nit('should work', function(done) {
-        this.nock
-          .get('/computer/(master)/api/json')
-          .reply(200, fixtures.nodeGet);
-
-        this.jenkins.node.get('master', function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          done();
-        });
-      });
-
-      it('should work with options', function(done) {
-        this.nock
-          .get('/queue/api/json?depth=1')
-          .reply(200, fixtures.queueList);
-
-        this.jenkins.queue.get({ depth: 1 }, function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          done();
-        });
-      });
-    });
-
-    ndescribe('cancel', function() {
-      it('should work', function(done) {
-        this.nock
-          .post('/queue/item/1/cancelQueue', '')
-          .reply(302);
-
-        this.jenkins.queue.cancel(1, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
-      it('should return error on failure', function(done) {
-        this.nock
-          .post('/queue/item/1/cancelQueue', '')
-          .reply(500);
-
-        this.jenkins.queue.cancel(1, function(err) {
-          should.exist(err);
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('view', function() {
-    beforeEach(function(done) {
-      helper.setup({ job: true, view: true, test: this }, done);
-    });
-
-    describe('create', function() {
-      it('should create view', function(done) {
-        var self = this;
-
-        var name = self.viewName + '-new';
-
-        self.nock
-          .head('/view/' + name + '/api/json')
-          .reply(404)
-          .post('/createView', JSON.parse(
-            JSON.stringify(fixtures.viewCreate).replace(/test-view/g, name)
-          ))
-          .reply(302)
-          .head('/view/' + name + '/api/json')
-          .reply(200);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.view.exists(name, next);
-        };
-
-        jobs.create = ['before', function(results, next) {
-          self.jenkins.view.create(name, 'list', next);
-        }];
-
-        jobs.after = ['create', function(results, next) {
-          self.jenkins.view.exists(name, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(false);
-          results.after.should.equal(true);
-
-          done();
-        });
-      });
-
-      nit('should return an error if it already exists', function(done) {
-        var error = 'A view already exists with the name "test-view"';
-
-        this.nock
-          .post('/createView', fixtures.viewCreate)
-          .reply(400, '', { 'x-error': error });
-
-        this.jenkins.view.create(this.viewName, 'list', function(err) {
-          should.exist(err);
-
-          err.message.should.eql('jenkins: view.create: A view already exists ' +
-                                 'with the name "test-view"');
-
-          done();
-        });
-      });
-    });
-
-    describe('config', function() {
-      it('should return xml', function(done) {
-        this.nock
-          .get('/view/' + this.viewName + '/config.xml')
-          .reply(200, fixtures.viewConfig);
-
-        this.jenkins.view.config(this.viewName, function(err, config) {
-          should.not.exist(err);
-
-          config.should.be.type('string');
-          config.should.containEql('<hudson.model.ListView>');
-
-          done();
-        });
-      });
-
-      it('should update config xml', function(done) {
-        var self = this;
-
-        var src = '<filterQueue>false</filterQueue>';
-        var dst = '<filterQueue>true</filterQueue>';
-
-        self.nock
-          .get('/view/' + self.viewName + '/config.xml')
-          .reply(200, fixtures.viewConfig)
-          .post('/view/' + self.viewName + '/config.xml')
-          .reply(200)
-          .get('/view/' + self.viewName + '/config.xml')
-          .reply(200, fixtures.viewConfig.replace(src, dst));
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.view.config(self.viewName, next);
-        };
-
-        jobs.config = ['before', function(results, next) {
-          var config = fixtures.viewConfig.replace(src, dst);
-
-          self.jenkins.view.config(self.viewName, config, next);
-        }];
-
-        jobs.after = ['config', function(results, next) {
-          self.jenkins.view.config(self.viewName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.containEql(src);
-          results.after.should.containEql(dst);
-
-          done();
-        });
-      });
-    });
-
-    describe('destroy', function() {
-      it('should delete view', function(done) {
-        var self = this;
-
-        self.nock
-          .head('/view/' + self.viewName + '/api/json')
-          .reply(200)
-          .post('/view/' + self.viewName + '/doDelete')
-          .reply(302)
-          .head('/view/' + self.viewName + '/api/json')
-          .reply(404);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.view.exists(self.viewName, next);
-        };
-
-        jobs.create = ['before', function(results, next) {
-          self.jenkins.view.destroy(self.viewName, next);
-        }];
-
-        jobs.after = ['create', function(results, next) {
-          self.jenkins.view.exists(self.viewName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.should.equal(true);
-          results.after.should.equal(false);
-
-          done();
-        });
-      });
-
-      nit('should return error on failure', function(done) {
-        this.nock
-          .post('/view/test/doDelete')
-          .reply(200);
-
-        this.jenkins.view.destroy('test', function(err) {
-          should.exist(err);
-
-          err.message.should.eql('jenkins: view.destroy: failed to delete: test');
-
-          done();
-        });
-      });
-    });
-
-    describe('get', function() {
-      it('should not get view', function(done) {
-        var name = this.viewName + '-nope';
-
-        this.nock
-          .get('/view/' + name + '/api/json')
-          .reply(404);
-
-        this.jenkins.view.get(name, function(err, data) {
-          should.exist(err);
-          should.not.exist(data);
-
-          done();
-        });
-      });
-
-      it('should get view', function(done) {
-        this.nock
-          .get('/view/' + this.viewName + '/api/json')
-          .reply(200, fixtures.viewGet);
-
-        this.jenkins.view.get(this.viewName, function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.properties('name', 'url');
-
-          done();
-        });
-      });
-
-      nit('should work with options', function(done) {
-        this.nock
-          .get('/view/test/api/json?depth=1')
-          .reply(200, fixtures.viewCreate);
-
-        this.jenkins.view.get('test', { depth: 1 }, function(err) {
-          should.not.exist(err);
-
-          done();
-        });
-      });
-
-      nit('should return error when not found', function(done) {
-        this.nock
-          .get('/view/test/api/json')
-          .reply(404);
-
-        this.jenkins.view.get('test', function(err, data) {
-          should.exist(err);
-          should.equal(err.message, 'jenkins: view.get: test not found');
-
-          should.not.exist(data);
-
-          done();
-        });
-      });
-    });
-
-    describe('list', function() {
-      it('should list views', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/api/json')
-          .reply(200, fixtures.viewList);
-
-        self.jenkins.view.list(function(err, data) {
-          should.not.exist(err);
-
-          should.exist(data);
-
-          data.should.not.be.empty;
-
-          data.forEach(function(view) {
-            view.should.have.properties('name');
-          });
-
-          done();
-        });
-      });
-
-      nit('should handle corrupt responses', function(done) {
-        var data = '"trash';
-
-        this.nock
-          .get('/api/json')
-          .reply(200, data);
-
-        this.jenkins.view.list(function(err) {
-          should.exist(err);
-          should.exist(err.message);
-
-          err.message.should.eql('jenkins: view.list: returned bad data');
-
-          done();
-        });
-      });
-    });
-
-    describe('add', function() {
-      it('should add job to view', function(done) {
-        var self = this;
-
-        var before = fixtures.viewGetListView;
-        before.jobs = [];
-
-        self.nock
-          .get('/view/' + self.viewName + '/api/json')
-          .reply(200, before)
-          .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
-          .reply(200)
-          .get('/view/' + self.viewName + '/api/json')
-          .reply(200, fixtures.viewGetListView);
-
-        var jobs = {};
-
-        jobs.before = function(next) {
-          self.jenkins.view.get(self.viewName, next);
-        };
-
-        jobs.add = ['before', function(results, next) {
-          self.jenkins.view.add(self.viewName, self.jobName, next);
-        }];
-
-        jobs.after = ['add', function(results, next) {
-          self.jenkins.view.get(self.viewName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.jobs.should.be.empty;
-          results.after.jobs.should.not.be.empty;
-
-          done();
-        });
-      });
-    });
-
-    describe('remove', function() {
-      it('should remove job from view', function(done) {
-        var self = this;
-
-        var after = fixtures.viewGetListView;
-        after.jobs = [];
-
-        self.nock
-          .post('/view/' + self.viewName + '/addJobToView?name=' + self.jobName)
-          .reply(200)
-          .get('/view/' + self.viewName + '/api/json')
-          .reply(200, fixtures.viewGetListView)
-          .post('/view/' + self.viewName + '/removeJobFromView?name=' + self.jobName)
-          .reply(200)
-          .get('/view/' + self.viewName + '/api/json')
-          .reply(200, after);
-
-        var jobs = {};
-
-        jobs.add = function(next) {
-          self.jenkins.view.add(self.viewName, self.jobName, next);
-        };
-
-        jobs.before = ['add', function(results, next) {
-          self.jenkins.view.get(self.viewName, next);
-        }];
-
-        jobs.remove = ['before', function(results, next) {
-          self.jenkins.view.remove(self.viewName, self.jobName, next);
-        }];
-
-        jobs.after = ['remove', function(results, next) {
-          self.jenkins.view.get(self.viewName, next);
-        }];
-
-        async_.auto(jobs, function(err, results) {
-          should.not.exist(err);
-
-          results.before.jobs.should.not.be.empty;
-          results.after.jobs.should.be.empty;
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('plugin', function() {
-    beforeEach(function(done) {
-      helper.setup({ test: this }, done);
-    });
-
-    describe('list', function() {
-      it('should list plugins', function(done) {
-        var self = this;
-
-        self.nock
-          .get('/pluginManager/api/json?depth=2')
-          .reply(200, fixtures.pluginList);
-
-        self.jenkins.plugin.list({ depth: 2 }, function(err, plugins) {
-          should.not.exist(err);
-
-          should.exist(plugins);
-
-          plugins.should.be.instanceof(Array);
-          plugins.should.not.be.empty;
-
-          plugins.forEach(function(plugin) {
-            plugin.should.have.properties(['longName', 'shortName', 'dependencies']);
-          });
-
-          done();
-        });
-      });
-    });
-  });
-
-  describe('walk', function() {
-    it('should work', function() {
-      var setup = function(tree, depth, data) {
-        data = data || [];
-
-        var prefix = lodash.repeat(' ', depth);
-
-        data.push(prefix + tree.name);
-
-        lodash.each(tree.methods, function(method) {
-          data.push(prefix + ' - ' + method.name + ' (' + method.type + ')');
-        });
-
-        lodash.each(tree.objects, function(tree) {
-          setup(tree, depth + 1, data);
-        });
-
-        return data;
-      };
-
-      setup(jenkins.Jenkins.walk(), 0).should.eql([
-        'Jenkins',
-        ' - info (callback)',
-        ' - get (callback)',
-        ' - walk (sync)',
-        ' Build',
-        '  - get (callback)',
-        '  - stop (callback)',
-        '  - term (callback)',
-        '  - log (callback)',
-        '  - logStream (eventemitter)',
-        ' CrumbIssuer',
-        '  - get (callback)',
-        ' Job',
-        '  - build (callback)',
-        '  - config (callback)',
-        '  - copy (callback)',
-        '  - create (callback)',
-        '  - destroy (callback)',
-        '  - delete (alias)',
-        '  - disable (callback)',
-        '  - enable (callback)',
-        '  - exists (callback)',
-        '  - get (callback)',
-        '  - list (callback)',
-        ' Label',
-        '  - get (callback)',
-        ' Node',
-        '  - config (callback)',
-        '  - create (callback)',
-        '  - destroy (callback)',
-        '  - delete (alias)',
-        '  - doDisconnect (callback)',
-        '  - toggleOffline (callback)',
-        '  - changeOfflineCause (callback)',
-        '  - disconnect (callback)',
-        '  - disable (callback)',
-        '  - enable (callback)',
-        '  - exists (callback)',
-        '  - get (callback)',
-        '  - list (callback)',
-        ' Plugin',
-        '  - list (callback)',
-        ' Queue',
-        '  - list (callback)',
-        '  - item (callback)',
-        '  - get (callback)',
-        '  - cancel (callback)',
-        ' View',
-        '  - create (callback)',
-        '  - config (callback)',
-        '  - destroy (callback)',
-        '  - delete (alias)',
-        '  - exists (callback)',
-        '  - get (callback)',
-        '  - list (callback)',
-        '  - add (callback)',
-        '  - remove (callback)',
-      ]);
-    });
-  });
-
-  describe('promisify', function() {
-    before(function() {
-      this.jenkins = jenkins({
-        baseUrl: this.url,
-        promisify: true,
-      });
-    });
-
-    it('should prefix error message', function() {
-      var self = this;
-
-      self.sinon.stub(papi.tools, 'promisify').callsFake(function() {
-        throw new Error('test');
-      });
-
-      should(function() {
-        jenkins({ baseUrl: self.url, promisify: true });
-      }).throw('promisify: test');
-    });
-
-    describe('default', function() {
-      it('should work', function() {
-        var self = this;
-
-        if (global.Promise) {
-          jenkins({ baseUrl: self.url, promisify: true });
-        } else {
-          should(function() {
-            jenkins({ baseUrl: self.url, promisify: true });
-          }).throw('promisify: wrapper required');
+    describe("list", function () {
+      it("should list jobs", async function () {
+        this.nock.get("/api/json").reply(200, fixtures.jobList);
+
+        const data = await this.jenkins.job.list();
+        should(data).not.be.empty();
+        for (const job of data) {
+          should(job).have.properties("name");
         }
       });
+
+      it("should list jobs with string options", async function () {
+        this.nock.get("/job/test/api/json").reply(200, fixtures.jobList);
+
+        const jobs = await this.jenkins.job.list("test");
+        for (const job of jobs) {
+          should(job).have.properties("name");
+        }
+      });
+
+      it("should list jobs with object options", async function () {
+        this.nock.get("/job/test/api/json").reply(200, fixtures.jobList);
+
+        const jobs = await this.jenkins.job.list({ name: ["test"] });
+        for (const job of jobs) {
+          should(job).have.properties("name");
+        }
+      });
+
+      nit("should handle corrupt responses", async function () {
+        const data = '"trash';
+
+        this.nock.get("/api/json").reply(200, data);
+
+        await shouldThrow(async () => {
+          await this.jenkins.job.list();
+        }, "jenkins: job.list: returned bad data");
+      });
+    });
+  });
+
+  describe("label", function () {
+    beforeEach(async function () {
+      return helper.setup({ test: this });
     });
 
-    ndescribe('callback', function() {
-      it('should work', function(done) {
-        this.nock
-          .get('/api/json')
-          .reply(200, { ok: true });
+    describe("get", function () {
+      it("should get label details", async function () {
+        this.nock.get("/label/master/api/json").reply(200, fixtures.labelGet);
 
-        this.jenkins.info(function(err, data) {
-          should.not.exist(err);
-
-          should(data).eql({ ok: true });
-
-          done();
-        });
+        const label = await this.jenkins.label.get("master");
+        should(label).have.properties("nodes");
       });
+    });
+  });
 
-      it('should get error', function(done) {
-        this.nock
-          .get('/api/json')
-          .reply(500);
+  describe("node", function () {
+    beforeEach(async function () {
+      return helper.setup({ node: true, test: this });
+    });
 
-        this.jenkins.info(function(err) {
-          should(err).have.property('message', 'jenkins: info: internal server error');
-
-          done();
-        });
+    describe("config", function () {
+      it("should error on master update", async function () {
+        await shouldThrow(async () => {
+          await this.jenkins.node.config("master", "xml");
+        }, "jenkins: node.config: master not supported");
       });
     });
 
-    ndescribe('promise', function() {
-      it('should work', function(done) {
+    describe("create", function () {
+      it("should create node", async function () {
+        const name = "test-node-" + uuid.v4();
+
         this.nock
-          .get('/api/json')
-          .reply(200, { ok: true });
+          .post(
+            "/computer/doCreateItem?" +
+              fixtures.nodeCreateQuery.replace(/{name}/g, name)
+          )
+          .reply(302, "", { location: "http://localhost:8080/computer/" });
 
-        this.jenkins.info().then(function(data) {
-          should(data).eql({ ok: true });
+        await this.jenkins.node.create(name);
+      });
+    });
 
-          done();
+    describe("destroy", function () {
+      it("should delete node", async function () {
+        this.nock
+          .head("/computer/" + this.nodeName + "/api/json")
+          .reply(200)
+          .post("/computer/" + this.nodeName + "/doDelete")
+          .reply(302, "")
+          .head("/computer/" + this.nodeName + "/api/json")
+          .reply(404);
+
+        const jobs = {};
+
+        const before = await this.jenkins.node.exists(this.nodeName);
+        should(before).equal(true);
+
+        await this.jenkins.node.destroy(this.nodeName);
+
+        const after = await this.jenkins.node.exists(this.nodeName);
+        should(after).equal(false);
+      });
+    });
+
+    describe("disable", function () {
+      it("should disable node", async function () {
+        this.nock
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGet)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGet)
+          .post(
+            "/computer/" + this.nodeName + "/toggleOffline?offlineMessage=away"
+          )
+          .reply(302, "")
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetTempOffline)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetTempOffline)
+          .post(
+            "/computer/" + this.nodeName + "/changeOfflineCause",
+            "offlineMessage=update&json=%7B%22offlineMessage%22%3A%22update%22%7D&" +
+              "Submit=Update%20reason"
+          )
+          .reply(302, "")
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetTempOfflineUpdate);
+
+        const beforeDisable = await this.jenkins.node.get(this.nodeName);
+        should(beforeDisable?.temporarilyOffline).equal(false);
+
+        await this.jenkins.node.disable(this.nodeName, "away");
+
+        const afterDisable = await this.jenkins.node.get(this.nodeName);
+        should(afterDisable?.temporarilyOffline).equal(true);
+        should(afterDisable?.offlineCauseReason).equal("away");
+
+        await this.jenkins.node.disable(this.nodeName, "update");
+
+        const afterUpdate = await this.jenkins.node.get(this.nodeName);
+        should(afterUpdate?.temporarilyOffline).equal(true);
+        should(afterUpdate?.offlineCauseReason).equal("update");
+      });
+    });
+
+    describe("enable", function () {
+      it("should enable node", async function () {
+        this.nock
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGet)
+          .post(
+            "/computer/" + this.nodeName + "/toggleOffline?offlineMessage=away"
+          )
+          .reply(302, "")
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetTempOffline)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetTempOffline)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGet)
+          .post("/computer/" + this.nodeName + "/toggleOffline?offlineMessage=")
+          .reply(302, "");
+
+        await this.jenkins.node.disable(this.nodeName, "away");
+
+        const before = await this.jenkins.node.get(this.nodeName);
+        should(before?.temporarilyOffline).equal(true);
+
+        await this.jenkins.node.enable(this.nodeName);
+
+        const after = await this.jenkins.node.get(this.nodeName);
+        should(after?.temporarilyOffline).equal(false);
+      });
+    });
+
+    describe("disconnect", function () {
+      it("should disconnect node", async function () {
+        this.nock
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetOnline)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetOnline)
+          .post(
+            "/computer/" + this.nodeName + "/doDisconnect?offlineMessage=away"
+          )
+          .reply(302, "")
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetOffline)
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetOffline)
+          .post(
+            "/computer/" +
+              this.nodeName +
+              "/toggleOffline?offlineMessage=update"
+          )
+          .reply(302, "")
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGetOfflineUpdate);
+
+        const beforeDisconnect = await retry(1000, async () => {
+          const node = await this.jenkins.node.get(this.nodeName);
+          if (!node || node.offline) throw new Error("node offline");
+          return node;
         });
+        should(beforeDisconnect?.offline).equal(false);
+
+        await this.jenkins.node.disconnect(this.nodeName, "away");
+
+        const afterDisconnect = await this.jenkins.node.get(this.nodeName);
+        should(afterDisconnect?.offline).equal(true);
+        should(afterDisconnect?.offlineCauseReason).equal("away");
+
+        await this.jenkins.node.disconnect(this.nodeName, "update");
+
+        const afterUpdate = await this.jenkins.node.get(this.nodeName);
+        should(afterUpdate?.offline).equal(true);
+        should(afterUpdate?.offlineCauseReason).equal("update");
+      });
+    });
+
+    describe("exists", function () {
+      it("should not find node", async function () {
+        const name = this.nodeName + "-nope";
+
+        this.nock.head("/computer/" + name + "/api/json").reply(404);
+
+        const exists = await this.jenkins.node.exists(name);
+        should(exists).equal(false);
       });
 
-      it('should get error', function(done) {
+      it("should find node", async function () {
+        this.nock.head("/computer/" + this.nodeName + "/api/json").reply(200);
+
+        const exists = await this.jenkins.node.exists(this.nodeName);
+        should(exists).equal(true);
+      });
+    });
+
+    describe("get", function () {
+      it("should get node details", async function () {
         this.nock
-          .get('/api/json')
-          .reply(500);
+          .get("/computer/" + this.nodeName + "/api/json")
+          .reply(200, fixtures.nodeGet);
 
-        this.jenkins.info().catch(function(err) {
-          should(err).have.property('message', 'jenkins: info: internal server error');
+        const node = await this.jenkins.node.get(this.nodeName);
+        should(node).have.properties("displayName");
+      });
 
-          done();
-        });
+      it("should get master", async function () {
+        this.nock
+          .get("/computer/(master)/api/json")
+          .reply(200, fixtures.nodeGet);
+
+        const node = await this.jenkins.node.get("master");
+        should(node).have.properties("displayName");
+      });
+    });
+
+    describe("list", function () {
+      it("should list nodes", async function () {
+        this.nock.get("/computer/api/json").reply(200, fixtures.nodeList);
+
+        const nodes = await this.jenkins.node.list();
+        should.exist(nodes);
+        should(nodes).be.instanceof(Array);
+        should(nodes).not.be.empty;
+      });
+
+      it("should include extra metadata", async function () {
+        this.nock.get("/computer/api/json").reply(200, fixtures.nodeList);
+
+        const info = await this.jenkins.node.list({ full: true });
+        should(info).have.properties(
+          "busyExecutors",
+          "computer",
+          "displayName",
+          "totalExecutors"
+        );
+      });
+    });
+  });
+
+  describe("queue", function () {
+    beforeEach(async function () {
+      return helper.setup({ job: true, test: this });
+    });
+
+    describe("list", function () {
+      it("should list queue", async function () {
+        this.nock
+          .get("/queue/api/json")
+          .reply(200, fixtures.queueList)
+          .post("/job/" + this.jobName + "/build")
+          .reply(201, "", {
+            location: "http://localhost:8080/queue/item/124/",
+          });
+
+        let stop = false;
+
+        await Promise.all([
+          retry(1000, async () => {
+            const queue = await this.jenkins.queue.list();
+            if (!queue?.length) {
+              throw new Error("no queue");
+            }
+
+            stop = true;
+
+            should(queue).be.instanceof(Array);
+          }),
+          retry(1000, async () => {
+            if (stop) return;
+
+            await this.jenkins.job.build(this.jobName);
+
+            if (!stop) return next(new Error("queue more"));
+          }),
+        ]);
+      });
+    });
+
+    describe("item", function () {
+      nit("should return a queue item", async function () {
+        this.nock
+          .get("/queue/item/130/api/json")
+          .reply(200, fixtures.queueItem);
+
+        const data = await this.jenkins.queue.item(130);
+        should(data).have.property("id");
+        should(data.id).equal(130);
+      });
+
+      it("should require a number", async function () {
+        await shouldThrow(async () => {
+          await this.jenkins.queue.item(null);
+        }, "jenkins: queue.item: number required");
+      });
+    });
+
+    describe("get", function () {
+      nit("should work", async function () {
+        this.nock
+          .get("/computer/(master)/api/json")
+          .reply(200, fixtures.nodeGet);
+
+        const data = await this.jenkins.node.get("master");
+        should.exist(data);
+      });
+    });
+
+    ndescribe("cancel", function () {
+      it("should work", async function () {
+        this.nock.post("/queue/item/1/cancelQueue", "").reply(302);
+
+        await this.jenkins.queue.cancel(1);
+      });
+
+      it("should return error on failure", async function () {
+        this.nock.post("/queue/item/1/cancelQueue", "").reply(500);
+
+        await shouldThrow(async () => {
+          await this.jenkins.queue.cancel(1);
+        }, "jenkins: queue.cancel: failed to cancel: 1");
+      });
+    });
+  });
+
+  describe("view", function () {
+    beforeEach(async function () {
+      return helper.setup({ job: true, view: true, test: this });
+    });
+
+    describe("create", function () {
+      it("should create view", async function () {
+        const name = this.viewName + "-new";
+
+        this.nock
+          .head("/view/" + name + "/api/json")
+          .reply(404)
+          .post(
+            "/createView",
+            JSON.parse(
+              JSON.stringify(fixtures.viewCreate).replace(/test-view/g, name)
+            )
+          )
+          .reply(302)
+          .head("/view/" + name + "/api/json")
+          .reply(200);
+
+        const before = await this.jenkins.view.exists(name);
+        should(before).equal(false);
+
+        await this.jenkins.view.create(name, "list");
+
+        const after = await this.jenkins.view.exists(name);
+        should(after).equal(true);
+      });
+
+      nit("should return an error if it already exists", async function () {
+        const error = 'A view already exists with the name "test-view"';
+
+        this.nock
+          .post("/createView", fixtures.viewCreate)
+          .reply(400, "", { "x-error": error });
+
+        await shouldThrow(async () => {
+          await this.jenkins.view.create(this.viewName, "list");
+        }, "jenkins: view.create: A view already exists " + 'with the name "test-view"');
+      });
+    });
+
+    describe("config", function () {
+      it("should return xml", async function () {
+        this.nock
+          .get("/view/" + this.viewName + "/config.xml")
+          .reply(200, fixtures.viewConfig);
+
+        const config = await this.jenkins.view.config(this.viewName);
+        should(config).be.type("string");
+        should(config).containEql("<hudson.model.ListView>");
+      });
+
+      it("should update config xml", async function () {
+        const src = "<filterQueue>false</filterQueue>";
+        const dst = "<filterQueue>true</filterQueue>";
+
+        this.nock
+          .get("/view/" + this.viewName + "/config.xml")
+          .reply(200, fixtures.viewConfig)
+          .post("/view/" + this.viewName + "/config.xml")
+          .reply(200)
+          .get("/view/" + this.viewName + "/config.xml")
+          .reply(200, fixtures.viewConfig.replace(src, dst));
+
+        const before = await this.jenkins.view.config(this.viewName);
+        should(before).containEql(src);
+
+        const config = fixtures.viewConfig.replace(src, dst);
+        await this.jenkins.view.config(this.viewName, config);
+
+        const after = await this.jenkins.view.config(this.viewName);
+        should(after).containEql(dst);
+      });
+    });
+
+    describe("destroy", function () {
+      it("should delete view", async function () {
+        this.nock
+          .head("/view/" + this.viewName + "/api/json")
+          .reply(200)
+          .post("/view/" + this.viewName + "/doDelete")
+          .reply(302)
+          .head("/view/" + this.viewName + "/api/json")
+          .reply(404);
+
+        const before = await this.jenkins.view.exists(this.viewName);
+        should(before).equal(true);
+
+        await this.jenkins.view.destroy(this.viewName);
+
+        const after = await this.jenkins.view.exists(this.viewName);
+        should(after).equal(false);
+      });
+
+      nit("should return error on failure", async function () {
+        this.nock.post("/view/test/doDelete").reply(200);
+
+        await shouldThrow(async () => {
+          await this.jenkins.view.destroy("test");
+        }, "jenkins: view.destroy: failed to delete: test");
+      });
+    });
+
+    describe("get", function () {
+      it("should not get view", async function () {
+        const name = this.viewName + "-nope";
+
+        this.nock.get("/view/" + name + "/api/json").reply(404);
+
+        await shouldThrow(async () => {
+          await this.jenkins.view.get(name);
+        }, `jenkins: view.get: ${name} not found`);
+      });
+
+      it("should get view", async function () {
+        this.nock
+          .get("/view/" + this.viewName + "/api/json")
+          .reply(200, fixtures.viewGet);
+
+        const data = await this.jenkins.view.get(this.viewName);
+        should(data).properties("name", "url");
+      });
+
+      nit("should work with options", async function () {
+        this.nock
+          .get("/view/test/api/json?depth=1")
+          .reply(200, fixtures.viewCreate);
+
+        await this.jenkins.view.get("test", { depth: 1 });
+      });
+
+      nit("should return error when not found", async function () {
+        this.nock.get("/view/test/api/json").reply(404);
+
+        await shouldThrow(async () => {
+          await this.jenkins.view.get("test");
+        }, "jenkins: view.get: test not found");
+      });
+    });
+
+    describe("list", function () {
+      it("should list views", async function () {
+        this.nock.get("/api/json").reply(200, fixtures.viewList);
+
+        const data = await this.jenkins.view.list();
+        should(data).not.be.empty();
+        for (const view of data) {
+          should(view).have.properties("name");
+        }
+      });
+
+      nit("should handle corrupt responses", async function () {
+        const data = '"trash';
+
+        this.nock.get("/api/json").reply(200, data);
+
+        await shouldThrow(async () => {
+          await this.jenkins.view.list();
+        }, "jenkins: view.list: returned bad data");
+      });
+    });
+
+    describe("add", function () {
+      it("should add job to view", async function () {
+        const beforeView = fixtures.viewGetListView;
+        beforeView.jobs = [];
+
+        this.nock
+          .get("/view/" + this.viewName + "/api/json")
+          .reply(200, beforeView)
+          .post("/view/" + this.viewName + "/addJobToView?name=" + this.jobName)
+          .reply(200)
+          .get("/view/" + this.viewName + "/api/json")
+          .reply(200, fixtures.viewGetListView);
+
+        const before = await this.jenkins.view.get(this.viewName);
+        should(before?.jobs).be.empty();
+
+        await this.jenkins.view.add(this.viewName, this.jobName);
+
+        const after = await this.jenkins.view.get(this.viewName);
+        should(after?.jobs).not.be.empty();
+      });
+    });
+
+    describe("remove", function () {
+      it("should remove job from view", async function () {
+        const afterView = fixtures.viewGetListView;
+        afterView.jobs = [];
+
+        this.nock
+          .post("/view/" + this.viewName + "/addJobToView?name=" + this.jobName)
+          .reply(200)
+          .get("/view/" + this.viewName + "/api/json")
+          .reply(200, fixtures.viewGetListView)
+          .post(
+            "/view/" + this.viewName + "/removeJobFromView?name=" + this.jobName
+          )
+          .reply(200)
+          .get("/view/" + this.viewName + "/api/json")
+          .reply(200, afterView);
+
+        await this.jenkins.view.add(this.viewName, this.jobName);
+
+        const before = await this.jenkins.view.get(this.viewName);
+        should(before?.jobs).not.empty();
+
+        await this.jenkins.view.remove(this.viewName, this.jobName);
+
+        const after = await this.jenkins.view.get(this.viewName);
+        should(after?.jobs).be.empty();
+      });
+    });
+  });
+
+  describe("plugin", function () {
+    beforeEach(async function () {
+      return helper.setup({ test: this });
+    });
+
+    describe("list", function () {
+      it("should list plugins", async function () {
+        this.nock
+          .get("/pluginManager/api/json?depth=2")
+          .reply(200, fixtures.pluginList);
+
+        const plugins = await this.jenkins.plugin.list({ depth: 2 });
+        should(plugins).be.instanceof(Array);
+        should(plugins).not.be.empty();
+
+        for (const plugin of plugins) {
+          should(plugin).have.properties([
+            "longName",
+            "shortName",
+            "dependencies",
+          ]);
+        }
       });
     });
   });
 });
+
+async function shouldThrow(block, message) {
+  if (!message) throw new Error("expected message required");
+
+  try {
+    await block();
+  } catch (err) {
+    should(err?.message).equal(message);
+    return;
+  }
+
+  throw Error("no exception thrown");
+}
