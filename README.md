@@ -13,7 +13,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 - queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
 - view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
-<a name="common-options"></a>
+<a id="common-options"></a>
 
 ### Common Options
 
@@ -22,7 +22,7 @@ These options will be passed along with any call, although only certain endpoint
 - depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
 - tree (String, optional): path expression (see Jenkins API documentation for more information)
 
-<a name="init"></a>
+<a id="init"></a>
 
 ### Jenkins(options)
 
@@ -46,7 +46,7 @@ const jenkins = new Jenkins({
 });
 ```
 
-<a name="info"></a>
+<a id="info"></a>
 
 ### jenkins.info(callback)
 
@@ -94,7 +94,7 @@ Result
 }
 ```
 
-<a name="build-get"></a>
+<a id="build-get"></a>
 
 ### jenkins.build.get(options)
 
@@ -171,7 +171,7 @@ Result
 }
 ```
 
-<a name="build-log"></a>
+<a id="build-log"></a>
 
 ### jenkins.build.log(options)
 
@@ -191,7 +191,7 @@ Usage
 await jenkins.build.log("example", 1);
 ```
 
-<a name="build-log-stream"></a>
+<a id="build-log-stream"></a>
 
 ### jenkins.build.logStream(options)
 
@@ -222,7 +222,7 @@ log.on("end", () => {
 });
 ```
 
-<a name="build-stop"></a>
+<a id="build-stop"></a>
 
 ### jenkins.build.stop(options)
 
@@ -239,7 +239,7 @@ Usage
 await jenkins.build.stop("example", 1);
 ```
 
-<a name="build-term"></a>
+<a id="build-term"></a>
 
 ### jenkins.build.term(options)
 
@@ -256,7 +256,7 @@ Usage
 await jenkins.build.term("example", 1);
 ```
 
-<a name="job-build"></a>
+<a id="job-build"></a>
 
 ### jenkins.job.build(options)
 
@@ -288,7 +288,7 @@ await jenkins.job.build({
 });
 ```
 
-<a name="job-config-get"></a>
+<a id="job-config-get"></a>
 
 ### jenkins.job.config(options)
 
@@ -304,7 +304,7 @@ Usage
 await jenkins.job.config("example");
 ```
 
-<a name="job-config-set"></a>
+<a id="job-config-set"></a>
 
 ### jenkins.job.config(options)
 
@@ -321,7 +321,7 @@ Usage
 await jenkins.job.config("example", xml);
 ```
 
-<a name="job-config-copy"></a>
+<a id="job-config-copy"></a>
 
 ### jenkins.job.copy(options)
 
@@ -338,7 +338,7 @@ Usage
 await jenkins.job.copy("fromJob", "example");
 ```
 
-<a name="job-create"></a>
+<a id="job-create"></a>
 
 ### jenkins.job.create(options)
 
@@ -355,7 +355,7 @@ Usage
 await jenkins.job.create("example", xml);
 ```
 
-<a name="job-destroy"></a>
+<a id="job-destroy"></a>
 
 ### jenkins.job.destroy(options)
 
@@ -371,7 +371,7 @@ Usage
 await jenkins.job.destroy("example");
 ```
 
-<a name="job-disable"></a>
+<a id="job-disable"></a>
 
 ### jenkins.job.disable(options)
 
@@ -387,7 +387,7 @@ Usage
 await jenkins.job.disable("example");
 ```
 
-<a name="job-enable"></a>
+<a id="job-enable"></a>
 
 ### jenkins.job.enable(options)
 
@@ -403,7 +403,7 @@ Usage
 await jenkins.job.enable("example");
 ```
 
-<a name="job-exists"></a>
+<a id="job-exists"></a>
 
 ### jenkins.job.exists(options)
 
@@ -419,7 +419,7 @@ Usage
 await jenkins.job.exists("example");
 ```
 
-<a name="job-get"></a>
+<a id="job-get"></a>
 
 ### jenkins.job.get(options)
 
@@ -495,7 +495,7 @@ Result
 }
 ```
 
-<a name="job-list"></a>
+<a id="job-list"></a>
 
 ### jenkins.job.list(callback)
 
@@ -523,7 +523,7 @@ Result
 ]
 ```
 
-<a name="label-get"></a>
+<a id="label-get"></a>
 
 ### jenkins.label.get(options)
 
@@ -566,7 +566,7 @@ Result
 }
 ```
 
-<a name="node-config-get"></a>
+<a id="node-config-get"></a>
 
 ### jenkins.node.config(options)
 
@@ -582,7 +582,7 @@ Usage
 await jenkins.node.config("example");
 ```
 
-<a name="node-create"></a>
+<a id="node-create"></a>
 
 ### jenkins.node.create(options)
 
@@ -598,7 +598,7 @@ Usage
 await jenkins.node.create("node-name");
 ```
 
-<a name="node-destroy"></a>
+<a id="node-destroy"></a>
 
 ### jenkins.node.destroy(options)
 
@@ -614,7 +614,7 @@ Usage
 await jenkins.node.destroy("node-name");
 ```
 
-<a name="node-disconnect"></a>
+<a id="node-disconnect"></a>
 
 ### jenkins.node.disconnect(options)
 
@@ -631,7 +631,7 @@ Usage
 await jenkins.node.disconnect("node-name", "no longer used");
 ```
 
-<a name="node-disable"></a>
+<a id="node-disable"></a>
 
 ### jenkins.node.disable(options)
 
@@ -648,7 +648,7 @@ Usage
 await jenkins.node.disable("node-name", "network failure");
 ```
 
-<a name="node-enable"></a>
+<a id="node-enable"></a>
 
 ### jenkins.node.enable(options)
 
@@ -664,7 +664,7 @@ Usage
 await jenkins.node.enable("node-name");
 ```
 
-<a name="node-exists"></a>
+<a id="node-exists"></a>
 
 ### jenkins.node.exists(options)
 
@@ -680,7 +680,7 @@ Usage
 await jenkins.node.exists("node-name");
 ```
 
-<a name="node-get"></a>
+<a id="node-get"></a>
 
 ### jenkins.node.get(options)
 
@@ -728,7 +728,7 @@ Result
 }
 ```
 
-<a name="node-list"></a>
+<a id="node-list"></a>
 
 ### jenkins.node.list(callback)
 
@@ -823,7 +823,7 @@ Result
 }
 ```
 
-<a name="plugin-list"></a>
+<a id="plugin-list"></a>
 
 ### jenkins.plugin.list(callback)
 
@@ -858,7 +858,7 @@ Result
 ]
 ```
 
-<a name="queue-list"></a>
+<a id="queue-list"></a>
 
 ### jenkins.queue.list(callback)
 
@@ -906,7 +906,7 @@ Result
 }
 ```
 
-<a name="queue-item"></a>
+<a id="queue-item"></a>
 
 ### jenkins.queue.item(options)
 
@@ -957,7 +957,7 @@ Result
 }
 ```
 
-<a name="queue-cancel"></a>
+<a id="queue-cancel"></a>
 
 ### jenkins.queue.cancel(options)
 
@@ -973,7 +973,7 @@ Usage
 await jenkins.queue.cancel(23);
 ```
 
-<a name="view-config-get"></a>
+<a id="view-config-get"></a>
 
 ### jenkins.view.config(options)
 
@@ -989,7 +989,7 @@ Usage
 await jenkins.view.config("example");
 ```
 
-<a name="view-config-set"></a>
+<a id="view-config-set"></a>
 
 ### jenkins.view.config(options)
 
@@ -1006,7 +1006,7 @@ Usage
 await jenkins.view.config("example", xml);
 ```
 
-<a name="view-create"></a>
+<a id="view-create"></a>
 
 ### jenkins.view.create(options)
 
@@ -1023,7 +1023,7 @@ Usage
 await jenkins.view.create("example", "list");
 ```
 
-<a name="view-destroy"></a>
+<a id="view-destroy"></a>
 
 ### jenkins.view.destroy(options)
 
@@ -1039,7 +1039,7 @@ Usage
 await jenkins.view.destroy("example");
 ```
 
-<a name="view-exists"></a>
+<a id="view-exists"></a>
 
 ### jenkins.view.exists(options)
 
@@ -1055,7 +1055,7 @@ Usage
 await jenkins.view.exists("example");
 ```
 
-<a name="view-get"></a>
+<a id="view-get"></a>
 
 ### jenkins.view.get(options)
 
@@ -1089,7 +1089,7 @@ Result
 }
 ```
 
-<a name="view-list"></a>
+<a id="view-list"></a>
 
 ### jenkins.view.list(callback)
 
@@ -1141,7 +1141,7 @@ Result
 }
 ```
 
-<a name="view-add"></a>
+<a id="view-add"></a>
 
 ### jenkins.view.add(options)
 
@@ -1158,7 +1158,7 @@ Usage
 await jenkins.view.add("example", "jobExample");
 ```
 
-<a name="view-remove"></a>
+<a id="view-remove"></a>
 
 ### jenkins.view.remove(options)
 
