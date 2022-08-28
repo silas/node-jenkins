@@ -18,31 +18,33 @@ describe("utils", function () {
       });
 
       it("should parse url", function () {
-        ["http://", "https://"].forEach(function (p) {
-          should(utils.folderPath(p).value).eql([]);
-          should(utils.folderPath(p + "example.org/").value).eql([]);
-          should(utils.folderPath(p + "example.org/job/one").value).eql([
-            "one",
-          ]);
-          should(utils.folderPath(p + "example.org/proxy/job/one").value).eql([
+        for (const prefix of ["http://", "https://"]) {
+          should(utils.folderPath(prefix).value).eql([]);
+          should(utils.folderPath(`${prefix}example.org/`).value).eql([]);
+          should(utils.folderPath(`${prefix}example.org/job/one`).value).eql([
             "one",
           ]);
           should(
-            utils.folderPath(p + "example.org/job/one/hello/world").value
+            utils.folderPath(`${prefix}example.org/proxy/job/one`).value
           ).eql(["one"]);
           should(
-            utils.folderPath(p + "example.org/job/one/hello/job/nope").value
+            utils.folderPath(`${prefix}example.org/job/one/hello/world`).value
           ).eql(["one"]);
-          should(utils.folderPath(p + "example.org/job/one/job/two").value).eql(
-            ["one", "two"]
-          );
-          should(utils.folderPath(p + "example.org/job/one%2Ftwo").value).eql([
-            "one/two",
-          ]);
           should(
-            utils.folderPath(p + "example.org/job/one/job/two%252Fthree/").value
+            utils.folderPath(`${prefix}example.org/job/one/hello/job/nope`)
+              .value
+          ).eql(["one"]);
+          should(
+            utils.folderPath(`${prefix}example.org/job/one/job/two`).value
+          ).eql(["one", "two"]);
+          should(
+            utils.folderPath(`${prefix}example.org/job/one%2Ftwo`).value
+          ).eql(["one/two"]);
+          should(
+            utils.folderPath(`${prefix}example.org/job/one/job/two%252Fthree/`)
+              .value
           ).eql(["one", "two%2Fthree"]);
-        });
+        }
       });
 
       it("should parse array", function () {

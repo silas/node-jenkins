@@ -39,7 +39,7 @@ Options
 Usage
 
 ```javascript
-const Jenkins = require("jenkins");
+import Jenkins from "jenkins";
 
 const jenkins = new Jenkins({
   baseUrl: "http://user:pass@localhost:8080",
