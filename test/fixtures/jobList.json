@@ -14,9 +14,7 @@
     "url": "http://localhost:8080/",
     "name": "All"
   },
-  "assignedLabels": [
-    {}
-  ],
+  "assignedLabels": [{}],
   "mode": "NORMAL",
   "nodeDescription": "the master Jenkins node",
   "nodeName": "",

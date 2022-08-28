@@ -1,10 +1,7 @@
 {
   "actions": [],
   "displayName": "test-node-a532b0f8-6079-4efa-80ea-ad61c05bef5b",
-  "executors": [
-    {},
-    {}
-  ],
+  "executors": [{}, {}],
   "icon": "computer-x.png",
   "idle": true,
   "jnlpAgent": true,

@@ -23,8 +23,8 @@
   },
   "url": "queue/item/130/",
   "why": null,
-  "executable" : {
-    "number" : 28,
-    "url" : "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
+  "executable": {
+    "number": 28,
+    "url": "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
   }
 }

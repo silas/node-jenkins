@@ -4,11 +4,7 @@
     {
       "actions": [],
       "displayName": "master",
-      "executors": [
-        {},
-        {},
-        {}
-      ],
+      "executors": [{}, {}, {}],
       "icon": "computer.png",
       "idle": true,
       "jnlpAgent": false,
@@ -48,9 +44,7 @@
     {
       "actions": [],
       "displayName": "test",
-      "executors": [
-        {}
-      ],
+      "executors": [{}],
       "icon": "computer-x.png",
       "idle": true,
       "jnlpAgent": false,
@@ -77,10 +71,7 @@
     {
       "actions": [],
       "displayName": "test-node-abc00edf-4e7e-4dfe-a6d6-157d19d592bc",
-      "executors": [
-        {},
-        {}
-      ],
+      "executors": [{}, {}],
       "icon": "computer-x.png",
       "idle": true,
       "jnlpAgent": true,

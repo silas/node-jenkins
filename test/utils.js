@@ -1,100 +1,123 @@
-'use strict';
+const fs = require("fs");
+const should = require("should");
 
-/* jshint expr: true */
+const utils = require("../lib/utils");
 
-/**
- * Module dependencies.
- */
-
-var fs = require('fs');
-var should = require('should');
-
-var utils = require('../lib/utils');
-
-/**
- * Tests.
- */
-
-describe('utils', function() {
-  describe('FolderPath', function() {
-    describe('constructor', function() {
-      it('should parse string', function() {
-        utils.FolderPath().value.should.eql([]);
-        utils.FolderPath('').value.should.eql([]);
-        utils.FolderPath('/').value.should.eql([]);
-        utils.FolderPath('a/').value.should.eql(['a']);
-        utils.FolderPath('/a').value.should.eql(['a']);
-        utils.FolderPath('a/b').value.should.eql(['a', 'b']);
-        utils.FolderPath('a//b').value.should.eql(['a', 'b']);
-        utils.FolderPath('a/b/c').value.should.eql(['a', 'b', 'c']);
+describe("utils", function () {
+  describe("folderPath", function () {
+    describe("constructor", function () {
+      it("should parse string", function () {
+        should(utils.folderPath().value).eql([]);
+        should(utils.folderPath("").value).eql([]);
+        should(utils.folderPath("/").value).eql([]);
+        should(utils.folderPath("a/").value).eql(["a"]);
+        should(utils.folderPath("/a").value).eql(["a"]);
+        should(utils.folderPath("a/b").value).eql(["a", "b"]);
+        should(utils.folderPath("a//b").value).eql(["a", "b"]);
+        should(utils.folderPath("a/b/c").value).eql(["a", "b", "c"]);
       });
 
-      it('should parse url', function() {
-        ['http://', 'https://'].forEach(function(p) {
-          utils.FolderPath(p).value.should.eql([]);
-          utils.FolderPath(p + 'example.org/').value.should.eql([]);
-          utils.FolderPath(p + 'example.org/job/one').value.should.eql(['one']);
-          utils.FolderPath(p + 'example.org/proxy/job/one').value.should.eql(['one']);
-          utils.FolderPath(p + 'example.org/job/one/hello/world').value.should.eql(['one']);
-          utils.FolderPath(p + 'example.org/job/one/hello/job/nope').value.should.eql(['one']);
-          utils.FolderPath(p + 'example.org/job/one/job/two').value.should.eql(['one', 'two']);
-          utils.FolderPath(p + 'example.org/job/one%2Ftwo').value.should.eql(['one/two']);
-          utils.FolderPath(p + 'example.org/job/one/job/two%252Fthree/').value
-            .should.eql(['one', 'two%2Fthree']);
+      it("should parse url", function () {
+        ["http://", "https://"].forEach(function (p) {
+          should(utils.folderPath(p).value).eql([]);
+          should(utils.folderPath(p + "example.org/").value).eql([]);
+          should(utils.folderPath(p + "example.org/job/one").value).eql([
+            "one",
+          ]);
+          should(utils.folderPath(p + "example.org/proxy/job/one").value).eql([
+            "one",
+          ]);
+          should(
+            utils.folderPath(p + "example.org/job/one/hello/world").value
+          ).eql(["one"]);
+          should(
+            utils.folderPath(p + "example.org/job/one/hello/job/nope").value
+          ).eql(["one"]);
+          should(utils.folderPath(p + "example.org/job/one/job/two").value).eql(
+            ["one", "two"]
+          );
+          should(utils.folderPath(p + "example.org/job/one%2Ftwo").value).eql([
+            "one/two",
+          ]);
+          should(
+            utils.folderPath(p + "example.org/job/one/job/two%252Fthree/").value
+          ).eql(["one", "two%2Fthree"]);
         });
       });
 
-      it('should parse array', function() {
-        utils.FolderPath(['a']).value.should.eql(['a']);
-        utils.FolderPath(['a', 'b']).value.should.eql(['a', 'b']);
+      it("should parse array", function () {
+        should(utils.folderPath(["a"]).value).eql(["a"]);
+        should(utils.folderPath(["a", "b"]).value).eql(["a", "b"]);
       });
     });
 
-    describe('name', function() {
-      it('should work', function() {
-        utils.FolderPath().name().should.equal('');
-        utils.FolderPath('a').name().should.equal('a');
-        utils.FolderPath('a/b').name().should.equal('b');
+    describe("name", function () {
+      it("should work", function () {
+        should(utils.folderPath().name()).equal("");
+        should(utils.folderPath("a").name()).equal("a");
+        should(utils.folderPath("a/b").name()).equal("b");
       });
     });
 
-    describe('path', function() {
-      it('should work', function() {
-        utils.FolderPath().path().should.containEql({
+    describe("path", function () {
+      it("should work", function () {
+        should(utils.folderPath().path()).containEql({
           encode: false,
-          value: '',
+          value: "",
         });
-        utils.FolderPath('a').path().should.containEql({
+        should(utils.folderPath("a").path()).containEql({
           encode: false,
-          value: '/job/a',
+          value: "/job/a",
         });
-        utils.FolderPath('a/b').path().should.containEql({
+        should(utils.folderPath("a/b").path()).containEql({
           encode: false,
-          value: '/job/a/job/b',
+          value: "/job/a/job/b",
         });
       });
     });
 
-    describe('parent', function() {
-      it('should work', function() {
-        utils.FolderPath().parent().value.should.eql([]);
-        utils.FolderPath('a').parent().value.should.eql([]);
-        utils.FolderPath('a/b').parent().value.should.eql(['a']);
-        utils.FolderPath('a/b/c').parent().value.should.eql(['a', 'b']);
+    describe("parent", function () {
+      it("should work", function () {
+        should(utils.folderPath().parent().value).eql([]);
+        should(utils.folderPath("a").parent().value).eql([]);
+        should(utils.folderPath("a/b").parent().value).eql(["a"]);
+        should(utils.folderPath("a/b/c").parent().value).eql(["a", "b"]);
       });
     });
   });
 
-  describe('isFileLike', function() {
-    it('should work', function() {
+  describe("parse", function () {
+    it("should work", function () {
+      should(utils.parse([])).eql({});
+      should(utils.parse(["value"])).eql({});
+      should(utils.parse([{}])).eql({});
+      should(utils.parse([{ hello: "world" }])).eql({ hello: "world" });
+      should(utils.parse([], "name")).eql({});
+      should(utils.parse(["test"], "name")).eql({ name: "test" });
+      should(utils.parse(["test", { hello: "world" }], "name")).eql({
+        hello: "world",
+        name: "test",
+      });
+      should(utils.parse(["test", { hello: "world" }], "name", "value")).eql({
+        hello: "world",
+        name: "test",
+      });
+      should(
+        utils.parse(["one", "two", { hello: "world" }], "name", "value")
+      ).eql({ hello: "world", name: "one", value: "two" });
+    });
+  });
+
+  describe("isFileLike", function () {
+    it("should work", function () {
       should(utils.isFileLike()).is.false;
       should(utils.isFileLike(null)).is.false;
-      should(utils.isFileLike('test')).is.false;
+      should(utils.isFileLike("test")).is.false;
       should(utils.isFileLike({})).is.false;
 
-      should(utils.isFileLike(Buffer.from('test'))).is.true;
+      should(utils.isFileLike(Buffer.from("test"))).is.true;
 
-      var stream = fs.createReadStream(__filename);
+      const stream = fs.createReadStream(__filename);
       should(utils.isFileLike(stream)).is.true;
       stream.close();
     });

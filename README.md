@@ -4,70 +4,65 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 ## Documentation
 
- * jenkins: [init](#init), [info](#info)
- * build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
- * job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
- * label: [get](#label-get)
- * node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
- * plugin: [list](#plugin-list)
- * queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
- * view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
-
-<a name="promise"></a>
-### Promise
-
-Promise support can be enabled by setting `promisify` to `true` in Node `>= 0.12` or passing a wrapper (ex: `bluebird.fromCallback`) in older versions.
+- jenkins: [init](#init), [info](#info)
+- build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
+- job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
+- label: [get](#label-get)
+- node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
+- plugin: [list](#plugin-list)
+- queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
+- view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
 
 <a name="common-options"></a>
+
 ### Common Options
 
 These options will be passed along with any call, although only certain endpoints support them.
 
- * depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
- * tree (String, optional): path expression (see Jenkins API documentation for more information)
+- depth (Number, default: 0): how much data to return (see [depth control](https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API#RemoteaccessAPI-Depthcontrol))
+- tree (String, optional): path expression (see Jenkins API documentation for more information)
 
 <a name="init"></a>
-### jenkins([options])
+
+### Jenkins(options)
 
 Initialize a new Jenkins client.
 
 Options
 
- * baseUrl (String): Jenkins URL
- * crumbIssuer (Boolean, default: false): enable CSRF Protection support
- * formData (Function, optional): enable file upload support on parameterized builds (must pass in `require('form-data')` as value for this option)
- * headers (Object, optional): headers included in every request
- * promisify (Boolean|Function, optional): convert callback methods to promises
- * and more via [papi](https://github.com/silas/node-papi#client)
+- baseUrl (String): Jenkins URL
+- crumbIssuer (Boolean, default: true): enable CSRF Protection support
+- formData (Function, optional): enable file upload support on parameterized builds (must pass in `require('form-data')` as value for this option)
+- headers (Object, optional): headers included in every request
+- and more via [papi](https://github.com/silas/node-papi#client)
 
 Usage
 
-``` javascript
-var jenkins = require('jenkins')({ baseUrl: 'http://user:pass@localhost:8080', crumbIssuer: true });
+```javascript
+const Jenkins = require("jenkins");
+
+const jenkins = new Jenkins({
+  baseUrl: "http://user:pass@localhost:8080",
+});
 ```
 
 <a name="info"></a>
+
 ### jenkins.info(callback)
 
 Get server information.
 
 Usage
 
-``` javascript
-jenkins.info(function(err, data) {
-  if (err) throw err;
-
-  console.log('info', data);
-});
+```javascript
+await jenkins.info();
 ```
 
 Result
 
-``` json
+```json
 {
-  "assignedLabels": [
-    {}
-  ],
+  "assignedLabels": [{}],
   "description": null,
   "jobs": [
     {
@@ -100,28 +95,25 @@ Result
 ```
 
 <a name="build-get"></a>
-### jenkins.build.get(options, callback)
+
+### jenkins.build.get(options)
 
 Get build information.
 
 Options
 
- * name (String): job name
- * number (Integer): build number
+- name (String): job name
+- number (Integer): build number
 
 Usage
 
-``` javascript
-jenkins.build.get('example', 1, function(err, data) {
-  if (err) throw err;
-
-  console.log('build', data);
-});
+```javascript
+await jenkins.build.get("example", 1);
 ```
 
 Result
 
-``` json
+```json
 {
   "actions": [],
   "buildable": true,
@@ -180,292 +172,272 @@ Result
 ```
 
 <a name="build-log"></a>
-### jenkins.build.log(options, callback)
+
+### jenkins.build.log(options)
 
 Get build log.
 
 Options
 
-* name (String): job name
-* number (Integer): build number
-* start (Integer, optional): start offset
-* type (String, enum: text, html, default: text): output format
-* meta (Boolean, default: false): return object with text (log data), more (boolean if there is more log data), and size (used with start to offset on subsequent calls)
+- name (String): job name
+- number (Integer): build number
+- start (Integer, optional): start offset
+- type (String, enum: text, html, default: text): output format
+- meta (Boolean, default: false): return object with text (log data), more (boolean if there is more log data), and size (used with start to offset on subsequent calls)
 
 Usage
 
-``` javascript
-jenkins.build.log('example', 1, function(err, data) {
-  if (err) throw err;
-
-  console.log('log', data);
-});
+```javascript
+await jenkins.build.log("example", 1);
 ```
 
 <a name="build-log-stream"></a>
-### jenkins.build.logStream(options, callback)
+
+### jenkins.build.logStream(options)
 
 Get build log stream.
 
 Options
 
-* name (String): job name
-* number (Integer): build number
-* type (String, enum: text, html, default: text): output format
-* delay (Integer, default: 1000): poll interval in milliseconds
+- name (String): job name
+- number (Integer): build number
+- type (String, enum: text, html, default: text): output format
+- delay (Integer, default: 1000): poll interval in milliseconds
 
 Usage
 
-``` javascript
-var log = jenkins.build.logStream('example', 1);
+```javascript
+const log = jenkins.build.logStream("example", 1);
 
-log.on('data', function(text) {
+log.on("data", (text) => {
   process.stdout.write(text);
 });
 
-log.on('error', function(err) {
-  console.log('error', err);
+log.on("error", (err) => {
+  console.log("error", err);
 });
 
-log.on('end', function() {
-  console.log('end');
+log.on("end", () => {
+  console.log("end");
 });
 ```
 
 <a name="build-stop"></a>
-### jenkins.build.stop(options, callback)
+
+### jenkins.build.stop(options)
 
 Stop build.
 
 Options
 
- * name (String): job name
- * number (Integer): build number
+- name (String): job name
+- number (Integer): build number
 
 Usage
 
-``` javascript
-jenkins.build.stop('example', 1, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.build.stop("example", 1);
 ```
 
 <a name="build-term"></a>
-### jenkins.build.term(options, callback)
+
+### jenkins.build.term(options)
 
 Terminates build.
 
 Options
 
- * name (String): job name
- * number (Integer): build number
+- name (String): job name
+- number (Integer): build number
 
 Usage
 
-``` javascript
-jenkins.build.term('example', 1, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.build.term("example", 1);
 ```
 
 <a name="job-build"></a>
-### jenkins.job.build(options, callback)
+
+### jenkins.job.build(options)
 
 Trigger build.
 
 Options
 
- * name (String): job name
- * parameters (Object, optional): build parameters
- * token (String, optional): authorization token
+- name (String): job name
+- parameters (Object, optional): build parameters
+- token (String, optional): authorization token
 
 Usage
 
-``` javascript
-jenkins.job.build('example', function(err, data) {
-  if (err) throw err;
+```javascript
+await jenkins.job.build("example");
+```
 
-  console.log('queue item number', data);
+```javascript
+await jenkins.job.build({
+  name: "example",
+  parameters: { name: "value" },
 });
 ```
 
-``` javascript
-jenkins.job.build({ name: 'example', parameters: { name: 'value' } }, function(err) {
-  if (err) throw err;
-});
-```
-
-``` javascript
-jenkins.job.build({ name: 'example', parameters: { file: fs.createReadStream('test.txt') } }, function(err) {
-  if (err) throw err;
+```javascript
+await jenkins.job.build({
+  name: "example",
+  parameters: { file: fs.createReadStream("test.txt") },
 });
 ```
 
 <a name="job-config-get"></a>
-### jenkins.job.config(options, callback)
+
+### jenkins.job.config(options)
 
 Get job XML configuration.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.config('example', function(err, data) {
-  if (err) throw err;
-
-  console.log('xml', data);
-});
+```javascript
+await jenkins.job.config("example");
 ```
 
 <a name="job-config-set"></a>
-### jenkins.job.config(options, callback)
+
+### jenkins.job.config(options)
 
 Update job XML configuration.
 
 Options
 
- * name (String): job name
- * xml (String): configuration XML
+- name (String): job name
+- xml (String): configuration XML
 
 Usage
 
-``` javascript
-jenkins.job.config('example', xml, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.config("example", xml);
 ```
 
 <a name="job-config-copy"></a>
-### jenkins.job.copy(options, callback)
+
+### jenkins.job.copy(options)
 
 Create job by copying existing job.
 
 Options
 
- * name (String): new job name
- * from (String): source job name
+- name (String): new job name
+- from (String): source job name
 
 Usage
 
-``` javascript
-jenkins.job.copy('fromJob', 'example', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.copy("fromJob", "example");
 ```
 
 <a name="job-create"></a>
-### jenkins.job.create(options, callback)
+
+### jenkins.job.create(options)
 
 Create job from scratch.
 
 Options
 
- * name (String): job name
- * xml (String): configuration XML
+- name (String): job name
+- xml (String): configuration XML
 
 Usage
 
-``` javascript
-jenkins.job.create('example', xml, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.create("example", xml);
 ```
 
 <a name="job-destroy"></a>
-### jenkins.job.destroy(options, callback)
+
+### jenkins.job.destroy(options)
 
 Delete job.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.destroy('example', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.destroy("example");
 ```
 
 <a name="job-disable"></a>
-### jenkins.job.disable(options, callback)
+
+### jenkins.job.disable(options)
 
 Disable job.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.disable('example', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.disable("example");
 ```
 
 <a name="job-enable"></a>
-### jenkins.job.enable(options, callback)
+
+### jenkins.job.enable(options)
 
 Enable job.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.enable('example', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.job.enable("example");
 ```
 
 <a name="job-exists"></a>
-### jenkins.job.exists(options, callback)
+
+### jenkins.job.exists(options)
 
 Check job exists.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.exists('example', function(err, exists) {
-  if (err) throw err;
-
-  console.log('exists', exists);
-});
+```javascript
+await jenkins.job.exists("example");
 ```
 
 <a name="job-get"></a>
-### jenkins.job.get(options, callback)
+
+### jenkins.job.get(options)
 
 Get job information.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.job.get('example', function(err, data) {
-  if (err) throw err;
-
-  console.log('job', data);
-});
+```javascript
+await jenkins.job.get("example");
 ```
 
 Result
 
-``` json
+```json
 {
   "actions": [],
   "buildable": true,
@@ -524,27 +496,24 @@ Result
 ```
 
 <a name="job-list"></a>
+
 ### jenkins.job.list(callback)
 
 List jobs.
 
 Options
 
- * name (String, optional): folder name
+- name (String, optional): folder name
 
 Usage
 
-``` javascript
-jenkins.job.list(function(err, data) {
-  if (err) throw err;
-
-  console.log('jobs', data);
-});
+```javascript
+await jenkins.job.list();
 ```
 
 Result
 
-``` json
+```json
 [
   {
     "color": "blue",
@@ -555,27 +524,24 @@ Result
 ```
 
 <a name="label-get"></a>
-### jenkins.label.get(options, callback)
+
+### jenkins.label.get(options)
 
 Get label information.
 
 Options
 
- * name (String): label name
+- name (String): label name
 
 Usage
 
-``` javascript
-jenkins.label.get('master', function(err, data) {
-  if (err) throw err;
-
-  console.log('label', data);
-});
+```javascript
+await jenkins.label.get("master");
 ```
 
 Result
 
-``` json
+```json
 {
   "_class": "hudson.model.labels.LabelAtom",
   "actions": [],
@@ -601,159 +567,142 @@ Result
 ```
 
 <a name="node-config-get"></a>
-### jenkins.node.config(options, callback)
+
+### jenkins.node.config(options)
 
 Get node XML configuration.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.config('example', function(err, data) {
-  if (err) throw err;
-
-  console.log('xml', data);
-});
+```javascript
+await jenkins.node.config("example");
 ```
 
 <a name="node-create"></a>
-### jenkins.node.create(options, callback)
+
+### jenkins.node.create(options)
 
 Create node.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.create('slave', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.node.create("node-name");
 ```
 
 <a name="node-destroy"></a>
-### jenkins.node.destroy(options, callback)
+
+### jenkins.node.destroy(options)
 
 Delete node.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.destroy('slave', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.node.destroy("node-name");
 ```
 
 <a name="node-disconnect"></a>
-### jenkins.node.disconnect(options, callback)
+
+### jenkins.node.disconnect(options)
 
 Disconnect node.
 
 Options
 
- * name (String): node name
- * message (String, optional): reason for being disconnected
+- name (String): node name
+- message (String, optional): reason for being disconnected
 
 Usage
 
-``` javascript
-jenkins.node.disconnect('slave', 'no longer used', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.node.disconnect("node-name", "no longer used");
 ```
 
 <a name="node-disable"></a>
-### jenkins.node.disable(options, callback)
+
+### jenkins.node.disable(options)
 
 Disable node.
 
 Options
 
- * name (String): node name
- * message (String, optional): reason for being disabled
+- name (String): node name
+- message (String, optional): reason for being disabled
 
 Usage
 
-``` javascript
-jenkins.node.disable('slave', 'network failure', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.node.disable("node-name", "network failure");
 ```
 
 <a name="node-enable"></a>
-### jenkins.node.enable(options, callback)
+
+### jenkins.node.enable(options)
 
 Enable node.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.enable('slave', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.node.enable("node-name");
 ```
 
 <a name="node-exists"></a>
-### jenkins.node.exists(options, callback)
+
+### jenkins.node.exists(options)
 
 Check node exists.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.exists('slave', function(err, exists) {
-  if (err) throw err;
-
-  console.log('exists', exists);
-});
+```javascript
+await jenkins.node.exists("node-name");
 ```
 
 <a name="node-get"></a>
-### jenkins.node.get(options, callback)
+
+### jenkins.node.get(options)
 
 Get node information.
 
 Options
 
- * name (String): node name
+- name (String): node name
 
 Usage
 
-``` javascript
-jenkins.node.get('slave', function(err, data) {
-  if (err) throw err;
-
-  console.log('node', data);
-});
+```javascript
+await jenkins.node.get("node-name");
 ```
 
 Result
 
-``` json
+```json
 {
   "actions": [],
-  "displayName": "slave",
-  "executors": [
-    {},
-    {}
-  ],
+  "displayName": "node-name",
+  "executors": [{}, {}],
   "icon": "computer-x.png",
   "idle": true,
   "jnlpAgent": true,
@@ -780,37 +729,31 @@ Result
 ```
 
 <a name="node-list"></a>
+
 ### jenkins.node.list(callback)
 
 List all nodes.
 
 Options
 
- * full (Boolean, default: false): include executor count in response
+- full (Boolean, default: false): include executor count in response
 
 Usage
 
-``` javascript
-jenkins.node.list(function(err, data) {
-  if (err) throw err;
-
-  console.log('nodes', data);
-});
+```javascript
+await jenkins.node.list();
 ```
 
 Result
 
-``` json
+```json
 {
   "busyExecutors": 0,
   "computer": [
     {
       "actions": [],
       "displayName": "master",
-      "executors": [
-        {},
-        {}
-      ],
+      "executors": [{}, {}],
       "icon": "computer.png",
       "idle": true,
       "jnlpAgent": false,
@@ -849,11 +792,8 @@ Result
     },
     {
       "actions": [],
-      "displayName": "slave",
-      "executors": [
-        {},
-        {}
-      ],
+      "displayName": "node-name",
+      "executors": [{}, {}],
       "icon": "computer-x.png",
       "idle": true,
       "jnlpAgent": true,
@@ -884,68 +824,55 @@ Result
 ```
 
 <a name="plugin-list"></a>
+
 ### jenkins.plugin.list(callback)
 
 List plugins (note: depth defaults to 1).
 
 Usage
 
-``` javascript
-jenkins.plugin.list(function(err, data) {
-  if (err) throw err;
-
-  console.log('plugins', data);
-});
+```javascript
+await jenkins.plugin.list();
 ```
 
 Result
 
-``` json
-[{
-  "active": true,
-  "backupVersion": null,
-  "bundled": false,
-  "deleted": false,
-  "dependencies": [
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {}
-  ],
-  "downgradable": false,
-  "enabled": true,
-  "hasUpdate": false,
-  "longName": "Email Extension Plugin",
-  "pinned": false,
-  "shortName": "email-ext",
-  "supportsDynamicLoad": "MAYBE",
-  "url": "http://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin",
-  "version": "2.53"
-}]
+```json
+[
+  {
+    "active": true,
+    "backupVersion": null,
+    "bundled": false,
+    "deleted": false,
+    "dependencies": [{}, {}, {}, {}, {}, {}, {}, {}],
+    "downgradable": false,
+    "enabled": true,
+    "hasUpdate": false,
+    "longName": "Email Extension Plugin",
+    "pinned": false,
+    "shortName": "email-ext",
+    "supportsDynamicLoad": "MAYBE",
+    "url": "http://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin",
+    "version": "2.53"
+  }
+]
 ```
 
 <a name="queue-list"></a>
+
 ### jenkins.queue.list(callback)
 
 List queues.
 
 Usage
 
-``` javascript
-jenkins.queue.list(function(err, data) {
-  if (err) throw err;
-
-  console.log('queues', data);
-});
+```javascript
+await jenkins.queue.list();
 ```
 
 Result
 
-``` json
+```json
 {
   "items": [
     {
@@ -980,27 +907,24 @@ Result
 ```
 
 <a name="queue-item"></a>
-### jenkins.queue.item(options, callback)
+
+### jenkins.queue.item(options)
 
 Lookup a queue item.
 
 Options
 
- * number (Integer): queue item number
+- number (Integer): queue item number
 
 Usage
 
-``` javascript
-jenkins.queue.item(130, function(err, data) {
-  if (err) throw err;
-
-  console.log('item', data);
-});
+```javascript
+await jenkins.queue.item(130);
 ```
 
 Result
 
-``` json
+```json
 {
   "actions": [
     {
@@ -1026,145 +950,130 @@ Result
   },
   "url": "queue/item/130/",
   "why": null,
-  "executable" : {
-    "number" : 28,
-    "url" : "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
+  "executable": {
+    "number": 28,
+    "url": "http://localhost:8080/job/test-job-b7ef0845-6515-444c-96a1-d2266d5e0f18/28/"
   }
 }
 ```
 
-
-
 <a name="queue-cancel"></a>
-### jenkins.queue.cancel(options, callback)
+
+### jenkins.queue.cancel(options)
 
 Cancel build in queue.
 
 Options
 
- * number (Integer): queue item id
+- number (Integer): queue item id
 
 Usage
 
-``` javascript
-jenkins.queue.cancel(23, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.queue.cancel(23);
 ```
 
 <a name="view-config-get"></a>
-### jenkins.view.config(options, callback)
+
+### jenkins.view.config(options)
 
 Get view XML configuration.
 
 Options
 
- * name (String): job name
+- name (String): job name
 
 Usage
 
-``` javascript
-jenkins.view.config('example', function(err, data) {
-  if (err) throw err;
-
-  console.log('xml', data);
-});
+```javascript
+await jenkins.view.config("example");
 ```
 
 <a name="view-config-set"></a>
-### jenkins.view.config(options, callback)
+
+### jenkins.view.config(options)
 
 Update view XML configuration.
 
 Options
 
- * name (String): job name
- * xml (String): configuration XML
+- name (String): job name
+- xml (String): configuration XML
 
 Usage
 
-``` javascript
-jenkins.view.config('example', xml, function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.view.config("example", xml);
 ```
 
 <a name="view-create"></a>
-### jenkins.view.create(options, callback)
+
+### jenkins.view.create(options)
 
 Create view.
 
 Options
 
- * name (String): view name
- * type (String, enum: list, my): view type
+- name (String): view name
+- type (String, enum: list, my): view type
 
 Usage
 
-``` javascript
-jenkins.view.create('example', 'list', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.view.create("example", "list");
 ```
 
 <a name="view-destroy"></a>
-### jenkins.view.destroy(options, callback)
+
+### jenkins.view.destroy(options)
 
 Delete view.
 
 Options
 
- * name (String): view name
+- name (String): view name
 
 Usage
 
-``` javascript
-jenkins.view.destroy('example', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.view.destroy("example");
 ```
 
 <a name="view-exists"></a>
-### jenkins.view.exists(options, callback)
+
+### jenkins.view.exists(options)
 
 Check view exists.
 
 Options
 
- * name (String): view name
+- name (String): view name
 
 Usage
 
-``` javascript
-jenkins.view.exists('example', function(err, exists) {
-  if (err) throw err;
-
-  console.log('exists', exists);
-});
+```javascript
+await jenkins.view.exists("example");
 ```
 
 <a name="view-get"></a>
-### jenkins.view.get(options, callback)
+
+### jenkins.view.get(options)
 
 Get view information.
 
 Options
 
- * name (String): view name
+- name (String): view name
 
 Usage
 
-``` javascript
-jenkins.view.get('example', function(err, data) {
-  if (err) throw err;
-
-  console.log('view', data);
-});
+```javascript
+await jenkins.view.get("example");
 ```
 
 Result
 
-``` json
+```json
 {
   "description": null,
   "jobs": [
@@ -1181,23 +1090,20 @@ Result
 ```
 
 <a name="view-list"></a>
+
 ### jenkins.view.list(callback)
 
 List all views.
 
 Usage
 
-``` javascript
-jenkins.view.list(function(err, data) {
-  if (err) throw err;
-
-  console.log('views', data);
-});
+```javascript
+await jenkins.view.list();
 ```
 
 Result
 
-``` json
+```json
 {
   "views": [
     {
@@ -1218,9 +1124,7 @@ Result
     "url": "http://localhost:8080/",
     "name": "All"
   },
-  "assignedLabels": [
-    {}
-  ],
+  "assignedLabels": [{}],
   "mode": "NORMAL",
   "nodeDescription": "the master Jenkins node",
   "nodeName": "",
@@ -1238,39 +1142,37 @@ Result
 ```
 
 <a name="view-add"></a>
-### jenkins.view.add(options, callback)
+
+### jenkins.view.add(options)
 
 Add job to view.
 
 Options
 
- * name (String): view name
- * job (String): job name
+- name (String): view name
+- job (String): job name
 
 Usage
 
-``` javascript
-jenkins.view.add('example', 'jobExample', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.view.add("example", "jobExample");
 ```
 
 <a name="view-remove"></a>
-### jenkins.view.remove(options, callback)
+
+### jenkins.view.remove(options)
 
 Remove job from view.
 
 Options
 
- * name (String): view name
- * job (String): job name
+- name (String): view name
+- job (String): job name
 
 Usage
 
-``` javascript
-jenkins.view.remove('example', 'jobExample', function(err) {
-  if (err) throw err;
-});
+```javascript
+await jenkins.view.remove("example", "jobExample");
 ```
 
 ## Test
