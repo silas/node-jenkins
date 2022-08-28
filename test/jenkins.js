@@ -48,9 +48,9 @@ describe("jenkins", function () {
     describe("get", function () {
       it("should return build details", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
-          .get("/job/" + this.jobName + "/1/api/json")
+          .get(`/job/${this.jobName}/1/api/json`)
           .reply(200, fixtures.buildGet);
 
         await this.jenkins.job.build(this.jobName);
@@ -65,9 +65,9 @@ describe("jenkins", function () {
 
       it("should return build log", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
-          .post("/job/" + this.jobName + "/1/logText/progressiveText")
+          .post(`/job/${this.jobName}/1/logText/progressiveText`)
           .reply(200, fixtures.consoleText, {
             "Content-Type": "text/plain;charset=UTF-8",
           });
@@ -102,9 +102,9 @@ describe("jenkins", function () {
     describe("stop", function () {
       it("should stop build", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
-          .post("/job/" + this.jobName + "/1/stop")
+          .post(`/job/${this.jobName}/1/stop`)
           .reply(302);
 
         await this.jenkins.job.build(this.jobName);
@@ -118,9 +118,9 @@ describe("jenkins", function () {
     describe("term", function () {
       nit("should terminate build", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/1/" })
-          .post("/job/" + this.jobName + "/1/term")
+          .post(`/job/${this.jobName}/1/term`)
           .reply(200);
 
         await this.jenkins.job.build(this.jobName);
@@ -140,7 +140,7 @@ describe("jenkins", function () {
     describe("build", function () {
       it("should start build", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/5/" });
 
         const number = await this.jenkins.job.build(this.jobName);
@@ -150,7 +150,7 @@ describe("jenkins", function () {
 
       it("should not error on 302", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(302, "", { location: "http://localhost:8080/queue/item/5/" });
 
         const number = await this.jenkins.job.build(this.jobName);
@@ -160,7 +160,7 @@ describe("jenkins", function () {
 
       it("should start build with token", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/build?token=secret")
+          .post(`/job/${this.jobName}/build?token=secret`)
           .reply(201, "", { location: "http://localhost:8080/queue/item/5/" });
 
         const number = await this.jenkins.job.build(this.jobName, {
@@ -197,7 +197,7 @@ describe("jenkins", function () {
     describe("config", function () {
       it("should get job config", async function () {
         this.nock
-          .get("/job/" + this.jobName + "/config.xml")
+          .get(`/job/${this.jobName}/config.xml`)
           .reply(200, fixtures.jobCreate);
 
         const config = await this.jenkins.job.config(this.jobName);
@@ -207,11 +207,11 @@ describe("jenkins", function () {
 
       it("should update config", async function () {
         this.nock
-          .get("/job/" + this.jobName + "/config.xml")
+          .get(`/job/${this.jobName}/config.xml`)
           .reply(200, fixtures.jobCreate)
-          .post("/job/" + this.jobName + "/config.xml")
+          .post(`/job/${this.jobName}/config.xml`)
           .reply(200)
-          .get("/job/" + this.jobName + "/config.xml")
+          .get(`/job/${this.jobName}/config.xml`)
           .reply(200, fixtures.jobUpdate);
 
         const before = await this.jenkins.job.config(this.jobName);
@@ -234,13 +234,11 @@ describe("jenkins", function () {
         const name = this.jobName + "-new";
 
         this.nock
-          .head("/job/" + name + "/api/json")
+          .head(`/job/${name}/api/json`)
           .reply(404)
-          .post(
-            "/createItem?name=" + name + "&from=" + this.jobName + "&mode=copy"
-          )
+          .post(`/createItem?name=${name}&from=${this.jobName}&mode=copy`)
           .reply(302)
-          .head("/job/" + name + "/api/json")
+          .head(`/job/${name}/api/json`)
           .reply(200);
 
         const jobs = {};
@@ -260,11 +258,11 @@ describe("jenkins", function () {
         const name = this.jobName + "-new";
 
         this.nock
-          .head("/job/" + name + "/api/json")
+          .head(`/job/${name}/api/json`)
           .reply(404)
-          .post("/createItem?name=" + name, fixtures.jobCreate)
+          .post(`/createItem?name=${name}`, fixtures.jobCreate)
           .reply(200)
-          .head("/job/" + name + "/api/json")
+          .head(`/job/${name}/api/json`)
           .reply(200);
 
         const before = await this.jenkins.job.exists(name);
@@ -286,18 +284,18 @@ describe("jenkins", function () {
 
         await shouldThrow(async () => {
           await this.jenkins.job.create("test", fixtures.jobCreate);
-        }, "jenkins: job.create: a job already exists with the name " + '"nodejs-jenkins-test"');
+        }, 'jenkins: job.create: a job already exists with the name "nodejs-jenkins-test"');
       });
     });
 
     describe("destroy", function () {
       it("should delete job", async function () {
         this.nock
-          .head("/job/" + this.jobName + "/api/json")
+          .head(`/job/${this.jobName}/api/json`)
           .reply(200)
-          .post("/job/" + this.jobName + "/doDelete")
+          .post(`/job/${this.jobName}/doDelete`)
           .reply(302)
-          .head("/job/" + this.jobName + "/api/json")
+          .head(`/job/${this.jobName}/api/json`)
           .reply(404);
 
         const before = await this.jenkins.job.exists(this.jobName);
@@ -321,11 +319,11 @@ describe("jenkins", function () {
     describe("disable", function () {
       it("should disable job", async function () {
         this.nock
-          .get("/job/" + this.jobName + "/api/json")
+          .get(`/job/${this.jobName}/api/json`)
           .reply(200, fixtures.jobGet)
-          .post("/job/" + this.jobName + "/disable")
+          .post(`/job/${this.jobName}/disable`)
           .reply(302)
-          .get("/job/" + this.jobName + "/api/json")
+          .get(`/job/${this.jobName}/api/json`)
           .reply(200, fixtures.jobGetDisabled);
 
         const before = await this.jenkins.job.get(this.jobName);
@@ -341,13 +339,13 @@ describe("jenkins", function () {
     describe("enable", function () {
       it("should enable job", async function () {
         this.nock
-          .post("/job/" + this.jobName + "/disable")
+          .post(`/job/${this.jobName}/disable`)
           .reply(302)
-          .get("/job/" + this.jobName + "/api/json")
+          .get(`/job/${this.jobName}/api/json`)
           .reply(200, fixtures.jobGetDisabled)
-          .post("/job/" + this.jobName + "/enable")
+          .post(`/job/${this.jobName}/enable`)
           .reply(302)
-          .get("/job/" + this.jobName + "/api/json")
+          .get(`/job/${this.jobName}/api/json`)
           .reply(200, fixtures.jobGet);
 
         await this.jenkins.job.disable(this.jobName);
@@ -366,14 +364,14 @@ describe("jenkins", function () {
       it("should not find job", async function () {
         const name = this.jobName + "-nope";
 
-        this.nock.head("/job/" + name + "/api/json").reply(404);
+        this.nock.head(`/job/${name}/api/json`).reply(404);
 
         const exists = await this.jenkins.job.exists(name);
         should(exists).equal(false);
       });
 
       it("should find job", async function () {
-        this.nock.head("/job/" + this.jobName + "/api/json").reply(200);
+        this.nock.head(`/job/${this.jobName}/api/json`).reply(200);
 
         const exists = await this.jenkins.job.exists(this.jobName);
         should(exists).equal(true);
@@ -384,7 +382,7 @@ describe("jenkins", function () {
       it("should not get job", async function () {
         const name = this.jobName + "-nope";
 
-        this.nock.get("/job/" + name + "/api/json").reply(404);
+        this.nock.get(`/job/${name}/api/json`).reply(404);
 
         await shouldThrow(async () => {
           await this.jenkins.job.get(name);
@@ -393,7 +391,7 @@ describe("jenkins", function () {
 
       it("should get job", async function () {
         this.nock
-          .get("/job/" + this.jobName + "/api/json")
+          .get(`/job/${this.jobName}/api/json`)
           .reply(200, fixtures.jobGet);
 
         const data = await this.jenkins.job.get(this.jobName);
@@ -488,7 +486,7 @@ describe("jenkins", function () {
 
     describe("create", function () {
       it("should create node", async function () {
-        const name = "test-node-" + uuid.v4();
+        const name = `test-node-${uuid.v4()}`;
 
         this.nock
           .post(
@@ -504,11 +502,11 @@ describe("jenkins", function () {
     describe("destroy", function () {
       it("should delete node", async function () {
         this.nock
-          .head("/computer/" + this.nodeName + "/api/json")
+          .head(`/computer/${this.nodeName}/api/json`)
           .reply(200)
-          .post("/computer/" + this.nodeName + "/doDelete")
+          .post(`/computer/${this.nodeName}/doDelete`)
           .reply(302, "")
-          .head("/computer/" + this.nodeName + "/api/json")
+          .head(`/computer/${this.nodeName}/api/json`)
           .reply(404);
 
         const jobs = {};
@@ -526,25 +524,23 @@ describe("jenkins", function () {
     describe("disable", function () {
       it("should disable node", async function () {
         this.nock
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGet)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGet)
-          .post(
-            "/computer/" + this.nodeName + "/toggleOffline?offlineMessage=away"
-          )
+          .post(`/computer/${this.nodeName}/toggleOffline?offlineMessage=away`)
           .reply(302, "")
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetTempOffline)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetTempOffline)
           .post(
-            "/computer/" + this.nodeName + "/changeOfflineCause",
+            `/computer/${this.nodeName}/changeOfflineCause`,
             "offlineMessage=update&json=%7B%22offlineMessage%22%3A%22update%22%7D&" +
               "Submit=Update%20reason"
           )
           .reply(302, "")
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetTempOfflineUpdate);
 
         const beforeDisable = await this.jenkins.node.get(this.nodeName);
@@ -567,19 +563,17 @@ describe("jenkins", function () {
     describe("enable", function () {
       it("should enable node", async function () {
         this.nock
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGet)
-          .post(
-            "/computer/" + this.nodeName + "/toggleOffline?offlineMessage=away"
-          )
+          .post(`/computer/${this.nodeName}/toggleOffline?offlineMessage=away`)
           .reply(302, "")
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetTempOffline)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetTempOffline)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGet)
-          .post("/computer/" + this.nodeName + "/toggleOffline?offlineMessage=")
+          .post(`/computer/${this.nodeName}/toggleOffline?offlineMessage=`)
           .reply(302, "");
 
         await this.jenkins.node.disable(this.nodeName, "away");
@@ -597,25 +591,21 @@ describe("jenkins", function () {
     describe("disconnect", function () {
       it("should disconnect node", async function () {
         this.nock
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetOnline)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetOnline)
-          .post(
-            "/computer/" + this.nodeName + "/doDisconnect?offlineMessage=away"
-          )
+          .post(`/computer/${this.nodeName}/doDisconnect?offlineMessage=away`)
           .reply(302, "")
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetOffline)
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetOffline)
           .post(
-            "/computer/" +
-              this.nodeName +
-              "/toggleOffline?offlineMessage=update"
+            `/computer/${this.nodeName}/toggleOffline?offlineMessage=update`
           )
           .reply(302, "")
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGetOfflineUpdate);
 
         const beforeDisconnect = await retry(1000, async () => {
@@ -643,14 +633,14 @@ describe("jenkins", function () {
       it("should not find node", async function () {
         const name = this.nodeName + "-nope";
 
-        this.nock.head("/computer/" + name + "/api/json").reply(404);
+        this.nock.head(`/computer/${name}/api/json`).reply(404);
 
         const exists = await this.jenkins.node.exists(name);
         should(exists).equal(false);
       });
 
       it("should find node", async function () {
-        this.nock.head("/computer/" + this.nodeName + "/api/json").reply(200);
+        this.nock.head(`/computer/${this.nodeName}/api/json`).reply(200);
 
         const exists = await this.jenkins.node.exists(this.nodeName);
         should(exists).equal(true);
@@ -660,7 +650,7 @@ describe("jenkins", function () {
     describe("get", function () {
       it("should get node details", async function () {
         this.nock
-          .get("/computer/" + this.nodeName + "/api/json")
+          .get(`/computer/${this.nodeName}/api/json`)
           .reply(200, fixtures.nodeGet);
 
         const node = await this.jenkins.node.get(this.nodeName);
@@ -711,7 +701,7 @@ describe("jenkins", function () {
         this.nock
           .get("/queue/api/json")
           .reply(200, fixtures.queueList)
-          .post("/job/" + this.jobName + "/build")
+          .post(`/job/${this.jobName}/build`)
           .reply(201, "", {
             location: "http://localhost:8080/queue/item/124/",
           });
@@ -734,7 +724,7 @@ describe("jenkins", function () {
 
             await this.jenkins.job.build(this.jobName);
 
-            if (!stop) return next(new Error("queue more"));
+            if (!stop) throw new Error("queue more");
           }),
         ]);
       });
@@ -796,7 +786,7 @@ describe("jenkins", function () {
         const name = this.viewName + "-new";
 
         this.nock
-          .head("/view/" + name + "/api/json")
+          .head(`/view/${name}/api/json`)
           .reply(404)
           .post(
             "/createView",
@@ -805,7 +795,7 @@ describe("jenkins", function () {
             )
           )
           .reply(302)
-          .head("/view/" + name + "/api/json")
+          .head(`/view/${name}/api/json`)
           .reply(200);
 
         const before = await this.jenkins.view.exists(name);
@@ -826,14 +816,14 @@ describe("jenkins", function () {
 
         await shouldThrow(async () => {
           await this.jenkins.view.create(this.viewName, "list");
-        }, "jenkins: view.create: A view already exists " + 'with the name "test-view"');
+        }, 'jenkins: view.create: A view already exists with the name "test-view"');
       });
     });
 
     describe("config", function () {
       it("should return xml", async function () {
         this.nock
-          .get("/view/" + this.viewName + "/config.xml")
+          .get(`/view/${this.viewName}/config.xml`)
           .reply(200, fixtures.viewConfig);
 
         const config = await this.jenkins.view.config(this.viewName);
@@ -846,11 +836,11 @@ describe("jenkins", function () {
         const dst = "<filterQueue>true</filterQueue>";
 
         this.nock
-          .get("/view/" + this.viewName + "/config.xml")
+          .get(`/view/${this.viewName}/config.xml`)
           .reply(200, fixtures.viewConfig)
-          .post("/view/" + this.viewName + "/config.xml")
+          .post(`/view/${this.viewName}/config.xml`)
           .reply(200)
-          .get("/view/" + this.viewName + "/config.xml")
+          .get(`/view/${this.viewName}/config.xml`)
           .reply(200, fixtures.viewConfig.replace(src, dst));
 
         const before = await this.jenkins.view.config(this.viewName);
@@ -867,11 +857,11 @@ describe("jenkins", function () {
     describe("destroy", function () {
       it("should delete view", async function () {
         this.nock
-          .head("/view/" + this.viewName + "/api/json")
+          .head(`/view/${this.viewName}/api/json`)
           .reply(200)
-          .post("/view/" + this.viewName + "/doDelete")
+          .post(`/view/${this.viewName}/doDelete`)
           .reply(302)
-          .head("/view/" + this.viewName + "/api/json")
+          .head(`/view/${this.viewName}/api/json`)
           .reply(404);
 
         const before = await this.jenkins.view.exists(this.viewName);
@@ -896,7 +886,7 @@ describe("jenkins", function () {
       it("should not get view", async function () {
         const name = this.viewName + "-nope";
 
-        this.nock.get("/view/" + name + "/api/json").reply(404);
+        this.nock.get(`/view/${name}/api/json`).reply(404);
 
         await shouldThrow(async () => {
           await this.jenkins.view.get(name);
@@ -905,7 +895,7 @@ describe("jenkins", function () {
 
       it("should get view", async function () {
         this.nock
-          .get("/view/" + this.viewName + "/api/json")
+          .get(`/view/${this.viewName}/api/json`)
           .reply(200, fixtures.viewGet);
 
         const data = await this.jenkins.view.get(this.viewName);
@@ -957,11 +947,11 @@ describe("jenkins", function () {
         beforeView.jobs = [];
 
         this.nock
-          .get("/view/" + this.viewName + "/api/json")
+          .get(`/view/${this.viewName}/api/json`)
           .reply(200, beforeView)
-          .post("/view/" + this.viewName + "/addJobToView?name=" + this.jobName)
+          .post(`/view/${this.viewName}/addJobToView?name=` + this.jobName)
           .reply(200)
-          .get("/view/" + this.viewName + "/api/json")
+          .get(`/view/${this.viewName}/api/json`)
           .reply(200, fixtures.viewGetListView);
 
         const before = await this.jenkins.view.get(this.viewName);
@@ -980,15 +970,13 @@ describe("jenkins", function () {
         afterView.jobs = [];
 
         this.nock
-          .post("/view/" + this.viewName + "/addJobToView?name=" + this.jobName)
+          .post(`/view/${this.viewName}/addJobToView?name=` + this.jobName)
           .reply(200)
-          .get("/view/" + this.viewName + "/api/json")
+          .get(`/view/${this.viewName}/api/json`)
           .reply(200, fixtures.viewGetListView)
-          .post(
-            "/view/" + this.viewName + "/removeJobFromView?name=" + this.jobName
-          )
+          .post(`/view/${this.viewName}/removeJobFromView?name=` + this.jobName)
           .reply(200)
-          .get("/view/" + this.viewName + "/api/json")
+          .get(`/view/${this.viewName}/api/json`)
           .reply(200, afterView);
 
         await this.jenkins.view.add(this.viewName, this.jobName);
