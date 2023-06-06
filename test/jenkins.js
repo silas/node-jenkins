@@ -179,6 +179,27 @@ describe("jenkins", function () {
         await this.jenkins.job.build("test", opts);
       });
 
+      nit("should work with form data parameters", async function () {
+        this.jenkins = new Jenkins({
+          baseUrl: this.url,
+          crumbIssuer: helper.config.crumbIssuer,
+          formData: require("form-data"),
+        });
+        this.jenkins.on("log", debug("jenkins:client"));
+
+        this.nock
+          .post("/job/test/buildWithParameters", /filename="oneName"/gm)
+          .reply(201);
+
+        const opts = {
+          parameters: {
+            oneName: Buffer.from("oneValue"),
+            twoName: "twoValue",
+          },
+        };
+        await this.jenkins.job.build("test", opts);
+      });
+
       nit("should work with a token and parameters", async function () {
         this.nock
           .post("/job/test/buildWithParameters?token=secret", {
