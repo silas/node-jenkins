@@ -4,8 +4,10 @@
   "version": "1.0.2",
   "main": "./lib",
   "files": [
-    "./lib"
+    "./lib",
+    "./types"
   ],
+  "types": "types/index.d.ts",
   "dependencies": {
     "papi": "^1.1.0"
   },
@@ -20,9 +22,11 @@
     "nyc": "^15.1.0",
     "prettier": "^2.7.1",
     "should": "^13.2.1",
-    "sinon": "^14.0.0"
+    "sinon": "^14.0.0",
+    "typescript": "^5.1.3"
   },
   "scripts": {
+    "prepublishOnly": "tsc",
     "format": "prettier -w .",
     "test": "prettier -c . && nyc mocha -- --recursive --check-leaks --timeout 15000",
     "acceptance": "NOCK_OFF=true NOCK_REC=false JENKINS_TEST_URL=http://admin:admin@localhost:8080 mocha --recursive --check-leaks --timeout 15000"
