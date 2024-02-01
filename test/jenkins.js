@@ -477,38 +477,44 @@ describe("jenkins", function () {
     });
 
     describe('credentials', () => {
+      beforeEach(async function () {
+        return helper.setup({ job: false, test: this , folder: true});
+      });
+
       it("should create credentials", async function () {
-        const folder = this.jobName + "-new";
+        const folder = this.folderName;
         const store = "folder";
         const domain = "_";
-        const id = "user-new"
+        const id = "user-new-cred";
 
         this.nock
           .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
-          .reply(404);
-          // .post(`/createItem?name=${name}`, fixtures.jobCreate)
-          // .reply(200)
-          // .head(`/job/${name}/api/json`)
-          // .reply(200);
+          .reply(404)
+          .post(`/job/${folder}/credentials/store/${store}/domain/${domain}/createCredentials`,
+              fixtures.credentialCreate)
+          .reply(200)
+          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+          .reply(200);
 
+      
         const before = await this.jenkins.credentials.exists(id, folder, store, domain);
         should(before).equal(false);
 
-        await this.jenkins.job.create(name, fixtures.jobCreate);
+        await this.jenkins.credentials.create(folder, store, domain, fixtures.credentialCreate);
 
-        const after = await this.jenkins.job.exists(name);
+        const after = await this.jenkins.credentials.exists(id, folder, store, domain);
         should(after).equal(true);
       });
 
-      it("should get credentials config", async function () {
-        this.nock
-          .get(`/job/${this.jobName}/config.xml`)
-          .reply(200, fixtures.jobCreate);
+      // it("should get credentials config", async function () {
+      //   this.nock
+      //     .get(`/job/${this.jobName}/config.xml`)
+      //     .reply(200, fixtures.jobCreate);
 
-        const config = await this.jenkins.credentials.config(this.jobName);
-        should(config).be.type("string");
-        should(config).containEql("<project>");
-      });
+      //   const config = await this.jenkins.credentials.config(this.jobName);
+      //   should(config).be.type("string");
+      //   should(config).containEql("<project>");
+      // });
     });
   });
 

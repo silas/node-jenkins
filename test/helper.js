@@ -23,6 +23,7 @@ async function setup(opts) {
   test.jobName = unique("job");
   test.nodeName = unique("node");
   test.viewName = unique("view");
+  test.folderName = unique("folder");
 
   if (!NOCK_OFF) {
     nock.disableNetConnect();
@@ -33,6 +34,10 @@ async function setup(opts) {
 
   if (opts.job) {
     promises.push(jenkins.job.create(test.jobName, fixtures.jobCreate));
+  }
+
+  if (opts.folder){
+    promises.push(jenkins.job.create(test.folderName, fixtures.folderCreate));
   }
 
   if (opts.node) {
