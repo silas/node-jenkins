@@ -123,6 +123,18 @@ async function cleanup(opts) {
     },
   ];
 
+  jobs.destroyFolders = [
+    "listJobs",
+    async (results) => {
+      return Promise.all(
+        results.listJobs
+          .map((job) => job.name)
+          .filter((name) => name.match(/^test-folder-/))
+          .map((name) => test.jenkins.job.destroy(name))
+      );
+    },
+  ];
+
   return auto(jobs);
 }
 
