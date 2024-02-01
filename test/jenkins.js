@@ -475,6 +475,41 @@ describe("jenkins", function () {
         }, "jenkins: job.list: returned bad data");
       });
     });
+
+    describe('credentials', () => {
+      it("should create credentials", async function () {
+        const folder = this.jobName + "-new";
+        const store = "folder";
+        const domain = "_";
+        const id = "user-new"
+
+        this.nock
+          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+          .reply(404);
+          // .post(`/createItem?name=${name}`, fixtures.jobCreate)
+          // .reply(200)
+          // .head(`/job/${name}/api/json`)
+          // .reply(200);
+
+        const before = await this.jenkins.credentials.exists(id, folder, store, domain);
+        should(before).equal(false);
+
+        await this.jenkins.job.create(name, fixtures.jobCreate);
+
+        const after = await this.jenkins.job.exists(name);
+        should(after).equal(true);
+      });
+
+      it("should get credentials config", async function () {
+        this.nock
+          .get(`/job/${this.jobName}/config.xml`)
+          .reply(200, fixtures.jobCreate);
+
+        const config = await this.jenkins.credentials.config(this.jobName);
+        should(config).be.type("string");
+        should(config).containEql("<project>");
+      });
+    });
   });
 
   describe("label", function () {

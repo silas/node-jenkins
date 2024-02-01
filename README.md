@@ -12,6 +12,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 - plugin: [list](#plugin-list)
 - queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
 - view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
+- credentials: 
 
 <a id="common-options"></a>
 
