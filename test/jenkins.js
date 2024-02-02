@@ -475,69 +475,58 @@ describe("jenkins", function () {
         }, "jenkins: job.list: returned bad data");
       });
     });
+  });
 
-    describe('credentials', () => {
-      beforeEach(async function () {
-        return helper.setup({ job: false, test: this , folder: true});
-      });
+  describe('credentials', () => {
+    beforeEach(async function () {
+      return helper.setup({ job: false, test: this , folder: true});
+    });
 
-      it("should create credentials", async function () {
-        const folder = this.folderName;
-        const store = "folder";
-        const domain = "_";
-        const id = "user-new-cred";
+    it("should create credentials", async function () {
+      const folder = this.folderName;
+      const store = "folder";
+      const domain = "_";
+      const id = "user-new-cred";
 
-        this.nock
-          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
-          .reply(404)
-          .post(`/job/${folder}/credentials/store/${store}/domain/${domain}/createCredentials`,
-              fixtures.credentialCreate)
-          .reply(200)
-          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
-          .reply(200);
+      this.nock
+        .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+        .reply(404)
+        .post(`/job/${folder}/credentials/store/${store}/domain/${domain}/createCredentials`,
+            fixtures.credentialCreate)
+        .reply(200)
+        .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+        .reply(200);
 
-      
-        const before = await this.jenkins.credentials.exists(id, folder, store, domain);
+    
+      const before = await this.jenkins.credentials.exists(id, folder, store, domain);
+      should(before).equal(false);
+
+      await this.jenkins.credentials.create(folder, store, domain, fixtures.credentialCreate);
+
+      const after = await this.jenkins.credentials.exists(id, folder, store, domain);
+      should(after).equal(true);
+    });
+
+    it("should create system credentials", async function () {
+      const domain = "_";
+      const id = "system-new-cred";
+
+      this.nock
+        .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
+        .reply(404)
+        .post(`/manage/credentials/store/system/domain/${domain}/createCredentials`,
+            fixtures.credentialCreate)
+        .reply(200)
+        .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
+        .reply(200);
+
+        const before = await this.jenkins.credentials.systemExist(id, domain);
         should(before).equal(false);
 
-        await this.jenkins.credentials.create(folder, store, domain, fixtures.credentialCreate);
+        await this.jenkins.credentials.systemCreate(domain, fixtures.credentialCreate);
 
-        const after = await this.jenkins.credentials.exists(id, folder, store, domain);
+        const after = await this.jenkins.credentials.systemExist(id, domain);
         should(after).equal(true);
-      });
-
-      it("should create system credentials", async function () {
-        const domain = "_";
-        const id = "system-new-cred";
-
-        this.nock
-          .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
-          .reply(404)
-          .post(`/manage/credentials/store/system/domain/${domain}/createCredentials`,
-              fixtures.credentialCreate)
-          .reply(200)
-          .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
-          .reply(200);
-
-          const before = await this.jenkins.credentials.systemExist(id, domain);
-          should(before).equal(false);
-  
-          await this.jenkins.credentials.systemCreate(domain, fixtures.credentialCreate);
-  
-          const after = await this.jenkins.credentials.systemExist(id, domain);
-          should(after).equal(true);
-      });
-
-
-      // it("should get credentials config", async function () {
-      //   this.nock
-      //     .get(`/job/${this.jobName}/config.xml`)
-      //     .reply(200, fixtures.jobCreate);
-
-      //   const config = await this.jenkins.credentials.config(this.jobName);
-      //   should(config).be.type("string");
-      //   should(config).containEql("<project>");
-      // });
     });
   });
 
