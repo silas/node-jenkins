@@ -506,6 +506,29 @@ describe("jenkins", function () {
         should(after).equal(true);
       });
 
+      it("should create system credentials", async function () {
+        const domain = "_";
+        const id = "system-new-cred";
+
+        this.nock
+          .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
+          .reply(404)
+          .post(`/manage/credentials/store/system/domain/${domain}/createCredentials`,
+              fixtures.credentialCreate)
+          .reply(200)
+          .head(`/manage/credentials/store/system/domain/${domain}/credential/${id}/api/json`)
+          .reply(200);
+
+          const before = await this.jenkins.credentials.systemExist(id, domain);
+          should(before).equal(false);
+  
+          await this.jenkins.credentials.systemCreate(domain, fixtures.credentialCreate);
+  
+          const after = await this.jenkins.credentials.systemExist(id, domain);
+          should(after).equal(true);
+      });
+
+
       // it("should get credentials config", async function () {
       //   this.nock
       //     .get(`/job/${this.jobName}/config.xml`)

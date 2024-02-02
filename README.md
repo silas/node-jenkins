@@ -12,7 +12,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 - plugin: [list](#plugin-list)
 - queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
 - view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
-- credentials: 
+- credentials: [create](#credential-create), [exists](#credential-exists), [system create](#credential-system-create), [system exist](#credential-system-exists) 
 
 <a id="common-options"></a>
 
@@ -1175,6 +1175,80 @@ Usage
 ```javascript
 await jenkins.view.remove("example", "jobExample");
 ```
+
+<a id="credential-create"></a>
+
+### jenkins.credentials.create(options)
+
+Create credential in store & domain (Non System).
+
+Options
+
+- folder (String): path of the folder or 'manage' for system
+- store (String): the store where credentials should be created
+- domain (String): domain where to create the credentials
+- xml (String): configuration XML
+
+Usage
+
+```javascript
+await jenkins.credentials.create("folder", "store", "domain", xml)
+```
+
+<a id="credential-exists"></a>
+
+### jenkins.credentials.exists(options)
+
+Check if the credential exist (Non System).
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or 'manage' for system
+- store (String): the store where credentials should be created
+- domain (String): domain where to create the credentials
+- xml (String): configuration XML
+
+Usage
+
+```javascript
+await jenkins.credentials.exists("id", "folder", "store", "domain")
+```
+
+<a id="credential-system-create"></a>
+
+### jenkins.credentials.systemCreate(options)
+
+Create system credential in the domain.
+
+Options
+
+- domain (String): domain where to create the credentials
+- xml (String): configuration XML
+
+Usage
+
+```javascript
+await jenkins.credentials.systemCreate("domain", "xml")
+```
+
+<a id="credential-system-exists"></a>
+
+### jenkins.credentials.systemExist(options)
+
+Check if the system credential exist.
+
+Options
+
+- id (String): the id of the credential
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.systemExist("id", "domain")
+```
+
 
 ## Test
 
