@@ -597,7 +597,7 @@ describe("jenkins", function () {
         const folder = "manage"
         const store = "system";
         const domain = "_";
-        const id = "system-new-cred";
+        const id = "user-new-cred";
 
         this.nock
           .head(`/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
@@ -622,7 +622,7 @@ describe("jenkins", function () {
         const folder = "manage"
         const store = "system";
         const domain = "_";
-        const id = "system-new-cred";
+        const id = "user-new-cred";
 
         this.nock
           .get(`/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/config.xml`)
@@ -637,7 +637,7 @@ describe("jenkins", function () {
         const folder = "manage"
         const store = "system";
         const domain = "_";
-        const id = "system-new-cred";
+        const id = "user-new-cred";
 
         this.nock
           .get(`/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/config.xml`)
@@ -680,7 +680,7 @@ describe("jenkins", function () {
         const folder = "manage"
         const store = "system";
         const domain = "_";
-        const id = "system-new-cred";
+        const id = "user-new-cred";
         
         this.nock
           .head(`/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
