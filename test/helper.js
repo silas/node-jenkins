@@ -87,6 +87,10 @@ async function cleanup(opts) {
     return test.jenkins.view.list();
   };
 
+  // jobs.listCredentials = async () => {
+  //   return test.jenkins.credentials.list();
+  // };
+
   jobs.destroyJobs = [
     "listJobs",
     async (results) => {
@@ -134,6 +138,18 @@ async function cleanup(opts) {
       );
     },
   ];
+
+  // jobs.destroySystemCredentials = [
+  //   "listSystemCredentials",
+  //   async (results) => {
+  //     return Promise.all(
+  //       results.listJobs
+  //         .map((job) => job.name)
+  //         .filter((name) => name.match(/^system-new-cred-/))
+  //         .map((name) => test.jenkins.job.destroy(name))
+  //     );
+  //   },
+  // ];
 
   return auto(jobs);
 }

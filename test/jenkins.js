@@ -550,29 +550,47 @@ describe("jenkins", function () {
         should(config).be.type("string");
         should(config).equals(fixtures.credentialUpdate);
       });
+
+      it("should list credentials", async function () {
+        const folder = this.folderName;
+        const store = "folder";
+        const domain = "_";
+
+        this.nock.get(`/job/${folder}/credentials/store/${store}/domain/${domain}/api/json?tree=credentials[id]`)
+        .reply(200, fixtures.credentialList);
+
+        const data = await this.jenkins.credentials.list(folder, store, domain);
+        should(data).not.be.empty();
+        for (const credential of data) {
+          should(credential).have.properties("id");
+        }
+      });
+
+      it("should delete credential", async function () {
+        const folder = this.folderName;
+        const store = "folder";
+        const domain = "_";
+        const id = "user-new-cred";
+        
+        this.nock
+          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+          .reply(200)
+          .delete(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/config.xml`)
+          .reply(302, "")
+          .head(`/job/${folder}/credentials/store/${store}/domain/${domain}/credential/${id}/api/json`)
+          .reply(404);
+
+        const jobs = {};
+
+        const before = await this.jenkins.credentials.exists(id, folder, store, domain);
+        should(before).equal(true);
+
+        await this.jenkins.credentials.destroy(id, folder, store, domain);
+
+        const after = await this.jenkins.credentials.exists(id, folder, store, domain);
+        should(after).equal(false);
+      });
     });
-
-      // it("should update config", async function () {
-      //   this.nock
-      //     .get(`/job/${this.jobName}/config.xml`)
-      //     .reply(200, fixtures.jobCreate)
-      //     .post(`/job/${this.jobName}/config.xml`)
-      //     .reply(200)
-      //     .get(`/job/${this.jobName}/config.xml`)
-      //     .reply(200, fixtures.jobUpdate);
-
-      //   const before = await this.jenkins.job.config(this.jobName);
-
-      //   const config = before.replace(
-      //     "<description>before</description>",
-      //     "<description>after</description>"
-      //   );
-      //   await this.jenkins.job.config(this.jobName, config);
-
-      //   const after = await this.jenkins.job.config(this.jobName);
-
-      //   should(before).not.eql(after);
-      //   should(after).containEql("<description>after</description>");
 
     describe("system", () => {
       it("should create system credentials", async function () {
