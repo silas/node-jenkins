@@ -12,7 +12,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 - plugin: [list](#plugin-list)
 - queue: [list](#queue-list), [item](#queue-item), [cancel](#queue-cancel)
 - view: [get config](#view-config-get), [set config](#view-config-set), [create](#view-create), [destroy](#view-destroy), [exists](#view-exists), [get](#view-get), [list](#view-list), [add job](#view-add), [remove job](#view-remove)
-- credentials: [create](#credential-create), [exists](#credential-exists), [system create](#credential-system-create), [system exist](#credential-system-exists) 
+- credentials: [create](#credential-create), [exists](#credential-exists), [get config](#credential-get-config), [set config](#credential-set-config), [destroy](#credential-destroy), [list](#credential-list)
 
 <a id="common-options"></a>
 
@@ -1180,34 +1180,33 @@ await jenkins.view.remove("example", "jobExample");
 
 ### jenkins.credentials.create(options)
 
-Create credential in store & domain (Non System).
+Create credential in a folder or system.
 
 Options
 
-- folder (String): path of the folder or 'manage' for system
-- store (String): the store where credentials should be created
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created,  can be `folder` or `system`
 - domain (String): domain where to create the credentials
 - xml (String): configuration XML
 
 Usage
 
 ```javascript
-await jenkins.credentials.create("folder", "store", "domain", xml)
+await jenkins.credentials.create("folder", "store", "domain", "xml")
 ```
 
 <a id="credential-exists"></a>
 
 ### jenkins.credentials.exists(options)
 
-Check if the credential exist (Non System).
+Check if the credential exist in a folder or system.
 
 Options
 
 - id (String): the id of the credential
-- folder (String): path of the folder or 'manage' for system
-- store (String): the store where credentials should be created
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created,  can be `folder` or `system`
 - domain (String): domain where to create the credentials
-- xml (String): configuration XML
 
 Usage
 
@@ -1215,41 +1214,81 @@ Usage
 await jenkins.credentials.exists("id", "folder", "store", "domain")
 ```
 
-<a id="credential-system-create"></a>
+<a id="credential-get-config"></a>
 
-### jenkins.credentials.systemCreate(options)
+### jenkins.credentials.config(options)
 
-Create system credential in the domain.
+Get XML configuration of a credential.
 
 Options
 
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created,  can be `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.config("id", "folder", "store", "domain")
+```
+
+<a id="credential-set-config"></a>
+
+### jenkins.credentials.config(options)
+
+Update Credential
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, can be `folder` or `system`
 - domain (String): domain where to create the credentials
 - xml (String): configuration XML
 
 Usage
 
 ```javascript
-await jenkins.credentials.systemCreate("domain", "xml")
+await jenkins.credentials.exists("id", "folder", "store", "domain", "xml")
 ```
 
-<a id="credential-system-exists"></a>
+<a id="credential-destroy"></a>
 
-### jenkins.credentials.systemExist(options)
+### jenkins.credentials.destroy(options)
 
-Check if the system credential exist.
+Delete credentials from folder or system.
 
 Options
 
 - id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, `folder` or `system`
 - domain (String): domain where to create the credentials
 
 Usage
 
 ```javascript
-await jenkins.credentials.systemExist("id", "domain")
+await jenkins.credentials.destroy("id", "folder", "store", "domain")
 ```
 
+<a id="credential-list"></a>
 
+### jenkins.credentials.list(options)
+
+Get a list of credentials in a folder or system.
+
+Options
+
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.list("folder", "store", "domain")
+```
 ## Test
 
 Run unit tests
