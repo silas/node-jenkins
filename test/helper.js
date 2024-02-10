@@ -36,7 +36,7 @@ async function setup(opts) {
     promises.push(jenkins.job.create(test.jobName, fixtures.jobCreate));
   }
 
-  if (opts.folder){
+  if (opts.folder) {
     promises.push(jenkins.job.create(test.folderName, fixtures.folderCreate));
   }
 
@@ -146,7 +146,9 @@ async function cleanup(opts) {
         results.listSystemCredentials
           .map((credential) => credential.id)
           .filter((id) => id.match(/^user-new-cred/))
-          .map((id) => test.jenkins.credentials.destroy(id, "manage", "system", "_"))
+          .map((id) =>
+            test.jenkins.credentials.destroy(id, "manage", "system", "_")
+          )
       );
     },
   ];

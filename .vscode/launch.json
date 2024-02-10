@@ -23,6 +23,6 @@
         "NOCK_REC": "false",
         "JENKINS_TEST_URL": "http://admin:admin@localhost:8080"
       }
-    },
+    }
   ]
 }
