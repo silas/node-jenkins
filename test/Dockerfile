@@ -9,4 +9,4 @@ ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 COPY setup.groovy /usr/share/jenkins/ref/init.groovy.d/setup.groovy
 COPY scriptApproval.xml /var/jenkins_home/scriptApproval.xml
 
-RUN jenkins-plugin-cli --plugins "jdk-tool script-security command-launcher cloudbees-folder"
+RUN jenkins-plugin-cli --plugins "jdk-tool script-security command-launcher cloudbees-folder credentials"

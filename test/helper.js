@@ -23,6 +23,7 @@ async function setup(opts) {
   test.jobName = unique("job");
   test.nodeName = unique("node");
   test.viewName = unique("view");
+  test.folderName = unique("folder");
 
   if (!NOCK_OFF) {
     nock.disableNetConnect();
@@ -33,6 +34,10 @@ async function setup(opts) {
 
   if (opts.job) {
     promises.push(jenkins.job.create(test.jobName, fixtures.jobCreate));
+  }
+
+  if (opts.folder) {
+    promises.push(jenkins.job.create(test.folderName, fixtures.folderCreate));
   }
 
   if (opts.node) {
@@ -82,6 +87,10 @@ async function cleanup(opts) {
     return test.jenkins.view.list();
   };
 
+  jobs.listSystemCredentials = async () => {
+    return test.jenkins.credentials.list("manage", "system", "_");
+  };
+
   jobs.destroyJobs = [
     "listJobs",
     async (results) => {
@@ -114,6 +123,32 @@ async function cleanup(opts) {
           .map((node) => node.name)
           .filter((name) => name.match(/^test-view-/))
           .map((name) => test.jenkins.view.destroy(name))
+      );
+    },
+  ];
+
+  jobs.destroyFolders = [
+    "listJobs",
+    async (results) => {
+      return Promise.all(
+        results.listJobs
+          .map((job) => job.name)
+          .filter((name) => name.match(/^test-folder-/))
+          .map((name) => test.jenkins.job.destroy(name))
+      );
+    },
+  ];
+
+  jobs.destroySystemCredentials = [
+    "listSystemCredentials",
+    async (results) => {
+      return Promise.all(
+        results.listSystemCredentials
+          .map((credential) => credential.id)
+          .filter((id) => id.match(/^user-new-cred/))
+          .map((id) =>
+            test.jenkins.credentials.destroy(id, "manage", "system", "_")
+          )
       );
     },
   ];

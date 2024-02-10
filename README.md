@@ -6,6 +6,7 @@ This is a Node.js client for [Jenkins](http://jenkins-ci.org/).
 
 - jenkins: [init](#init), [info](#info)
 - build: [get](#build-get), [log](#build-log), [logStream](#build-log-stream), [stop](#build-stop), [term](#build-term)
+- credentials: [create](#credentials-create), [exists](#credentials-exists), [get config](#credentials-get-config), [set config](#credentials-set-config), [destroy](#credentials-destroy), [list](#credentials-list)
 - job: [build](#job-build), [get config](#job-config-get), [set config](#job-config-set), [copy](#job-config-copy), [create](#job-create), [destroy](#job-destroy), [disable](#job-disable), [enable](#job-enable), [exists](#job-exists), [get](#job-get), [list](#job-list)
 - label: [get](#label-get)
 - node: [get config](#node-config-get), [create](#node-create), [destroy](#node-destroy), [disconnect](#node-disconnect), [disable](#node-disable), [enable](#node-enable), [exists](#node-exists), [get](#node-get), [list](#node-list)
@@ -254,6 +255,120 @@ Usage
 
 ```javascript
 await jenkins.build.term("example", 1);
+```
+
+<a id="credentials-create"></a>
+
+### jenkins.credentials.create(options)
+
+Create credential in a folder or system.
+
+Options
+
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, can be `folder` or `system`
+- domain (String): domain where to create the credentials
+- xml (String): configuration XML
+
+Usage
+
+```javascript
+await jenkins.credentials.create("folder", "store", "domain", "xml");
+```
+
+<a id="credentials-exists"></a>
+
+### jenkins.credentials.exists(options)
+
+Check if the credential exist in a folder or system.
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, can be `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.exists("id", "folder", "store", "domain");
+```
+
+<a id="credentials-get-config"></a>
+
+### jenkins.credentials.config(options)
+
+Get XML configuration of a credential.
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, can be `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.config("id", "folder", "store", "domain");
+```
+
+<a id="credentials-set-config"></a>
+
+### jenkins.credentials.config(options)
+
+Update Credential
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, can be `folder` or `system`
+- domain (String): domain where to create the credentials
+- xml (String): configuration XML
+
+Usage
+
+```javascript
+await jenkins.credentials.exists("id", "folder", "store", "domain", "xml");
+```
+
+<a id="credentials-destroy"></a>
+
+### jenkins.credentials.destroy(options)
+
+Delete credentials from folder or system.
+
+Options
+
+- id (String): the id of the credential
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.destroy("id", "folder", "store", "domain");
+```
+
+<a id="credentials-list"></a>
+
+### jenkins.credentials.list(options)
+
+Get a list of credentials in a folder or system.
+
+Options
+
+- folder (String): path of the folder or `manage` for **system** credentials
+- store (String): the store where credentials should be created, `folder` or `system`
+- domain (String): domain where to create the credentials
+
+Usage
+
+```javascript
+await jenkins.credentials.list("folder", "store", "domain");
 ```
 
 <a id="job-build"></a>
